@@ -30,6 +30,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovingObject")
 	bool bPointture;
 
-	UFUNCTION()
-	void MovingObject(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & HitResult);
+//	UFUNCTION()
+//	void MovingObject(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & HitResult);
 };
