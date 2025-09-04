@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "NomPlayer.generated.h"
 
+class UWeaponComponent;
 class UCameraComponent;
 class USpringArmComponent;
 struct FInputActionValue;
@@ -55,6 +56,10 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* CameraComp;
 
+	//Components
+	UPROPERTY(EditAnywhere)
+	UWeaponComponent* WeaponComp;
+	
 	//Inputs
 	UPROPERTY(EditAnywhere)
 	UInputMappingContext* IMC_NomPlayer;
@@ -126,22 +131,22 @@ protected:
 
 	//Battle
 	UFUNCTION()
-	void Fire();
+	virtual void Fire();
 	UFUNCTION()
-	void Aim();
+	virtual void Aim();
 	UFUNCTION()
-	void Melee();
+	virtual void Melee();
 	UFUNCTION()
-	void Throw();
+	virtual void Throw();
 	UFUNCTION()
-	void Skill();
+	virtual void Skill();
 	UFUNCTION()
-	void UltimateSkill();
+	virtual void UltimateSkill();
 
 	UFUNCTION()
-	void ChangeWeapon1();
+	virtual void ChangeWeapon1();
 	UFUNCTION()
-	void ChangeWeapon2();
+	virtual void ChangeWeapon2();
 	UFUNCTION()
-	void ChangeWeapon3();
+	virtual void ChangeWeapon3();
 };

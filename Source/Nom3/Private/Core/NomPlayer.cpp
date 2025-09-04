@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Nom3/Nom3.h"
+#include "Weapon/WeaponComponent.h"
 
 // Sets default values
 ANomPlayer::ANomPlayer()
@@ -62,6 +63,9 @@ ANomPlayer::ANomPlayer()
 	GetCharacterMovement()->JumpZVelocity = JumpForce;
 	GetCharacterMovement()->GravityScale *= GravityMultiplier;
 	GetCharacterMovement()->AirControl = 0.5f;
+
+	//Add Component
+	WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
 }
 
 // Called when the game starts or when spawned
@@ -201,7 +205,7 @@ void ANomPlayer::InteractHold(const FInputActionValue& Value)
 
 void ANomPlayer::Fire()
 {
-	PRINTINFO();
+	WeaponComp->Fire();
 }
 
 void ANomPlayer::Aim()
