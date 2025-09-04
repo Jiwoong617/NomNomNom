@@ -108,6 +108,10 @@ void ANomPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		EnhancedInputComponent->BindAction(IA_Throw, ETriggerEvent::Started, this, &ANomPlayer::Throw);
 		EnhancedInputComponent->BindAction(IA_Skill, ETriggerEvent::Started, this, &ANomPlayer::Skill);
 		EnhancedInputComponent->BindAction(IA_Ultimate, ETriggerEvent::Started, this, &ANomPlayer::UltimateSkill);
+
+		EnhancedInputComponent->BindAction(IA_Weapon1, ETriggerEvent::Started, this, &ANomPlayer::ChangeWeapon1);
+		EnhancedInputComponent->BindAction(IA_Weapon2, ETriggerEvent::Started, this, &ANomPlayer::ChangeWeapon2);
+		EnhancedInputComponent->BindAction(IA_Weapon3, ETriggerEvent::Started, this, &ANomPlayer::ChangeWeapon3);
 	}
 }
 
@@ -221,6 +225,21 @@ void ANomPlayer::Skill()
 }
 
 void ANomPlayer::UltimateSkill()
+{
+	PRINTINFO();
+}
+
+void ANomPlayer::ChangeWeapon1()
+{
+	PRINTINFO();
+}
+
+void ANomPlayer::ChangeWeapon2()
+{
+	PRINTINFO();
+}
+
+void ANomPlayer::ChangeWeapon3()
 {
 	PRINTINFO();
 }

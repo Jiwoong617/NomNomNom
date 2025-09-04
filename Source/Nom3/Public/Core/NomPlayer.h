@@ -45,7 +45,6 @@ protected:
 	bool bIsAiming = false;
 	float InteractDuration = 0.f;
 	
-	
 	//Fps Mesh
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* FpsMeshComp;
@@ -89,6 +88,14 @@ protected:
 	UInputAction* IA_Skill;
 	UPROPERTY(EditAnywhere)
 	UInputAction* IA_Ultimate;
+	
+	//Weapon Swap
+	UPROPERTY(EditAnywhere)
+	UInputAction* IA_Weapon1;
+	UPROPERTY(EditAnywhere)
+	UInputAction* IA_Weapon2;
+	UPROPERTY(EditAnywhere)
+	UInputAction* IA_Weapon3;
 
 public:
 
@@ -130,4 +137,11 @@ protected:
 	void Skill();
 	UFUNCTION()
 	void UltimateSkill();
+
+	UFUNCTION()
+	void ChangeWeapon1();
+	UFUNCTION()
+	void ChangeWeapon2();
+	UFUNCTION()
+	void ChangeWeapon3();
 };
