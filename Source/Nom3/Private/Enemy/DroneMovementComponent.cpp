@@ -7,6 +7,7 @@ UDroneMovementComponent::UDroneMovementComponent() :
 	bSimulate(false),
 	GravityForce(0),
 	GravityDirection(FVector::DownVector),
+	CruiseThrustForce(500),
 	ThrustForce(500),
 	ThrustDirection(FVector::ForwardVector),
 	ThrustVectoringLevel(0.75),
@@ -35,11 +36,11 @@ void UDroneMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType
 		return;
 	}
 
-	//중력 적용
+	//중력 적용 (등가 원리)
 	Velocity += GravityForce * GravityDirection * DeltaTime;
 
 	//추진력 적용
-	Velocity += ThrustForce * ThrustDirection * DeltaTime;
+	Velocity += (ThrustForce * ThrustDirection / Mass) * DeltaTime;
 	
 	//공기 저항 적용
 	const FVector DragForce = -Velocity * DragCoefficient;
@@ -48,6 +49,10 @@ void UDroneMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	
 	//이동량 연산
 	const FVector Delta = Velocity * DeltaTime;
+
+	//속도의 방향을 드로우
+	const FVector Location = GetOwner()->GetActorLocation();
+	DrawDebugLine(GetWorld(), Location, Location + Velocity, FColor::Red, false, -1, 0, 0 );
 
 	//안전 이동 이동
 	FHitResult Hit;
@@ -77,10 +82,21 @@ void UDroneMovementComponent::Shock(const FVector Direction, const float Magnitu
 	Velocity += Impulse / Mass;
 }
 
-void UDroneMovementComponent::ThrottleThrust(const float Alpha)
+void UDroneMovementComponent::ThrottleThrustByLevel(const float Level)
 {
-	//추진력 보간
-	ThrustForce = FMath::Lerp(0, ThrustForce, Alpha);
+	//목표 추진력 결정
+	ThrustForce = CruiseThrustForce * Level;
+}
+
+void UDroneMovementComponent::ThrottleToCruiseThrust()
+{
+	//순항 추진력을 향해 점진적 보간
+	ThrustForce = FMath::Lerp(ThrustForce, CruiseThrustForce, 0.25);
+}
+
+void UDroneMovementComponent::ThrottleHighToEvade()
+{
+	ThrottleThrustByLevel(30);
 }
 
 void UDroneMovementComponent::VectorThrust(const FVector Direction)
@@ -96,4 +112,10 @@ void UDroneMovementComponent::Fall()
 
 	//중력 가속 시작
 	GravityForce = 980;
+}
+
+void UDroneMovementComponent::Impulse()
+{
+	//충격 발생
+	Velocity += FMath::RandRange(400, 800) * FMath::VRand();
 }

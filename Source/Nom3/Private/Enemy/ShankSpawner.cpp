@@ -21,6 +21,8 @@ void AShankSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
+	LaunchShanks(FMath::RandRange(SpawnMin, SpawnMax));
+
 	//2초마다 주기적으로 생크 스폰
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
@@ -53,27 +55,33 @@ void AShankSpawner::LaunchShanks(const int32 Count)
 	{
 		GetWorldTimerManager().ClearTimer(SpawnTimerHandle);
 	}, Count * 0.25, false);
+
+	//생크 소환 람다식
+	auto SpawnLambda = [this]()
+	{
+		//원뿔 범위로 변환
+		const FVector ConeDirection = LaunchDirection->GetForwardVector();
+		const FVector RandomDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(ConeDirection, LaunchConeAngle);
+		const FVector SpawnLocation = LaunchDirection->GetComponentLocation();
+		const FRotator SpawnRotation = RandomDirection.Rotation();
+		const FTransform SpawnTransform(SpawnRotation, SpawnLocation);
+			
+		//정찰 생크 스폰
+		if (const AShankBase* SpawnShank = GetWorld()->SpawnActor<AShankBase>(ScoutShankClass, SpawnTransform);
+			SpawnShank && SpawnShank->DroneMoveComp)
+		{
+			//사출
+			SpawnShank->DroneMoveComp->Launch(RandomDirection);
+		}
+	};
+
+	//생크 1회 스폰
+	SpawnLambda();
 	
-	//요청한 만큼 생크를 소환
-	for (int32 i = 1; i <= Count; i++)
+	//요청한 만큼 생크를 반복 스폰
+	for (int32 i = 0; i < Count; i++)
 	{
 		FTimerHandle Temp;
-		GetWorldTimerManager().SetTimer(Temp, [this]()
-		{
-			//원뿔 범위로 변환
-			const FVector ConeDirection = LaunchDirection->GetForwardVector();
-			const FVector RandomDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(ConeDirection, LaunchConeAngle);
-			const FVector SpawnLocation = LaunchDirection->GetComponentLocation();
-			const FRotator SpawnRotation = RandomDirection.Rotation();
-			const FTransform SpawnTransform(SpawnRotation, SpawnLocation);
-			
-			//정찰 생크 스폰
-			if (const AShankBase* SpawnShank = GetWorld()->SpawnActor<AShankBase>(ScoutShankClass, SpawnTransform);
-				SpawnShank && SpawnShank->DroneMoveComp)
-			{
-				//사출
-				SpawnShank->DroneMoveComp->Launch(RandomDirection);
-			}
-		}, i * 0.25, false);	
+		GetWorldTimerManager().SetTimer(Temp, SpawnLambda, i * 0.25, false);	
 	}
 }

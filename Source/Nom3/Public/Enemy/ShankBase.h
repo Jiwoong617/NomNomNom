@@ -51,9 +51,23 @@ public:
 	UPROPERTY(EditAnywhere)
 	float KeepDistance;
 
+	UPROPERTY(VisibleAnywhere)
+	FTimerHandle DodgeTimerHandle;
+
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	void DecideTargetLocation();
+
+	UFUNCTION(BlueprintCallable)
+	void OnAimByPlayerSight();
+
+	UFUNCTION(BlueprintCallable)
+	void OnShotByPlayer(int Damage);
+
+	void OnShotDown();
 
 };

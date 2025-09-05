@@ -18,43 +18,49 @@ protected:
 	virtual void BeginPlay() override;
 
 	//시뮬레이션 여부
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category="Movement")
 	bool bSimulate;
 
 	//중력
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Movement")
 	float GravityForce;
 
 	//중력 방향
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Movement")
 	FVector GravityDirection;
 
-	//추진력
-	UPROPERTY(EditAnywhere)
+	//순항 추진력
+	UPROPERTY(EditAnywhere, Category="Movement")
+	float CruiseThrustForce;
+
+	//
+	
+	//현재 추진력
+	UPROPERTY(VisibleAnywhere, Category="Movement")
 	float ThrustForce;
 
-	//추진 방향
-	UPROPERTY(VisibleAnywhere)
+	//현재 추진 방향
+	UPROPERTY(VisibleAnywhere, Category="Movement")
 	FVector ThrustDirection;
 
 	//추력 편향 레벨
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Movement")
 	float ThrustVectoringLevel;
 	
 	//사출 속도
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Movement")
 	float LaunchSpeed;
 
 	//탄성 계수
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Movement")
 	float Bounciness;
 
 	//공기 저항 계수
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Movement")
 	float DragCoefficient;
 
 	//질량
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Movement")
 	float Mass;
 
 public:
@@ -67,11 +73,20 @@ public:
 	void Shock(FVector Direction, float Magnitude);
 
 	UFUNCTION(BlueprintCallable)
-	void ThrottleThrust(float Alpha);
+	void ThrottleThrustByLevel(float Level);
+
+	UFUNCTION(BlueprintCallable)
+	void ThrottleToCruiseThrust();
+
+	UFUNCTION(BlueprintCallable)
+	void ThrottleHighToEvade();
 	
 	UFUNCTION(BlueprintCallable)
 	void VectorThrust(FVector Direction);
 
 	UFUNCTION(BlueprintCallable)
 	void Fall();
+
+	UFUNCTION(BlueprintCallable)
+	void Impulse();
 };
