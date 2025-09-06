@@ -15,7 +15,7 @@ enum class EWeaponType : uint8
 };
 
 UCLASS(BlueprintType)
-class NOM3_API UWeaponData : public UDataAsset
+class NOM3_API UWeaponData : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 public:
@@ -23,14 +23,20 @@ public:
 	EWeaponType WeaponType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Damage;
+	float EquipDuration;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ReloadDuration;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxAmmo;
+	int Damage;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float AmmoCount;
+	int MaxAmmo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float CurrentAmmo;
+	int AmmoCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float FireRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsAimable;
 };

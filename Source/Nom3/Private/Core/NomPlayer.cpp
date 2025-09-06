@@ -3,6 +3,8 @@
 
 #include "Core/NomPlayer.h"
 
+#include <rapidjson/document.h>
+
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
@@ -45,16 +47,16 @@ ANomPlayer::ANomPlayer()
 	}
 	
 	//FPS Cam Settings
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("FPS Spring Arm");
-	SpringArmComp->SetupAttachment(RootComponent);
-	SpringArmComp->SetRelativeLocation(FVector(320.000000,0.000000,80.000000));
-	CameraComp = CreateDefaultSubobject<UCameraComponent>("FPS Cam");
-	CameraComp->SetupAttachment(SpringArmComp);
-	CameraComp->bUsePawnControlRotation = true;
-	CameraComp->bEnableFirstPersonFieldOfView = true;
-	CameraComp->bEnableFirstPersonScale = true;
-	CameraComp->FirstPersonFieldOfView = 70.0f;
-	CameraComp->FirstPersonScale = 0.6f;
+	FpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("FPS Spring Arm");
+	FpsSpringArmComp->SetupAttachment(RootComponent);
+	FpsSpringArmComp->SetRelativeLocation(FVector(320.000000,0.000000,80.000000));
+	FpsCameraComp = CreateDefaultSubobject<UCameraComponent>("FPS Cam");
+	FpsCameraComp->SetupAttachment(FpsSpringArmComp);
+	FpsCameraComp->bUsePawnControlRotation = true;
+	FpsCameraComp->bEnableFirstPersonFieldOfView = true;
+	FpsCameraComp->bEnableFirstPersonScale = true;
+	FpsCameraComp->FirstPersonFieldOfView = 70.0f;
+	FpsCameraComp->FirstPersonScale = 0.6f;
 
 	//Basic Init
 	JumpMaxCount = 2;
@@ -106,8 +108,14 @@ void ANomPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 		EnhancedInputComponent->BindAction(IA_Interact, ETriggerEvent::Triggered, this, &ANomPlayer::InteractHold);
 
-		EnhancedInputComponent->BindAction(IA_Fire, ETriggerEvent::Triggered, this, &ANomPlayer::Fire);
-		EnhancedInputComponent->BindAction(IA_Aim, ETriggerEvent::Triggered, this, &ANomPlayer::Aim);
+		EnhancedInputComponent->BindAction(IA_Fire, ETriggerEvent::Started, this, &ANomPlayer::Fire);
+		EnhancedInputComponent->BindAction(IA_Fire, ETriggerEvent::Completed, this, &ANomPlayer::Fire);
+		
+		EnhancedInputComponent->BindAction(IA_Aim, ETriggerEvent::Started, this, &ANomPlayer::Aim);
+		EnhancedInputComponent->BindAction(IA_Aim, ETriggerEvent::Completed, this, &ANomPlayer::Aim);
+		
+		EnhancedInputComponent->BindAction(IA_Reload, ETriggerEvent::Started, this, &ANomPlayer::Reload);
+		
 		EnhancedInputComponent->BindAction(IA_Melee, ETriggerEvent::Started, this, &ANomPlayer::Melee);
 		EnhancedInputComponent->BindAction(IA_Throw, ETriggerEvent::Started, this, &ANomPlayer::Throw);
 		EnhancedInputComponent->BindAction(IA_Skill, ETriggerEvent::Started, this, &ANomPlayer::Skill);
@@ -203,14 +211,35 @@ void ANomPlayer::InteractHold(const FInputActionValue& Value)
 	}
 }
 
-void ANomPlayer::Fire()
+void ANomPlayer::Fire(const FInputActionValue& Value)
 {
-	WeaponComp->Fire();
+	bool isFireing = Value.Get<bool>();
+	if (isFireing)
+	{
+		WeaponComp->FireStart();
+	}
+	else
+	{
+		WeaponComp->FireEnd();
+	}
 }
 
-void ANomPlayer::Aim()
+void ANomPlayer::Aim(const FInputActionValue& Value)
 {
-	PRINTINFO();
+	bool isAiming = Value.Get<bool>();
+	if (isAiming)
+	{
+		WeaponComp->ReloadStart();
+	}
+	else
+	{
+		WeaponComp->ReloadEnd();
+	}
+}
+
+void ANomPlayer::Reload()
+{
+	WeaponComp->ReloadStart();
 }
 
 void ANomPlayer::Melee()
@@ -235,16 +264,26 @@ void ANomPlayer::UltimateSkill()
 
 void ANomPlayer::ChangeWeapon1()
 {
-	PRINTINFO();
+	WeaponComp->ChangeWeapon(0);
 }
 
 void ANomPlayer::ChangeWeapon2()
 {
-	PRINTINFO();
+	WeaponComp->ChangeWeapon(1);
 }
 
 void ANomPlayer::ChangeWeapon3()
 {
-	PRINTINFO();
+	WeaponComp->ChangeWeapon(2);
+}
+
+USpringArmComponent* ANomPlayer::GetFpsCamArm()
+{
+	return FpsSpringArmComp;
+}
+
+UCameraComponent* ANomPlayer::GetFpsCam()
+{
+	return FpsCameraComp;
 }
 

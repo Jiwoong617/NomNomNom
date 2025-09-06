@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WeaponData.h"
 #include "GameFramework/Actor.h"
 #include "WeaponBase.generated.h"
 
+class ANomPlayer;
 class UWeaponData;
 
 UCLASS()
@@ -21,34 +23,35 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
-	
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-private:
-	UPROPERTY(EditDefaultsOnly)
-	UWeaponData* WeaponData;
-
 protected:
-	UPROPERTY(VisibleAnywhere)
-	USkeletalMeshComponent* WeaponMesh;
-	//TODO : 상속 받고 메쉬 적용해야됨
+	UPROPERTY(EditAnywhere)
+	const UWeaponData* WeaponData;
 	
+	UPROPERTY(VisibleAnywhere)
+	USkeletalMeshComponent* WeaponMeshComp;
+
+	UPROPERTY(VisibleAnywhere)
+	ANomPlayer* WeaponOwner;
+
 	UPROPERTY(EditAnywhere)
-	FName LeftHandSocket = TEXT("LeftHandSocket");
+	FName FireSocketName = TEXT("FireSocket");
+
+public:
 	UPROPERTY(EditAnywhere)
-	FName RightHandSocket = TEXT("RightHandSocket");
+	int32 CurrentAmmo;
 	UPROPERTY(EditAnywhere)
-	FName AimSocket = TEXT("AimSocket");
+	int32 MaxAmmo;
 	
 public:
-	virtual void InitializeWeapon(UWeaponData* InData);
-	
 	virtual void Fire();
-
+	virtual void AimFire();
 	virtual void Reload();
 
-	virtual void Aim();
+	void SetOwner(ANomPlayer* NewOwner);
+	const UWeaponData* GetData() const;
+	FTransform GetSocketTransform(FName& SocketName);
 };

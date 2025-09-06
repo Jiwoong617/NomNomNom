@@ -7,9 +7,19 @@
 #include "WeaponComponent.generated.h"
 
 
+class ANomPlayer;
 class AWeaponBase;
 enum class EWeaponType : uint8;
 class UWeaponData;
+
+UENUM(BlueprintType)
+enum class EWeaponState : uint8
+{
+	Idle,
+	Fire,
+	Reload,
+	Changing
+};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class NOM3_API UWeaponComponent : public UActorComponent
@@ -31,24 +41,58 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	TArray<UWeaponData*> WeaponDataList;
+	ANomPlayer* Owner;
 
+	//Weapon
 	UPROPERTY(EditAnywhere)
-	TMap<EWeaponType, AWeaponBase*> WeaponList;
-
+	TArray<AWeaponBase*> WeaponList;
+	UPROPERTY(EditAnywhere)
+	int32 CurrentWeaponIdx = 0;
 	UPROPERTY(EditAnywhere)
 	AWeaponBase* CurrentWeapon;
 
+	//Socket Name
+	UPROPERTY(EditAnywhere)
+	FName LeftHandSocket = TEXT("LeftHandSocket");
+	UPROPERTY(EditAnywhere)
+	FName RightHandSocket = TEXT("RightHandSocket");
+	UPROPERTY(EditAnywhere)
+	FName AimSocket = TEXT("AimSocket");
+
+	//Shoot 관련
+	UPROPERTY(EditAnywhere)
+	EWeaponState WeaponState = EWeaponState::Idle;
+	FTimerHandle ReloadHandle;
+	FTimerHandle ChangeHandle;
+	float FireTime = 0;
+	bool bIsFiring = false;
+	bool bIsAim = false;
+	
 public:
 	UFUNCTION()
 	void Init();
 	
 	UFUNCTION()
+	void FireStart();
+	UFUNCTION()
+	void FireEnd();
+	UFUNCTION()
 	void Fire();
+	
 	UFUNCTION()
-	void Reload();
+	void ReloadStart();
 	UFUNCTION()
-	void Aim();
+	void ReloadEnd();
+	
 	UFUNCTION()
-	void ChangeWeapon(EWeaponType WeaponType);
+	void AimStart();
+	UFUNCTION()
+	void AimEnd();
+	UFUNCTION()
+	void OnAiming();
+	
+	UFUNCTION()
+	void ChangeWeapon(int32 idx);
+	UFUNCTION()
+	void ResetToIdle();
 };

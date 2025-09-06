@@ -3,6 +3,8 @@
 
 #include "Weapon/WeaponComponent.h"
 
+#include "Core/NomPlayer.h"
+#include "Nom3/Nom3.h"
 #include "Weapon/WeaponBase.h"
 #include "Weapon/WeaponData.h"
 
@@ -35,43 +37,140 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+	Fire();
 }
 
 void UWeaponComponent::Init()
 {
-	// TODO : 수정해야됨 - ChildActor로
-	for (UWeaponData* Data : WeaponDataList)
+	Owner = Cast<ANomPlayer>(GetOwner());
+
+	TArray<UChildActorComponent*> ChildComps;
+	GetOwner()->GetComponents<UChildActorComponent>(ChildComps);
+	for (UChildActorComponent* child : ChildComps)
 	{
-		if (!Data) continue;
-
-		AWeaponBase* NewWeapon = GetWorld()->SpawnActor<AWeaponBase>(AWeaponBase::StaticClass());
-		NewWeapon->InitializeWeapon(Data);
-
-		//NewWeapon->SetActorHiddenInGame(true);
-		WeaponList.Add(Data->WeaponType, NewWeapon);
+		if (AWeaponBase* wb = Cast<AWeaponBase>(child->GetChildActor()))
+		{
+			wb->SetOwner(Owner);
+			wb->SetActorHiddenInGame(true);
+			WeaponList.Add(wb);
+		}
 	}
+	
+	//PRINTLOG(TEXT("%d"), WeaponList.Num());
+	
+	if (WeaponList.Num() > 0)
+	{
+		WeaponList.Sort([](const AWeaponBase& A, const AWeaponBase& B)
+		{
+			return A.GetData()->WeaponType < B.GetData()->WeaponType;
+		});
+		CurrentWeaponIdx = 0;
+		CurrentWeapon = WeaponList[CurrentWeaponIdx];
+		CurrentWeapon->SetActorHiddenInGame(false);
+		FireTime = CurrentWeapon->GetData()->FireRate;
+	}
+}
 
-	CurrentWeapon = WeaponList[EWeaponType::HandCannon];
+void UWeaponComponent::FireStart()
+{
+	if (WeaponState == EWeaponState::Idle)
+	{
+		WeaponState = EWeaponState::Fire;
+		bIsFiring = true;
+	}
+}
+
+void UWeaponComponent::FireEnd()
+{
+	WeaponState = EWeaponState::Idle;
+	bIsFiring = false;
 }
 
 void UWeaponComponent::Fire()
 {
-	CurrentWeapon->Fire();
+	FireTime += GetWorld()->GetDeltaSeconds();
+	
+	if (FireTime > CurrentWeapon->GetData()->FireRate && WeaponState == EWeaponState::Fire)
+	{
+		FireTime = 0.0f;
+		if (bIsAim)
+		{
+			CurrentWeapon->AimFire();
+		}
+		else
+		{
+			CurrentWeapon->Fire();
+		}
+	}
 }
 
-void UWeaponComponent::Reload()
+void UWeaponComponent::ReloadStart()
+{
+	if (CurrentWeapon->CurrentAmmo == CurrentWeapon->GetData()->AmmoCount)
+		return;
+	
+	if (WeaponState == EWeaponState::Idle || WeaponState == EWeaponState::Fire)
+	{
+		WeaponState = EWeaponState::Reload;
+
+		GetWorld()->GetTimerManager().SetTimer(ReloadHandle, [this]()
+		{
+			ReloadEnd();
+		}, CurrentWeapon->GetData()->ReloadDuration, false);
+	}
+}
+
+void UWeaponComponent::ReloadEnd()
 {
 	CurrentWeapon->Reload();
+	WeaponState = bIsFiring ? EWeaponState::Fire : EWeaponState::Idle;
 }
 
-void UWeaponComponent::Aim()
+void UWeaponComponent::AimStart()
 {
-	CurrentWeapon->Aim();
+	if (CurrentWeapon->GetData()->IsAimable == false)
+	{
+		return;
+	}
+
+	bIsAim = true;
 }
 
-void UWeaponComponent::ChangeWeapon(EWeaponType WeaponType)
+void UWeaponComponent::AimEnd()
 {
+	bIsAim = false;
+}
+
+void UWeaponComponent::OnAiming()
+{
+	
+}
+
+void UWeaponComponent::ChangeWeapon(int32 idx)
+{
+	if (idx == CurrentWeaponIdx)
+	{
+		return;
+	}
+
+	WeaponState = EWeaponState::Changing;
+	GetWorld()->GetTimerManager().SetTimer(ChangeHandle, [this]()
+	{
+		ResetToIdle();
+		WeaponState = bIsFiring ? EWeaponState::Fire : EWeaponState::Idle;
+	}, WeaponList[idx]->GetData()->EquipDuration, false);
+	
 	CurrentWeapon->SetActorHiddenInGame(true);
-	CurrentWeapon = WeaponList[WeaponType];
+	CurrentWeaponIdx = idx;
+	CurrentWeapon = WeaponList[idx];
 	CurrentWeapon->SetActorHiddenInGame(false);
+}
+
+void UWeaponComponent::ResetToIdle()
+{
+	WeaponState = EWeaponState::Idle;
+	GetWorld()->GetTimerManager().ClearTimer(ReloadHandle);
+	GetWorld()->GetTimerManager().ClearTimer(ChangeHandle);
+	AimEnd();
+	FireTime = CurrentWeapon->GetData()->FireRate;
 }

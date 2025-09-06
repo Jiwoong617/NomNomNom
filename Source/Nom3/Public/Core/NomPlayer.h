@@ -52,9 +52,9 @@ protected:
 	
 	//Camera
 	UPROPERTY(EditAnywhere)
-	USpringArmComponent* SpringArmComp;
+	USpringArmComponent* FpsSpringArmComp;
 	UPROPERTY(EditAnywhere)
-	UCameraComponent* CameraComp;
+	UCameraComponent* FpsCameraComp;
 
 	//Components
 	UPROPERTY(EditAnywhere)
@@ -85,6 +85,9 @@ protected:
 	UInputAction* IA_Fire;
 	UPROPERTY(EditAnywhere)
 	UInputAction* IA_Aim;
+	UPROPERTY(EditAnywhere)
+	UInputAction* IA_Reload;
+	
 	UPROPERTY(EditAnywhere)
 	UInputAction* IA_Melee;
 	UPROPERTY(EditAnywhere)
@@ -131,9 +134,11 @@ protected:
 
 	//Battle
 	UFUNCTION()
-	virtual void Fire();
+	void Fire(const FInputActionValue& Value);
 	UFUNCTION()
-	virtual void Aim();
+	void Aim(const FInputActionValue& Value);
+	UFUNCTION()
+	void Reload();
 	UFUNCTION()
 	virtual void Melee();
 	UFUNCTION()
@@ -144,9 +149,13 @@ protected:
 	virtual void UltimateSkill();
 
 	UFUNCTION()
-	virtual void ChangeWeapon1();
+	void ChangeWeapon1();
 	UFUNCTION()
-	virtual void ChangeWeapon2();
+	void ChangeWeapon2();
 	UFUNCTION()
-	virtual void ChangeWeapon3();
+	void ChangeWeapon3();
+
+public:
+	USpringArmComponent* GetFpsCamArm();
+	UCameraComponent* GetFpsCam();
 };

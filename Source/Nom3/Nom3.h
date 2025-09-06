@@ -15,4 +15,4 @@ DECLARE_LOG_CATEGORY_EXTERN(NOM3, Log, All);
 //포맷과 가변인자
 //사용할 때 PRINTLOG(TEXT("%s"), TEXT("HelloWorld"));
 #define PRINTLOG(fmt, ...) \
-UE_LOG(TPS, Warning, TEXT("%s : %s"), *CALLINFO, *FString::Printf(fmt, ##__VA_ARGS__))
+UE_LOG(NOM3, Warning, TEXT("%s : %s"), *CALLINFO, *FString::Printf(fmt, ##__VA_ARGS__))
