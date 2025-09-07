@@ -60,7 +60,7 @@ void AAutoDoor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Othe
 	// 	// When the player enters, cancel any pending close timer and open the door.
 	// 	GetWorld()->GetTimerManager().ClearTimer(CloseTimerHandle);
 		bShouldBeOpen = true;
-		UE_LOG(LogTemp, Warning, TEXT("Player entered, opening door."));
+		UE_LOG(LogTemp, Warning, TEXT("플레이가 문을 열었습니다."));
 	// }
 }
 
@@ -71,12 +71,12 @@ void AAutoDoor::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 	// {
 	// 	// When the player leaves, start a timer to close the door.
 	// 	GetWorld()->GetTimerManager().SetTimer(CloseTimerHandle, this, &AAutoDoor::CloseDoor, CloseDelay, false);
-		UE_LOG(LogTemp, Warning, TEXT("Player left, starting close timer."));
+		UE_LOG(LogTemp, Warning, TEXT("플레이거 지나갔으니 문을 닫습니다."));
 	// }
 }
 
 void AAutoDoor::CloseDoor()
 {
 	bShouldBeOpen = false;
-	UE_LOG(LogTemp, Warning, TEXT("Timer finished, closing door."));
+	UE_LOG(LogTemp, Warning, TEXT("시간이 다 되었으니 문을 닫습니다."));
 }

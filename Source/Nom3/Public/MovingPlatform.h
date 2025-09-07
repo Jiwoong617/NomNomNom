@@ -13,9 +13,6 @@ class NOM3_API AMovingPlatform : public AMovingObject
 public:
 	AMovingPlatform();
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	class UStaticMeshComponent* MeshComp;
-
 
 protected:
 
