@@ -2,16 +2,19 @@
 
 #include "Enemy/DroneMovementComponent.h"
 
-// Sets default values for this component's properties
+#include "Kismet/KismetMathLibrary.h"
+
 UDroneMovementComponent::UDroneMovementComponent() :
 	bSimulate(false),
 	GravityForce(0),
-	GravityDirection(FVector::DownVector),
+	GravityDir(FVector::DownVector),
 	CruiseThrustForce(500),
+	EvadeThrustLevel(40),
 	ThrustForce(500),
-	ThrustDirection(FVector::ForwardVector),
+	ThrustDir(FVector::ZeroVector),
 	ThrustVectoringLevel(0.75),
 	LaunchSpeed(0),
+	SplashSpeed(500),
 	Bounciness(0.5),
 	DragCoefficient(5),
 	Mass(10)
@@ -37,10 +40,10 @@ void UDroneMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	}
 
 	//중력 적용 (등가 원리)
-	Velocity += GravityForce * GravityDirection * DeltaTime;
+	Velocity += GravityForce * GravityDir * DeltaTime;
 
 	//추진력 적용
-	Velocity += (ThrustForce * ThrustDirection / Mass) * DeltaTime;
+	Velocity += (ThrustForce * ThrustDir / Mass) * DeltaTime;
 	
 	//공기 저항 적용
 	const FVector DragForce = -Velocity * DragCoefficient;
@@ -66,19 +69,30 @@ void UDroneMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	}
 }
 
-void UDroneMovementComponent::Launch(const FVector LaunchDirection)
+void UDroneMovementComponent::Launch(const FVector LaunchDir)
 {
 	//사출 속도 결정
-	Velocity = LaunchDirection * LaunchSpeed;
+	Velocity = LaunchDir * LaunchSpeed;
+
+	//추진 방향 초기화
+	ThrustDir = LaunchDir;
 
 	//시뮬레이션 활성화
 	bSimulate = true;
 }
 
-void UDroneMovementComponent::Shock(const FVector Direction, const float Magnitude)
+void UDroneMovementComponent::Splash(const FVector SplashDir)
 {
-	//충격 적용
-	const FVector Impulse = Direction * Magnitude;
+	//충격 방향
+	const FVector ImpulseDir = UKismetMathLibrary::ProjectVectorOnToPlane(SplashDir, GravityDir).GetSafeNormal();
+
+	//충격 방향 랜덤화
+	const FVector RandomImpulseDir = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(ImpulseDir, 45);
+	
+	//충격 연산
+	const FVector Impulse = RandomImpulseDir * SplashSpeed;
+
+	//가속
 	Velocity += Impulse / Mass;
 }
 
@@ -91,18 +105,22 @@ void UDroneMovementComponent::ThrottleThrustByLevel(const float Level)
 void UDroneMovementComponent::ThrottleToCruiseThrust()
 {
 	//순항 추진력을 향해 점진적 보간
-	ThrustForce = FMath::Lerp(ThrustForce, CruiseThrustForce, 0.25);
+	ThrustForce = FMath::Lerp(ThrustForce, CruiseThrustForce, 0.1);
 }
 
 void UDroneMovementComponent::ThrottleHighToEvade()
 {
-	ThrottleThrustByLevel(30);
+	//기존 속도 급감
+	Velocity = FMath::Lerp(Velocity, FVector::ZeroVector, 0.5);
+	
+	//추진력 급상승
+	ThrottleThrustByLevel(EvadeThrustLevel);
 }
 
-void UDroneMovementComponent::VectorThrust(const FVector Direction)
+void UDroneMovementComponent::VectorThrust(const FVector VectorDir)
 {
 	//추진 방향 구면 보간
-	ThrustDirection = FVector::SlerpVectorToDirection(ThrustDirection, Direction, ThrustVectoringLevel);
+	ThrustDir = FVector::SlerpVectorToDirection(ThrustDir, VectorDir, ThrustVectoringLevel);
 }
 
 void UDroneMovementComponent::Fall()
@@ -112,10 +130,4 @@ void UDroneMovementComponent::Fall()
 
 	//중력 가속 시작
 	GravityForce = 980;
-}
-
-void UDroneMovementComponent::Impulse()
-{
-	//충격 발생
-	Velocity += FMath::RandRange(400, 800) * FMath::VRand();
 }

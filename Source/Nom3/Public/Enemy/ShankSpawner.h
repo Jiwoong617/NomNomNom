@@ -8,7 +8,6 @@
 
 class UArrowComponent;
 class AShankBase;
-enum EShankType : int;
 
 UCLASS()
 class NOM3_API AShankSpawner : public AActor

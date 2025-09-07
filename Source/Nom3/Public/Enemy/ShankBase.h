@@ -8,12 +8,22 @@
 
 class UDroneMovementComponent;
 class USphereComponent;
+class UShankCircleStateMachine;
 
 UENUM()
-enum EShankType
+enum class EShankType : uint8
 {
 	ScoutShank = 0 UMETA(DisplayName = "ScoutShank"),
 	SelfDestructShank = 1 UMETA(DisplayName = "SelfDestructShank"),
+};
+
+UENUM()
+enum class EShankState : uint8
+{
+	Sleep = 0 UMETA(DisplayName = "Sleep"),
+	Circle = 1 UMETA(DisplayName = "Circle"),
+	Evade = 2 UMETA(DisplayName = "Evade"),
+	Splash = 3 UMETA(DisplayName = "Splash"),
 };
 
 UCLASS()
@@ -40,7 +50,10 @@ public:
 	TObjectPtr<UDroneMovementComponent> DroneMoveComp;
 
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<AActor> TargetActor;
+	TObjectPtr<UShankCircleStateMachine> CircleStateMachine;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<AActor> TargetPawn;
 
 	UPROPERTY(VisibleAnywhere)
 	FVector TargetLocation;
@@ -54,20 +67,20 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	FTimerHandle DodgeTimerHandle;
 
+	UPROPERTY(VisibleAnywhere)
+	EShankState CurrentState;
+
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
-
-	UFUNCTION()
-	void DecideTargetLocation();
-
+	
 	UFUNCTION(BlueprintCallable)
 	void OnAimByPlayerSight();
 
 	UFUNCTION(BlueprintCallable)
-	void OnShotByPlayer(int Damage);
+	void OnShotByPlayer(FVector ShotDir, int Damage);
 
-	void OnShotDown();
-
+	UFUNCTION(BlueprintCallable)
+	void OnShotDown(const FVector ShotDir);
 };

@@ -27,13 +27,15 @@ protected:
 
 	//중력 방향
 	UPROPERTY(EditAnywhere, Category="Movement")
-	FVector GravityDirection;
+	FVector GravityDir;
 
 	//순항 추진력
 	UPROPERTY(EditAnywhere, Category="Movement")
 	float CruiseThrustForce;
 
-	//
+	//회피 추진 레벨
+	UPROPERTY(EditAnywhere, Category="Movement")
+	float EvadeThrustLevel;
 	
 	//현재 추진력
 	UPROPERTY(VisibleAnywhere, Category="Movement")
@@ -41,7 +43,7 @@ protected:
 
 	//현재 추진 방향
 	UPROPERTY(VisibleAnywhere, Category="Movement")
-	FVector ThrustDirection;
+	FVector ThrustDir;
 
 	//추력 편향 레벨
 	UPROPERTY(EditAnywhere, Category="Movement")
@@ -50,6 +52,10 @@ protected:
 	//사출 속도
 	UPROPERTY(EditAnywhere, Category="Movement")
 	float LaunchSpeed;
+
+	//파괴 충격
+	UPROPERTY(EditAnywhere, Category="Movement")
+	float SplashSpeed;
 
 	//탄성 계수
 	UPROPERTY(EditAnywhere, Category="Movement")
@@ -67,10 +73,10 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	void Launch(FVector LaunchDirection);
+	void Launch(FVector LaunchDir);
 
 	UFUNCTION(BlueprintCallable)
-	void Shock(FVector Direction, float Magnitude);
+	void Splash(FVector SplashDir);
 
 	UFUNCTION(BlueprintCallable)
 	void ThrottleThrustByLevel(float Level);
@@ -82,11 +88,8 @@ public:
 	void ThrottleHighToEvade();
 	
 	UFUNCTION(BlueprintCallable)
-	void VectorThrust(FVector Direction);
+	void VectorThrust(FVector VectorDir);
 
 	UFUNCTION(BlueprintCallable)
 	void Fall();
-
-	UFUNCTION(BlueprintCallable)
-	void Impulse();
 };
