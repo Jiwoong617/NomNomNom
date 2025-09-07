@@ -12,7 +12,7 @@ class USpringArmComponent;
 struct FInputActionValue;
 class UInputMappingContext;
 class UInputAction;
-
+class USceneComponent;
 
 UCLASS()
 class NOM3_API ANomPlayer : public ACharacter
@@ -50,11 +50,13 @@ protected:
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* FpsMeshComp;
 	
-	//Camera
+	//Camera and Weapon
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* FpsSpringArmComp;
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* FpsCameraComp;
+	UPROPERTY(EditAnywhere)
+	USceneComponent* WeaponListSceneComp;
 
 	//Components
 	UPROPERTY(EditAnywhere)

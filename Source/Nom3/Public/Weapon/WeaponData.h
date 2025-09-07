@@ -22,6 +22,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EWeaponType WeaponType;
 
+	//장착 및 장전 시간
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float EquipDuration;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -29,7 +30,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Damage;
-	
+
+	//탄창 및 발사 속도
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int MaxAmmo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -37,6 +39,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float FireRate;
 
+	//조준
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsAimable;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ADS_FOV;
+
+	//반동 pitch-상하, yaw-좌우
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RecoilPitchMin;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RecoilPitchMax;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RecoilYawMin;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RecoilYawMax;
 };

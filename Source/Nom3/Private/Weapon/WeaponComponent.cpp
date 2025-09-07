@@ -3,10 +3,15 @@
 
 #include "Weapon/WeaponComponent.h"
 
+#include <gsl/pointers>
+
+#include "Camera/CameraComponent.h"
+#include "Components/TimelineComponent.h"
 #include "Core/NomPlayer.h"
 #include "Nom3/Nom3.h"
 #include "Weapon/WeaponBase.h"
 #include "Weapon/WeaponData.h"
+#include "GameFramework/SpringArmComponent.h"
 
 
 // Sets default values for this component's properties
@@ -17,6 +22,12 @@ UWeaponComponent::UWeaponComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+
+	ConstructorHelpers::FObjectFinder<UCurveFloat> TempCurve(TEXT("/Script/Engine.CurveFloat'/Game/Data/AimCurve.AimCurve'"));
+	if (TempCurve.Succeeded())
+	{
+		AimCurve = TempCurve.Object;
+	}
 }
 
 
@@ -38,6 +49,7 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 	// ...
 	Fire();
+	AimTimeline.TickTimeline(DeltaTime);
 }
 
 void UWeaponComponent::Init()
@@ -68,6 +80,17 @@ void UWeaponComponent::Init()
 		CurrentWeapon = WeaponList[CurrentWeaponIdx];
 		CurrentWeapon->SetActorHiddenInGame(false);
 		FireTime = CurrentWeapon->GetData()->FireRate;
+	}
+
+	//Aiming
+	if (AimCurve)
+	{
+		CamOffset = Owner->GetFpsCamArm()->GetRelativeLocation();
+		
+		FOnTimelineFloat Progress;
+		Progress.BindUFunction(this, FName("OnAiming"));
+		AimTimeline.AddInterpFloat(AimCurve, Progress);
+		AimTimeline.SetLooping(false);
 	}
 }
 
@@ -134,16 +157,33 @@ void UWeaponComponent::AimStart()
 	}
 
 	bIsAim = true;
+
+	//에임 소켓 위치 월드 -> 로컬로 변환
+	FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
+	FVector AimSocketLocLocal = Owner->GetFpsCamArm()->GetAttachParent()->
+		GetComponentTransform().InverseTransformPosition(AimSocketLoc);
+	
+	AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
+	
+	AimTimeline.PlayFromStart();
 }
 
 void UWeaponComponent::AimEnd()
 {
 	bIsAim = false;
+	AimTimeline.Reverse();
 }
 
-void UWeaponComponent::OnAiming()
+void UWeaponComponent::OnAiming(float Value)
 {
+	FVector NewLoc(
+		CamOffset.X,
+		FMath::Lerp(CamOffset.Y, AimCamLoc.Y, Value),
+		FMath::Lerp(CamOffset.Z, AimCamLoc.Z, Value)
+	);
+	Owner->GetFpsCamArm()->SetRelativeLocation(NewLoc);
 	
+	Owner->GetFpsCam()->SetFieldOfView(FMath::Lerp(CameraFOV, CurrentWeapon->GetData()->ADS_FOV, Value));
 }
 
 void UWeaponComponent::ChangeWeapon(int32 idx)
@@ -154,6 +194,7 @@ void UWeaponComponent::ChangeWeapon(int32 idx)
 	}
 
 	WeaponState = EWeaponState::Changing;
+	GetWorld()->GetTimerManager().ClearTimer(ChangeHandle);
 	GetWorld()->GetTimerManager().SetTimer(ChangeHandle, [this]()
 	{
 		ResetToIdle();

@@ -30,6 +30,27 @@ void AWeaponBase::BeginPlay()
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (IsHidden() == false && CurrentRecoil != TargetRecoil)
+	{
+		CurrentRecoil = FMath::RInterpTo(CurrentRecoil, TargetRecoil, DeltaTime, 20.f);
+		FRotator DeltaRecoil = CurrentRecoil - LastAppliedRecoil;
+		WeaponOwner->GetController()->SetControlRotation(WeaponOwner->GetControlRotation() + DeltaRecoil);
+		LastAppliedRecoil = CurrentRecoil;
+	}
+}
+
+void AWeaponBase::ApplyRecoil()
+{
+	const float RecoilPitch = FMath::RandRange(WeaponData->RecoilPitchMin, WeaponData->RecoilPitchMax);
+	const float RecoilYaw = FMath::RandRange(WeaponData->RecoilYawMin, WeaponData->RecoilYawMax) * FMath::RandBool();
+	
+	TargetRecoil.Pitch += RecoilPitch;
+	TargetRecoil.Yaw += RecoilYaw;
+	
+	//값 제한 -180~180
+	TargetRecoil.Pitch = FRotator::NormalizeAxis(TargetRecoil.Pitch);
+	TargetRecoil.Yaw = FRotator::NormalizeAxis(TargetRecoil.Yaw);
 }
 
 void AWeaponBase::Fire()
@@ -47,6 +68,9 @@ void AWeaponBase::Fire()
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan,
 			FString::Printf(TEXT("%d/%d - %d"), CurrentAmmo, WeaponData->AmmoCount, MaxAmmo));
+
+		//Recoil
+		ApplyRecoil();
 	}
 }
 
@@ -75,4 +99,14 @@ const UWeaponData* AWeaponBase::GetData() const
 FTransform AWeaponBase::GetSocketTransform(FName& SocketName)
 {
 	return WeaponMeshComp->GetSocketTransform(SocketName);
+}
+
+
+float AWeaponBase::EaseElasticOut(float t)
+{
+	if (t == 0.f) return 0.f;
+	if (t == 1.f) return 1.f;
+
+	float p = 0.3f;
+	return FMath::Pow(2.f, -10.f * t) * FMath::Sin((t - p / 4.f) * (2 * PI) / p) + 1.f;
 }

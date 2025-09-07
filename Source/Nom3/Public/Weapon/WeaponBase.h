@@ -40,11 +40,25 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FName FireSocketName = TEXT("FireSocket");
 
+	//Recoil
+	UPROPERTY(EditAnywhere)
+	FRotator CurrentRecoil; //현재 반동
+	UPROPERTY(EditAnywhere)
+	FRotator TargetRecoil; //목표 반동
+	UPROPERTY(EditAnywhere)
+	FRotator LastAppliedRecoil;   // 직전 프레임에 적용한 반동
+
 public:
 	UPROPERTY(EditAnywhere)
 	int32 CurrentAmmo;
 	UPROPERTY(EditAnywhere)
 	int32 MaxAmmo;
+
+protected:
+	UFUNCTION()
+	void ApplyRecoil();
+
+	float EaseElasticOut(float t);
 	
 public:
 	virtual void Fire();

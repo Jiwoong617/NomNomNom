@@ -21,7 +21,7 @@ ANomPlayer::ANomPlayer()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//TPS Mesh
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn_Simple.SKM_Quinn_Simple'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
 	if (TempMesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(TempMesh.Object);
@@ -34,7 +34,7 @@ ANomPlayer::ANomPlayer()
 	//FSP Mesh
 	FpsMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPS Mesh"));
 	FpsMeshComp->SetupAttachment(GetRootComponent());
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempFpsMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempFpsMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn_Simple.SKM_Quinn_Simple'"));
 	if (TempFpsMesh.Succeeded())
 	{
 		FpsMeshComp->SetSkeletalMesh(TempFpsMesh.Object);
@@ -57,6 +57,11 @@ ANomPlayer::ANomPlayer()
 	FpsCameraComp->bEnableFirstPersonScale = true;
 	FpsCameraComp->FirstPersonFieldOfView = 70.0f;
 	FpsCameraComp->FirstPersonScale = 0.6f;
+
+	//FPS WeaponList
+	WeaponListSceneComp = CreateDefaultSubobject<USceneComponent>("WeaponList");
+	WeaponListSceneComp->SetupAttachment(RootComponent);
+	
 
 	//Basic Init
 	JumpMaxCount = 2;
@@ -101,6 +106,7 @@ void ANomPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &ANomPlayer::MoveInput);
+		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Completed, this, &ANomPlayer::MoveInput);
 		EnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &ANomPlayer::LookInput);
 		EnhancedInputComponent->BindAction(IA_Jump, ETriggerEvent::Started, this, &ANomPlayer::JumpInput);
 		EnhancedInputComponent->BindAction(IA_Run, ETriggerEvent::Started, this, &ANomPlayer::RunToggle);
@@ -130,6 +136,11 @@ void ANomPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 void ANomPlayer::MoveInput(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
+	if (MovementVector == FVector2D::ZeroVector)
+	{
+		bIsRunning = false;
+	}
+	
 	MoveFunc(MovementVector.X, MovementVector.Y);
 }
 
@@ -141,17 +152,25 @@ void ANomPlayer::LookInput(const FInputActionValue& Value)
 
 void ANomPlayer::JumpInput()
 {
+	if (bIsCrouching)
+	{
+		UnCrouch();
+	}
 	Jump();
 }
 
 void ANomPlayer::RunToggle()
 {
 	bIsRunning = !bIsRunning;
-	GetCharacterMovement()->MaxWalkSpeed = bIsRunning ? MaxSpeed * 2 : MaxSpeed;
 }
 
 void ANomPlayer::CrouchToggle()
 {
+	if (GetMovementComponent()->IsFalling())
+	{
+		return;
+	}
+	
 	CrouchOrSlide();
 	bIsCrouching = !bIsCrouching;
 }
@@ -170,6 +189,8 @@ void ANomPlayer::MoveFunc(float Right, float Forward)
 {
 	if (GetController())
 	{
+		GetCharacterMovement()->MaxWalkSpeed = bIsRunning ? MaxSpeed * 2 : MaxSpeed;
+		
 		// pass the move inputs
 		AddMovementInput(GetActorRightVector(), Right);
 		AddMovementInput(GetActorForwardVector(), Forward);
@@ -229,11 +250,13 @@ void ANomPlayer::Aim(const FInputActionValue& Value)
 	bool isAiming = Value.Get<bool>();
 	if (isAiming)
 	{
-		WeaponComp->ReloadStart();
+		bIsAiming = true;
+		WeaponComp->AimStart();
 	}
 	else
 	{
-		WeaponComp->ReloadEnd();
+		bIsAiming = false;
+		WeaponComp->AimEnd();
 	}
 }
 
