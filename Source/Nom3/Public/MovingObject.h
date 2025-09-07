@@ -23,13 +23,26 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "MovingObject")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovingObject")
 	class UStaticMeshComponent* ObjectMesh;
+
+	//속도
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovingObject")
 	float ObjectSpeed;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovingObject")
-	bool bPointture;
 
-//	UFUNCTION()
-//	void MovingObject(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & HitResult);
+	//목표 지점
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovingObject", Meta = (MakeEditWidget = true))
+	FVector TargetLocation;
+
+	//움직임 트리거
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovingObject")
+	bool bIsTriggered; 
+
+	//게임 시작 시의 월드 위치
+	FVector StartLocation;
+	//목표 지점의 월드 위치
+	FVector GlobalTargetLocation;
+
+private:
+	
 };
