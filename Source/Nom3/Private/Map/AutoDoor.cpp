@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "AutoDoor.h"
+#include "Nom3/Public/Map/AutoDoor.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "TimerManager.h"

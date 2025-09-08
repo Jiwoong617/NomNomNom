@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MovingObject.h"
+#include  "Nom3/Public/Map/MovingObject.h"
 #include "Components/StaticMeshComponent.h"
 
 // Sets default values
