@@ -2,39 +2,23 @@
 
 #pragma once
 
+
 #include "CoreMinimal.h"
-#include "MovingObject.h"
+#include "Interfaces/Interactable.h" 
+#include "Map/MovingObject.h"
 #include "MovingPlatform.generated.h"
+
+
 UCLASS()
-class NOM3_API AMovingPlatform : public AMovingObject
+class NOM3_API AMovingPlaform : public AMovingObject
 {
 	GENERATED_BODY()
 
-public:
-	AMovingPlatform();
-
-
 protected:
-
+	// 게임 시작 시 호출됩니다.
 	virtual void BeginPlay() override;
 
 public:
-
+	// 매 프레임 호출됩니다.
 	virtual void Tick(float DeltaTime) override;
-
-		
-	UPROPERTY(EditAnywhere, Category = "Moving Platform")
-	float WaitTime;
-	
-	FTimerHandle MovementTimerHandle;
-
-	//이동 및 반향
-	void ToggleMovement();
-    
-	//원래 속도
-	float OriginalSpeed;
-
-private:
-
-	
 };

@@ -6,43 +6,49 @@
 #include "GameFramework/Actor.h"
 #include "MovingObject.generated.h"
 
-UCLASS()
+// Defines the current movement state of the object
+UENUM(BlueprintType)
+enum class EMovementState : uint8
+{
+	Idle,
+	MovingToTarget,
+	MovingToStart
+};
+
+UCLASS(Abstract) // Abstract means this class cannot be placed directly in the world
+
+
 class NOM3_API AMovingObject : public AActor
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	AMovingObject();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovingObject")
+	// The visual representation of the moving object
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class UStaticMeshComponent* ObjectMesh;
 
-	//속도
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovingObject")
-	float ObjectSpeed;
+	// --- Movement Properties ---
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Moving Object | Movement")
+	float MoveSpeed;
 
-	//목표 지점
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovingObject", Meta = (MakeEditWidget = true))
+	// The target location in local space (relative to the object's start position)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Moving Object | Movement", Meta = (MakeEditWidget = true))
 	FVector TargetLocation;
 
-	//움직임 트리거
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovingObject")
-	bool bIsTriggered; 
+	// --- State ---
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Moving Object | State")
+	EMovementState MovementState;
 
-	//게임 시작 시의 월드 위치
+protected:
+	// The world-space start and target locations
 	FVector StartLocation;
-	//목표 지점의 월드 위치
 	FVector GlobalTargetLocation;
-
-private:
-	
 };

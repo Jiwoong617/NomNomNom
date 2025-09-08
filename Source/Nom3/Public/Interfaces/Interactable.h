@@ -7,21 +7,21 @@
 #include "Interactable.generated.h"
 
 // This class does not need to be modified.
-UINTERFACE()
+UINTERFACE(MinimalAPI)
 class UInteractable : public UInterface
 {
 	GENERATED_BODY()
 };
 
 /**
- * 
+ * Interface for objects that can be interacted with by the player.
  */
 class NOM3_API IInteractable
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-
-	virtual void OnInteract() = 0;
+	// Called when the player interacts with this object.
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interaction")
+	void Interact(AActor* Interactor);
 };

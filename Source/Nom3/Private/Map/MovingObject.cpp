@@ -1,55 +1,67 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include  "Nom3/Public/Map/MovingObject.h"
 #include "Components/StaticMeshComponent.h"
+#include "Nom3/Public/Map/MovingObject.h"
 
-// Sets default values
+
 AMovingObject::AMovingObject()
 {
-
 	PrimaryActorTick.bCanEverTick = true;
 
 	ObjectMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ObjectMesh"));
 	SetRootComponent(ObjectMesh);
 
-	ObjectSpeed = 100.0f;
-	bIsTriggered = false;
-	TargetLocation = FVector(0.0f, 0.0f, 200.0f);
+	// Default values
+	MoveSpeed = 200.0f;
+	TargetLocation = FVector(0.0f, 0.0f, 500.0f); // Default to moving 5m up
+	MovementState = EMovementState::Idle;
 }
 
-// Called when the game starts or when spawned
 void AMovingObject::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Store the initial start and target locations in world space
 	StartLocation = GetActorLocation();
-    
-	//정우 형이 말한 설정한 위치 월드좌표계의 위치를 변환화여 저장하는 형식
 	GlobalTargetLocation = GetTransform().TransformPosition(TargetLocation);
 }
 
-// Called every frame
 void AMovingObject::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//true 면 지정 위치 false 시작위치
-	FVector Destination = bIsTriggered ? GlobalTargetLocation : StartLocation;
-
-	// 방향 구하기
-	FVector Direction = (Destination - GetActorLocation()).GetSafeNormal();
-
-	// 현재 위치와 목표 지점 사이의 거리
-	float DistanceToDestination = FVector::Dist(GetActorLocation(), Destination);
-
-	// 목표 지점에 거의 도달했다면 이동을 멈춥니다. (정확히 위치를 고정시켜 떨림 방지)
-	if (DistanceToDestination < 1.0f)
+	// If we are idle, there's nothing to do.
+	if (MovementState == EMovementState::Idle)
 	{
-		SetActorLocation(Destination);
 		return;
 	}
 
-	// 이동
-	FVector Movement = Direction * ObjectSpeed * DeltaTime;
-	SetActorLocation(GetActorLocation() + Movement);
+	const FVector Destination = (MovementState == EMovementState::MovingToTarget) ? GlobalTargetLocation : StartLocation;
+    const float DistanceToDestination = FVector::Dist(GetActorLocation(), Destination);
+
+	// If we are very close, just snap to the destination and stop.
+	if (DistanceToDestination < 1.0f)
+	{
+		SetActorLocation(Destination, true);
+		MovementState = EMovementState::Idle;
+		return;
+	}
+
+    // Calculate the movement vector for this frame
+    const FVector Direction = (Destination - GetActorLocation()).GetSafeNormal();
+    const FVector MovementThisFrame = Direction * MoveSpeed * DeltaTime;
+
+    // Check if this movement would overshoot the destination.
+    if (MovementThisFrame.Size() >= DistanceToDestination)
+    {
+        // If so, just move directly to the destination and stop.
+        SetActorLocation(Destination, true);
+        MovementState = EMovementState::Idle;
+    }
+    else
+    {
+        // Otherwise, perform the movement.
+	    SetActorLocation(GetActorLocation() + MovementThisFrame, true);
+    }
 }

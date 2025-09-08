@@ -1,66 +1,33 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// MovingPlatform.cpp
 
+#include "Map/MovingPlatform.h"
 
-#include "Nom3/Public/Map/MovingPlatform.h"
-
-
-// Sets default values
-AMovingPlatform::AMovingPlatform()
-{
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-	WaitTime = 2.0f;
-
-}
-
-// Called when the game starts or when spawned
-void AMovingPlatform::BeginPlay()
+void AMovingPlaform::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//목표 지점으로
-	bIsTriggered = true; 
-    
-	//원래 속도 저장
-	OriginalSpeed = ObjectSpeed;
-	
+	// 게임이 시작되면 즉시 목표 지점으로 이동을 시작합니다.
+	MovementState = EMovementState::MovingToTarget;
 }
 
-// Called every frame
-void AMovingPlatform::Tick(float DeltaTime)
+void AMovingPlaform::Tick(float DeltaTime)
 {
+	// 부모 클래스의 Tick 함수를 호출하여 실제 이동을 처리합니다.
 	Super::Tick(DeltaTime);
 
-	//타이머 활성화 중일떈 정지 하도록
-	if (GetWorld()->GetTimerManager().IsTimerActive(MovementTimerHandle))
+	// 이동이 끝나서 상태가 Idle이 되었는지 확인합니다.
+	if (MovementState == EMovementState::Idle)
 	{
-		return;
-	}
-
-	// 현재 위치 목표지점 간의 거리
-	FVector Destination = bIsTriggered ? GlobalTargetLocation : StartLocation;
-	float Distance = FVector::Dist(GetActorLocation(), Destination);
-
-	// 목표 지점에 도착했다면
-	if (Distance < 1.0f) // 작다면
-	{
-		// 정지
-		ObjectSpeed = 0.0f;
-
-		//2 초뒤 toggle_movement 실행
-		GetWorld()->GetTimerManager().SetTimer(MovementTimerHandle,this,  &AMovingPlatform::ToggleMovement,WaitTime,false);
+		// 현재 위치가 목표 지점과 거의 같다면, 시작 지점으로 돌아가도록 상태를 변경합니다.
+		// 부동 소수점 오차를 감안하여 Equals 함수로 비교합니다.
+		if (GetActorLocation().Equals(GlobalTargetLocation, 1.0f))
+		{
+			MovementState = EMovementState::MovingToStart;
+		}
+		// 현재 위치가 시작 지점과 거의 같다면, 다시 목표 지점으로 이동하도록 상태를 변경합니다.
+		else if (GetActorLocation().Equals(StartLocation, 1.0f))
+		{
+			MovementState = EMovementState::MovingToTarget;
+		}
 	}
 }
-
-void AMovingPlatform::ToggleMovement()
-{
-	//이동방향을 반대로 바꿈
-	bIsTriggered = !bIsTriggered;
-
-	//아까 멈춘거 원래 속도로
-	ObjectSpeed = OriginalSpeed;
-    
-	//움직이면서 다시 타이머 초기화
-	GetWorld()->GetTimerManager().ClearTimer(MovementTimerHandle);
-}
-
