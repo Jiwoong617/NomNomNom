@@ -1,8 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/ShankCircleStateMachine.h"
-#include "DroneMovementComponent.h"
-#include "ShankBase.h"
+#include "Enemy/Shank/ShankCircleStateMachine.h"
+#include "Enemy/Components/DroneMovementComponent.h"
+#include "Enemy/Shank/ShankBase.h"
 
 UShankCircleStateMachine::UShankCircleStateMachine()
 {

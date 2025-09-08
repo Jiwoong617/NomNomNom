@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/StateMachineBase.h"
+#include "Enemy/Core/StateMachineBase.h"
 
 UStateMachineBase::UStateMachineBase()
 {

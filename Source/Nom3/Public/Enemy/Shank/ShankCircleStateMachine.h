@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Enemy/StateMachineBase.h"
+#include "Enemy/Core/StateMachineBase.h"
 #include "ShankCircleStateMachine.generated.h"
 
 //델리게이트 선언

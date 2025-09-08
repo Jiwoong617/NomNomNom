@@ -1,12 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/ShankBase.h"
-
-#include "MeshPaintVisualize.h"
-#include "ShankCircleStateMachine.h"
-#include "Components/ArrowComponent.h"
+#include "Enemy/Shank/ShankBase.h"
+#include "Enemy/Shank/ShankCircleStateMachine.h"
 #include "Components/SphereComponent.h"
-#include "Enemy/DroneMovementComponent.h"
+#include "Enemy/Components/DroneMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
