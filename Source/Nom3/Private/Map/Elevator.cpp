@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Elevator.h"
+#include  "Nom3/Public/Map/Elevator.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/Character.h" // 플레이어 캐릭터 확인을 위해 추가

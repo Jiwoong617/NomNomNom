@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MovingPlatform.h"
+#include "Nom3/Public/Map/MovingPlatform.h"
 
 
 // Sets default values
