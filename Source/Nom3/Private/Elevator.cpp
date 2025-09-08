@@ -17,8 +17,8 @@ AElevator::AElevator()
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AElevator::OnOverlapBegin);
 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AElevator::OnOverlapEnd);
 	
-	MinSpeed = 50.0f;
-	Acceleration = 2.0f;
+	MinSpeed = 500.0f;
+	Acceleration = 10.0f;
 	// 이거 처음에 안움직이게 할려고 한거임 재민아 까먹지 말아라
 	bIsTriggered = false;
 }
