@@ -15,11 +15,11 @@ AElevator::AElevator()
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
 	TriggerBox->SetupAttachment(RootComponent);
 
-	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AElevator::OnOverlapBegin);
+	// TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AElevator::OnOverlapBegin);
 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AElevator::OnOverlapEnd);
 	
-	MinSpeed = 500.0f;
-	Acceleration = 10.0f;
+	MinSpeed = 50.0f;
+	Acceleration = 2.0f;
 	// 이거 처음에 안움직이게 할려고 한거임 재민아 까먹지 말아라
 	bIsTriggered = false;
 }
@@ -30,6 +30,8 @@ void AElevator::BeginPlay()
 	Super::BeginPlay();
 	MaxSpeed = ObjectSpeed;
 	ObjectSpeed = 0.0f;
+
+	bIsTriggered = true;
 	
 }
 
@@ -61,17 +63,17 @@ void AElevator::Tick(float DeltaTime)
 	SetActorLocation(GetActorLocation() + Movement);
 	
 }
-void AElevator::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	ACharacter* PlayerCharacter = Cast<ANomPlayer>(OtherActor);
-	if (PlayerCharacter != nullptr)
-		{
-		// bIsTriggered 상태를 반전시켜 엘리베이터의 목표 위치를 변경합니다.
-		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동합니다.
-		bIsTriggered = !bIsTriggered;
-		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었습니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
-	 }
-}
+// void AElevator::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+// {
+// 	ACharacter* PlayerCharacter = Cast<ANomPlayer>(OtherActor);
+// 	if (PlayerCharacter != nullptr)
+// 		{
+// 		// bIsTriggered 상태를 반전시켜 엘리베이터의 목표 위치를 변경합니다.
+// 		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동합니다.
+// 		bIsTriggered = !bIsTriggered;
+// 		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었습니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
+// 	 }
+// }
 
 void AElevator::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
