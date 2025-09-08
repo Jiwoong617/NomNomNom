@@ -39,18 +39,3 @@ void ARifle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-void ARifle::Fire()
-{
-	Super::Fire();
-}
-
-void ARifle::AimFire()
-{
-	Super::AimFire();
-}
-
-void ARifle::Reload()
-{
-	Super::Reload();
-}

@@ -268,6 +268,7 @@ void ANomPlayer::Fire(const FInputActionValue& Value)
 void ANomPlayer::Aim(const FInputActionValue& Value)
 {
 	bool isAiming = Value.Get<bool>();
+		
 	if (isAiming)
 	{
 		if (bIsRunning) bIsRunning = false;
@@ -295,6 +296,7 @@ void ANomPlayer::Reload()
 		bIsFiring = false;
 		WeaponComp->FireEnd();
 	}
+
 	WeaponComp->ReloadStart();
 }
 
@@ -342,4 +344,3 @@ UCameraComponent* ANomPlayer::GetFpsCam()
 {
 	return FpsCameraComp;
 }
-

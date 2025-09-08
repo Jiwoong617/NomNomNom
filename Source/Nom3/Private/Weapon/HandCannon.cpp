@@ -33,7 +33,6 @@ AHandCannon::AHandCannon()
 void AHandCannon::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -42,18 +41,12 @@ void AHandCannon::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AHandCannon::Fire()
+void AHandCannon::NoAimFire()
 {
-	Super::Fire();
+	Super::NoAimFire();
 }
 
 void AHandCannon::AimFire()
 {
 	Super::AimFire();
 }
-
-void AHandCannon::Reload()
-{
-	Super::Reload();
-}
-

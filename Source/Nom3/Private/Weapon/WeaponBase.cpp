@@ -5,6 +5,7 @@
 
 #include "Camera/CameraComponent.h"
 #include "Core/NomPlayer.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Nom3/Nom3.h"
 #include "Weapon/WeaponData.h"
 
@@ -18,6 +19,7 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 	WeaponMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	RootComponent = WeaponMeshComp;
 	WeaponMeshComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	
 }
 
 // Called when the game starts or when spawned
@@ -31,12 +33,11 @@ void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsHidden() == false && CurrentRecoil != TargetRecoil)
+	if (IsHidden() == false)
 	{
-		CurrentRecoil = FMath::RInterpTo(CurrentRecoil, TargetRecoil, DeltaTime, 20.f);
-		FRotator DeltaRecoil = CurrentRecoil - LastAppliedRecoil;
-		WeaponOwner->GetController()->SetControlRotation(WeaponOwner->GetControlRotation() + DeltaRecoil);
-		LastAppliedRecoil = CurrentRecoil;
+		Fire();
+		ApplyingRecoil();
+		OnAiming();
 	}
 }
 
@@ -53,18 +54,52 @@ void AWeaponBase::ApplyRecoil()
 	TargetRecoil.Yaw = FRotator::NormalizeAxis(TargetRecoil.Yaw);
 }
 
+void AWeaponBase::ApplyingRecoil()
+{
+	if (CurrentRecoil != TargetRecoil)
+	{
+		CurrentRecoil = FMath::RInterpTo(CurrentRecoil, TargetRecoil, GetWorld()->GetDeltaSeconds(), 20.f);
+		FRotator DeltaRecoil = CurrentRecoil - LastAppliedRecoil;
+		WeaponOwner->GetController()->SetControlRotation(WeaponOwner->GetControlRotation() + DeltaRecoil);
+		LastAppliedRecoil = CurrentRecoil;
+	}
+}
+
+void AWeaponBase::FireStart()
+{
+	bIsFiring = true;
+}
+
+void AWeaponBase::FireEnd()
+{
+	bIsFiring = false;
+}
+
 void AWeaponBase::Fire()
+{
+	FireTime += GetWorld()->GetDeltaSeconds();
+	
+	if (FireTime > WeaponData->FireRate && bIsFiring)
+	{
+		FireTime = 0.0f;
+		if (bIsAiming)
+			AimFire();
+		else
+			NoAimFire();
+	}
+}
+
+void AWeaponBase::AimFire()
 {
 	if (CurrentAmmo > 0)
 	{
 		CurrentAmmo--;
 		FVector Pos = WeaponOwner->GetFpsCam()->GetComponentLocation();
+		FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
 		FHitResult Hit;
-		GetWorld()->LineTraceSingleByChannel(Hit, Pos,
-			Pos + WeaponOwner->GetFpsCam()->GetForwardVector() * 10000, ECC_Visibility);
+		GetWorld()->LineTraceSingleByChannel(Hit, Pos,Pos + Dir * 10000, ECC_Visibility);
 
-		DrawDebugLine(GetWorld(), Pos,
-			Pos + WeaponOwner->GetFpsCam()->GetForwardVector() * 10000, FColor::Red, false, 1);
+		//DrawDebugLine(GetWorld(), Pos, Dir * 10000, FColor::Red, false, 1);
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan,
 			FString::Printf(TEXT("%d/%d - %d"), CurrentAmmo, WeaponData->AmmoCount, MaxAmmo));
@@ -74,9 +109,55 @@ void AWeaponBase::Fire()
 	}
 }
 
-void AWeaponBase::AimFire()
+void AWeaponBase::NoAimFire()
 {
-	PRINTINFO();
+	if (CurrentAmmo > 0)
+	{
+		CurrentAmmo--;
+
+		//탄퍼짐
+		float SpreadHalf = WeaponData->BulletSpread * 0.5f;
+		float RandPitch = FMath::RandRange(-SpreadHalf, SpreadHalf);
+		float RandYaw   = FMath::RandRange(-SpreadHalf, SpreadHalf);
+
+		FVector Pos = WeaponOwner->GetFpsCam()->GetComponentLocation();
+		FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
+		FRotator SpreadRot = Dir.Rotation();
+		SpreadRot.Pitch += RandPitch;
+		SpreadRot.Yaw += RandYaw;
+		FVector FinalDir = SpreadRot.Vector();
+
+		FHitResult Hit;
+		GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + FinalDir * 10000,ECC_Visibility);
+		
+		//DrawDebugLine(GetWorld(), Pos, Pos + FinalDir * 10000, FColor::Red, false, 1);
+		//DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
+		
+		GEngine->AddOnScreenDebugMessage(
+			-1, 5.0f, FColor::Cyan,
+			FString::Printf(TEXT("%d/%d - %d"), CurrentAmmo, WeaponData->AmmoCount, MaxAmmo)
+		);
+
+		//Recoil
+		ApplyRecoil();
+	}
+}
+
+void AWeaponBase::ReloadStart()
+{
+	if (CurrentAmmo == WeaponData->AmmoCount)
+		return;
+
+	GetWorld()->GetTimerManager().SetTimer(ReloadHandle, [this]()
+	{
+		ReloadEnd();
+	}, WeaponData->ReloadDuration, false);
+}
+
+void AWeaponBase::ReloadEnd()
+{
+	Reload();
+	bIsReloading = false;
 }
 
 void AWeaponBase::Reload()
@@ -84,6 +165,50 @@ void AWeaponBase::Reload()
 	int32 NeededAmmo = FMath::Min(MaxAmmo, WeaponData->AmmoCount - CurrentAmmo);
 	CurrentAmmo += NeededAmmo;
 	MaxAmmo -= NeededAmmo;
+}
+
+void AWeaponBase::AimStart()
+{
+	if (WeaponData->IsAimable == false)
+	{
+		return;
+	}
+	
+	bIsAiming = true;
+
+	CamOffset = WeaponOwner->GetFpsCamArm()->GetRelativeLocation();
+	//에임 소켓 위치 월드 -> 로컬로 변환
+	FVector AimSocketLoc = GetSocketTransform(AimSocket).GetLocation();
+	FVector AimSocketLocLocal = WeaponOwner->GetFpsCamArm()->GetAttachParent()->
+		GetComponentTransform().InverseTransformPosition(AimSocketLoc);
+	
+	AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
+	AimTime = 0.f;
+}
+
+void AWeaponBase::AimEnd()
+{
+	bIsAiming = false;
+}
+
+void AWeaponBase::OnAiming()
+{
+	if (bIsAiming)
+	{
+		if (AimTime >= WeaponData->AimDuration) return;
+		AimTime += GetWorld()->GetDeltaSeconds();
+		
+		WeaponOwner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(CamOffset, AimCamLoc, AimTime/WeaponData->AimDuration));
+		WeaponOwner->GetFpsCam()->SetFieldOfView(FMath::Lerp(CameraFOV, WeaponData->ADS_FOV, AimTime/WeaponData->AimDuration));
+	}
+	else
+	{
+		if (AimTime <= 0) return;
+		AimTime -= GetWorld()->GetDeltaSeconds();
+		
+		WeaponOwner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(AimCamLoc, CamOffset, 1.f - AimTime/WeaponData->AimDuration));
+		WeaponOwner->GetFpsCam()->SetFieldOfView(FMath::Lerp(WeaponData->ADS_FOV, CameraFOV, 1.f - AimTime/WeaponData->AimDuration));
+	}
 }
 
 void AWeaponBase::SetOwner(ANomPlayer* NewOwner)
@@ -99,14 +224,4 @@ const UWeaponData* AWeaponBase::GetData() const
 FTransform AWeaponBase::GetSocketTransform(FName& SocketName)
 {
 	return WeaponMeshComp->GetSocketTransform(SocketName);
-}
-
-
-float AWeaponBase::EaseElasticOut(float t)
-{
-	if (t == 0.f) return 0.f;
-	if (t == 1.f) return 1.f;
-
-	float p = 0.3f;
-	return FMath::Pow(2.f, -10.f * t) * FMath::Sin((t - p / 4.f) * (2 * PI) / p) + 1.f;
 }

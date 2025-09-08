@@ -14,6 +14,19 @@ class UInputMappingContext;
 class UInputAction;
 class USceneComponent;
 
+// UENUM(BlueprintType)
+// enum class EPlayerState : uint8
+// {
+// 	Idle = 0		UMETA(DisplayName = "Idle"),
+// 	Walking	= 1		UMETA(DisplayName = "Walking"),
+// 	Running = 2		UMETA(DisplayName = "Running"),
+// 	Reloading = 3	UMETA(DisplayName = "Reloading"),
+// 	Aiming = 4		UMETA(DisplayName = "Aiming"),
+// 	Firing = 5		UMETA(DisplayName = "Firing"),
+// 	AimFire = 6		UMETA(DisplayName = "AimFire"),
+// 	Crouch = 7		UMETA(DisplayName = "Crouch"),
+// };
+
 UCLASS()
 class NOM3_API ANomPlayer : public ACharacter
 {

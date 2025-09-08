@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "WeaponData.h"
+#include "Components/TimelineComponent.h"
 #include "GameFramework/Actor.h"
 #include "WeaponBase.generated.h"
 
@@ -26,7 +26,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
 protected:
 	UPROPERTY(EditAnywhere)
 	const UWeaponData* WeaponData;
@@ -37,9 +37,12 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	ANomPlayer* WeaponOwner;
 
+	//SocketName
 	UPROPERTY(EditAnywhere)
 	FName FireSocketName = TEXT("FireSocket");
-
+	UPROPERTY(EditAnywhere)
+	FName AimSocket = TEXT("AimSocket");
+	
 	//Recoil
 	UPROPERTY(EditAnywhere)
 	FRotator CurrentRecoil; //현재 반동
@@ -48,6 +51,28 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FRotator LastAppliedRecoil;   // 직전 프레임에 적용한 반동
 
+	UPROPERTY(EditAnywhere)
+	float FireTime;
+	UPROPERTY(EditAnywhere)
+	bool bIsAiming = false;
+	UPROPERTY(EditAnywhere)
+	bool bIsFiring = false;
+	UPROPERTY(EditAnywhere)
+	bool bIsReloading = false;
+
+	//ADS
+	UPROPERTY(EditAnywhere)
+	float CameraFOV = 90.f;
+	UPROPERTY(EditAnywhere)
+	FVector CamOffset;
+	UPROPERTY(EditAnywhere)
+	FVector AimCamLoc;
+	UPROPERTY(EditAnywhere)
+	float AimTime;
+
+	FTimerHandle ReloadHandle;
+	FTimerHandle ChangeHandle;
+
 public:
 	UPROPERTY(EditAnywhere)
 	int32 CurrentAmmo;
@@ -55,15 +80,25 @@ public:
 	int32 MaxAmmo;
 
 protected:
-	UFUNCTION()
-	void ApplyRecoil();
+	UFUNCTION() void ApplyRecoil();
+	UFUNCTION() void ApplyingRecoil();
 
-	float EaseElasticOut(float t);
+	UFUNCTION() virtual void AimFire();
+	UFUNCTION() virtual void NoAimFire();
+	
+	void OnAiming();
 	
 public:
-	virtual void Fire();
-	virtual void AimFire();
-	virtual void Reload();
+	UFUNCTION() void FireStart();
+	UFUNCTION() void FireEnd();
+	UFUNCTION() void Fire();
+	
+	UFUNCTION() void ReloadStart();
+	UFUNCTION() void ReloadEnd();
+	UFUNCTION() void Reload();
+	
+	UFUNCTION() void AimStart();
+	UFUNCTION() void AimEnd();
 
 	void SetOwner(ANomPlayer* NewOwner);
 	const UWeaponData* GetData() const;

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Components/TimelineComponent.h"
 #include "WeaponComponent.generated.h"
 
 
@@ -12,16 +11,6 @@ class ANomPlayer;
 class AWeaponBase;
 enum class EWeaponType : uint8;
 class UWeaponData;
-struct FTimeline;
-
-UENUM(BlueprintType)
-enum class EWeaponState : uint8
-{
-	Idle,
-	Fire,
-	Reload,
-	Changing
-};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class NOM3_API UWeaponComponent : public UActorComponent
@@ -58,31 +47,8 @@ private:
 	FName LeftHandSocket = TEXT("LeftHandSocket");
 	UPROPERTY(EditAnywhere)
 	FName RightHandSocket = TEXT("RightHandSocket");
-	UPROPERTY(EditAnywhere)
-	FName AimSocket = TEXT("AimSocket");
 
-	//Shoot 관련
-	UPROPERTY(EditAnywhere)
-	EWeaponState WeaponState = EWeaponState::Idle;
-	FTimerHandle ReloadHandle;
-	FTimerHandle ChangeHandle;
-	float FireTime = 0;
-	bool bIsFiring = false;
-	bool bIsAim = false;
 
-	
-	//Aim
-	UPROPERTY(EditAnywhere)
-	float CameraFOV = 90.f;
-	UPROPERTY(EditAnywhere)
-	FVector CamOffset;
-	UPROPERTY(EditAnywhere)
-	FVector AimCamLoc;
-	UPROPERTY(EditAnywhere)
-	FTimeline AimTimeline;
-	UPROPERTY(EditAnywhere)
-	UCurveFloat* AimCurve;
-	
 public:
 	UFUNCTION()
 	void Init();
@@ -91,8 +57,6 @@ public:
 	void FireStart();
 	UFUNCTION()
 	void FireEnd();
-	UFUNCTION()
-	void Fire();
 	
 	UFUNCTION()
 	void ReloadStart();
@@ -103,11 +67,10 @@ public:
 	void AimStart();
 	UFUNCTION()
 	void AimEnd();
-	UFUNCTION()
-	void OnAiming(float Value);
 	
 	UFUNCTION()
 	void ChangeWeapon(int32 idx);
+
 	UFUNCTION()
-	void ResetToIdle();
+	AWeaponBase* GetCurrentWeapon();
 };
