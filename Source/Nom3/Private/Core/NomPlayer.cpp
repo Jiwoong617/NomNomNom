@@ -154,6 +154,7 @@ void ANomPlayer::JumpInput()
 {
 	if (bIsCrouching)
 	{
+		bIsCrouching = false;
 		UnCrouch();
 	}
 	Jump();
@@ -161,6 +162,22 @@ void ANomPlayer::JumpInput()
 
 void ANomPlayer::RunToggle()
 {
+	if (bIsFiring)
+	{
+		WeaponComp->FireEnd();
+		bIsFiring = false;
+	}
+	if (bIsAiming)
+	{
+		WeaponComp->AimEnd();
+		bIsAiming = false;
+	}
+	if (bIsCrouching)
+	{
+		UnCrouch();
+		bIsCrouching = false;
+	}
+	
 	bIsRunning = !bIsRunning;
 }
 
@@ -189,7 +206,7 @@ void ANomPlayer::MoveFunc(float Right, float Forward)
 {
 	if (GetController())
 	{
-		GetCharacterMovement()->MaxWalkSpeed = bIsRunning ? MaxSpeed * 2 : MaxSpeed;
+		GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? MaxSpeed/2 : (bIsRunning ? MaxSpeed * 2 : MaxSpeed);
 		
 		// pass the move inputs
 		AddMovementInput(GetActorRightVector(), Right);
@@ -201,16 +218,14 @@ void ANomPlayer::CrouchOrSlide()
 {
 	if (bIsRunning)
 	{
-		//슬라이드
-		PRINTINFO();
+		//슬라이드 없애기로 했음
+		bIsRunning =false;
 	}
+	
+	if (bIsCrouching)
+		UnCrouch();
 	else
-	{
-		if (bIsCrouching)
-			UnCrouch();
-		else
-			Crouch();
-	}
+		Crouch();
 }
 
 void ANomPlayer::InteractHold(const FInputActionValue& Value)
@@ -235,13 +250,18 @@ void ANomPlayer::InteractHold(const FInputActionValue& Value)
 void ANomPlayer::Fire(const FInputActionValue& Value)
 {
 	bool isFireing = Value.Get<bool>();
+	
 	if (isFireing)
 	{
+		bIsRunning = false;
+		
 		WeaponComp->FireStart();
+		bIsFiring = true;
 	}
 	else
 	{
 		WeaponComp->FireEnd();
+		bIsFiring = false;
 	}
 }
 
@@ -250,6 +270,8 @@ void ANomPlayer::Aim(const FInputActionValue& Value)
 	bool isAiming = Value.Get<bool>();
 	if (isAiming)
 	{
+		if (bIsRunning) bIsRunning = false;
+		
 		bIsAiming = true;
 		WeaponComp->AimStart();
 	}
@@ -262,6 +284,17 @@ void ANomPlayer::Aim(const FInputActionValue& Value)
 
 void ANomPlayer::Reload()
 {
+	bIsRunning = false;
+	if (bIsAiming)
+	{
+		bIsAiming = false;
+		WeaponComp->AimEnd();
+	}
+	if (bIsFiring)
+	{
+		bIsFiring = false;
+		WeaponComp->FireEnd();
+	}
 	WeaponComp->ReloadStart();
 }
 

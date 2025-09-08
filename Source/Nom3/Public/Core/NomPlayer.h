@@ -41,6 +41,7 @@ protected:
 	float GravityMultiplier = 0.75f;
 
 	//Movement params
+	bool bIsFiring = false;
 	bool bIsRunning = false;
 	bool bIsCrouching = false;
 	bool bIsAiming = false;
