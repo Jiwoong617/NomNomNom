@@ -49,7 +49,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FRotator TargetRecoil; //목표 반동
 	UPROPERTY(EditAnywhere)
-	FRotator LastAppliedRecoil;   // 직전 프레임에 적용한 반동
+	FRotator LastAppliedRecoil; // 직전 프레임에 적용한 반동
 
 	UPROPERTY(EditAnywhere)
 	float FireTime;
@@ -69,9 +69,6 @@ protected:
 	FVector AimCamLoc;
 	UPROPERTY(EditAnywhere)
 	float AimTime;
-
-	FTimerHandle ReloadHandle;
-	FTimerHandle ChangeHandle;
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -100,6 +97,11 @@ public:
 	UFUNCTION() void AimStart();
 	UFUNCTION() void AimEnd();
 
+	//OnCancled - Weapon
+	UFUNCTION() void OnFireCanceled();
+	UFUNCTION() void OnReloadCanceled();
+	UFUNCTION() void OnAimCanceled();
+	
 	void SetOwner(ANomPlayer* NewOwner);
 	const UWeaponData* GetData() const;
 	FTransform GetSocketTransform(FName& SocketName);

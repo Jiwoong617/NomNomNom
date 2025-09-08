@@ -26,6 +26,8 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CamOffset = WeaponOwner->GetFpsCamArm()->GetRelativeLocation();
 }
 
 // Called every frame
@@ -148,10 +150,12 @@ void AWeaponBase::ReloadStart()
 	if (CurrentAmmo == WeaponData->AmmoCount)
 		return;
 
-	GetWorld()->GetTimerManager().SetTimer(ReloadHandle, [this]()
-	{
-		ReloadEnd();
-	}, WeaponData->ReloadDuration, false);
+	bIsReloading = true;
+	//TODO : Player로 옮기기
+	// GetWorld()->GetTimerManager().SetTimer(ReloadHandle, [this]()
+	// {
+	// 	ReloadEnd();
+	// }, WeaponData->ReloadDuration, false);
 }
 
 void AWeaponBase::ReloadEnd()
@@ -176,7 +180,6 @@ void AWeaponBase::AimStart()
 	
 	bIsAiming = true;
 
-	CamOffset = WeaponOwner->GetFpsCamArm()->GetRelativeLocation();
 	//에임 소켓 위치 월드 -> 로컬로 변환
 	FVector AimSocketLoc = GetSocketTransform(AimSocket).GetLocation();
 	FVector AimSocketLocLocal = WeaponOwner->GetFpsCamArm()->GetAttachParent()->
@@ -209,6 +212,18 @@ void AWeaponBase::OnAiming()
 		WeaponOwner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(AimCamLoc, CamOffset, 1.f - AimTime/WeaponData->AimDuration));
 		WeaponOwner->GetFpsCam()->SetFieldOfView(FMath::Lerp(WeaponData->ADS_FOV, CameraFOV, 1.f - AimTime/WeaponData->AimDuration));
 	}
+}
+
+void AWeaponBase::OnFireCanceled()
+{
+}
+
+void AWeaponBase::OnReloadCanceled()
+{
+}
+
+void AWeaponBase::OnAimCanceled()
+{
 }
 
 void AWeaponBase::SetOwner(ANomPlayer* NewOwner)

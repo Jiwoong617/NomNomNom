@@ -9,7 +9,6 @@
 #include "Weapon/WeaponBase.h"
 #include "Weapon/WeaponData.h"
 
-
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
 {
@@ -111,6 +110,21 @@ void UWeaponComponent::ChangeWeapon(int32 idx)
 	CurrentWeapon->SetActorHiddenInGame(false);
 }
 
+void UWeaponComponent::OnFireCanceled()
+{
+}
+
+void UWeaponComponent::OnReloadCanceled()
+{
+}
+
+void UWeaponComponent::OnAimCanceled()
+{
+}
+
+void UWeaponComponent::OnChangeWeaponCanceled()
+{
+}
 
 AWeaponBase* UWeaponComponent::GetCurrentWeapon()
 {

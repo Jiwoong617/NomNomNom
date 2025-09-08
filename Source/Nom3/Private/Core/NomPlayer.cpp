@@ -120,7 +120,7 @@ void ANomPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		EnhancedInputComponent->BindAction(IA_Aim, ETriggerEvent::Started, this, &ANomPlayer::Aim);
 		EnhancedInputComponent->BindAction(IA_Aim, ETriggerEvent::Completed, this, &ANomPlayer::Aim);
 		
-		EnhancedInputComponent->BindAction(IA_Reload, ETriggerEvent::Started, this, &ANomPlayer::Reload);
+		EnhancedInputComponent->BindAction(IA_Reload, ETriggerEvent::Started, this, &ANomPlayer::ReloadStart);
 		
 		EnhancedInputComponent->BindAction(IA_Melee, ETriggerEvent::Started, this, &ANomPlayer::Melee);
 		EnhancedInputComponent->BindAction(IA_Throw, ETriggerEvent::Started, this, &ANomPlayer::Throw);
@@ -283,7 +283,7 @@ void ANomPlayer::Aim(const FInputActionValue& Value)
 	}
 }
 
-void ANomPlayer::Reload()
+void ANomPlayer::ReloadStart()
 {
 	bIsRunning = false;
 	if (bIsAiming)
@@ -298,6 +298,11 @@ void ANomPlayer::Reload()
 	}
 
 	WeaponComp->ReloadStart();
+}
+
+void ANomPlayer::ReloadEnd()
+{
+	WeaponComp->ReloadEnd();
 }
 
 void ANomPlayer::Melee()
@@ -333,6 +338,30 @@ void ANomPlayer::ChangeWeapon2()
 void ANomPlayer::ChangeWeapon3()
 {
 	WeaponComp->ChangeWeapon(2);
+}
+
+void ANomPlayer::OnRunCanceled()
+{
+}
+
+void ANomPlayer::OnCrouchCanceled()
+{
+}
+
+void ANomPlayer::OnReloadCanceled()
+{
+}
+
+void ANomPlayer::OnFireCanceled()
+{
+}
+
+void ANomPlayer::OnAimCanceled()
+{
+}
+
+void ANomPlayer::OnChangeWeaponCanceled()
+{
 }
 
 USpringArmComponent* ANomPlayer::GetFpsCamArm()

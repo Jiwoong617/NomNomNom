@@ -121,6 +121,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UInputAction* IA_Weapon3;
 
+	//Reload Timer
+	FTimerHandle ReloadHandle;
 public:
 
 protected:
@@ -154,7 +156,9 @@ protected:
 	UFUNCTION()
 	void Aim(const FInputActionValue& Value);
 	UFUNCTION()
-	void Reload();
+	void ReloadStart();
+	UFUNCTION()
+	void ReloadEnd();
 	UFUNCTION()
 	virtual void Melee();
 	UFUNCTION()
@@ -170,6 +174,15 @@ protected:
 	void ChangeWeapon2();
 	UFUNCTION()
 	void ChangeWeapon3();
+
+	//OnCanceled - Moving
+	UFUNCTION() void OnRunCanceled();
+	UFUNCTION() void OnCrouchCanceled();
+	//OnCancled - Weapon
+	UFUNCTION() void OnFireCanceled();
+	UFUNCTION() void OnReloadCanceled();
+	UFUNCTION() void OnAimCanceled();
+	UFUNCTION() void OnChangeWeaponCanceled();
 
 public:
 	USpringArmComponent* GetFpsCamArm();

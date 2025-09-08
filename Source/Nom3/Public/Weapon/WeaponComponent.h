@@ -48,7 +48,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	FName RightHandSocket = TEXT("RightHandSocket");
 
-
+	//WeaponChange Timer
+	FTimerHandle ChangeHandle;
+	
 public:
 	UFUNCTION()
 	void Init();
@@ -71,6 +73,12 @@ public:
 	UFUNCTION()
 	void ChangeWeapon(int32 idx);
 
+	//OnCancled - Weapon
+	UFUNCTION() void OnFireCanceled();
+	UFUNCTION() void OnReloadCanceled();
+	UFUNCTION() void OnAimCanceled();
+	UFUNCTION() void OnChangeWeaponCanceled();
+	
 	UFUNCTION()
 	AWeaponBase* GetCurrentWeapon();
 };
