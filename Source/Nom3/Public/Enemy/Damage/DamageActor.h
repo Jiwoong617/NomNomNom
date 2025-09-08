@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "DamageActor.generated.h"
 
+class UDamageWidget;
 class UWidgetComponent;
 
 UCLASS()
@@ -15,10 +16,20 @@ class NOM3_API ADamageActor : public AActor
 
 public:
 	ADamageActor();
-	
+
+	virtual void BeginPlay() override;
+
+protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UWidgetComponent> WidgetComp;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDamageWidget> DamageWidget;
+
+public:
 	UFUNCTION()
-	void ShowAndHide();
+	void Activate();
+
+	UFUNCTION()
+	void Deactivate();
 };

@@ -4,6 +4,7 @@
 #include "Enemy/Shank/ShankCircleStateMachine.h"
 #include "Components/SphereComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
+#include "Enemy/Damage/DamageActorPoolGameInstanceSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -42,6 +43,12 @@ AShankBase::AShankBase() :
 void AShankBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//데미지 액터 풀링 서브시스템 획득
+	if (auto Temp = GetGameInstance()->GetSubsystem<UDamageActorPoolGameInstanceSubsystem>())
+	{
+		DamageActorPool = Temp;
+	}
 
 	//플레어어 폰 획득
 	TargetPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -158,6 +165,8 @@ void AShankBase::OnAimByPlayerSight()
 
 void AShankBase::OnShotByPlayer(const FVector ShotDir, int Damage)
 {
+	DamageActorPool->ShowNormalDamageActor(GetActorLocation());
+	
 	OnShotDown(ShotDir);
 }
 

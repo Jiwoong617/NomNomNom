@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ShankBase.generated.h"
 
+class UDamageActorPoolGameInstanceSubsystem;
 class UDroneMovementComponent;
 class USphereComponent;
 class UShankCircleStateMachine;
@@ -74,7 +75,10 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
-	
+
+	UPROPERTY()
+	TObjectPtr<UDamageActorPoolGameInstanceSubsystem> DamageActorPool;
+ 	
 	UFUNCTION(BlueprintCallable)
 	void OnAimByPlayerSight();
 

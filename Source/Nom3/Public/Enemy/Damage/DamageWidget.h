@@ -3,7 +3,8 @@
 #pragma once
 
 //델리게이트 선언
-DECLARE_DELEGATE_OneParam(FOnWidgetAnimationFinishedSignature, AActor)
+DECLARE_MULTICAST_DELEGATE(FOnWidgetAnimationStartedSignature)
+DECLARE_MULTICAST_DELEGATE(FOnWidgetAnimationFinishedSignature)
 
 //전방 선언
 #include "CoreMinimal.h"
@@ -18,8 +19,13 @@ class NOM3_API UDamageWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
-	void ShowAndHide();
+	UFUNCTION()
+	void PlayShowAndHideAnimation();
 
+	//애니메이션 시작 델리게이트
+	FOnWidgetAnimationStartedSignature OnAnimationStartedDelegate;
+
+	//애니메이션 종료 델리게이트
 	FOnWidgetAnimationFinishedSignature OnAnimationFinishedDelegate;
 	
 protected:
@@ -31,9 +37,10 @@ protected:
 
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	TObjectPtr<class UWidgetAnimation> ShowAndHideAnim;
-	
-	void OnAnimationStarted();
-	
-	void OnAnimationFinished();
 
+	UFUNCTION()
+	void OnShow();
+
+	UFUNCTION()
+	void OnHide();
 };

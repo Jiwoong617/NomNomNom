@@ -1,9 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy/Damage/DamageActor.h"
-
 #include "Components/WidgetComponent.h"
+#include "Enemy/Damage/DamageActorPoolGameInstanceSubsystem.h"
 #include "Enemy/Damage/DamageWidget.h"
+#include "Nom3/Nom3.h"
 
 ADamageActor::ADamageActor()
 {
@@ -14,18 +15,36 @@ ADamageActor::ADamageActor()
 	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComp"));
 	WidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 	WidgetComp->SetupAttachment(GetRootComponent());
+}
 
-	//위젯 블루프린트 로드
-	if (const ConstructorHelpers::FClassFinder<UDamageWidget> Finder(TEXT("/Game/Enemies/Damage/WBP_DamageWidget.WBP_DamageWidget_C"));
-		Finder.Class)
+void ADamageActor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//위젯 컴포넌트의 위젯 캐스팅
+	if (auto Temp = Cast<UDamageWidget>(WidgetComp->GetWidget()))
 	{
-		WidgetComp->SetWidgetClass(Finder.Class);
+		//프로퍼티에 할당
+		DamageWidget = Temp;
+
+		//풀에 자신을 반환하는 메서드를 람다식으로 바인딩
+		DamageWidget->OnAnimationFinishedDelegate.AddLambda([this](){ Deactivate(); });
 	}
 }
 
-void ADamageActor::ShowAndHide()
+void ADamageActor::Activate()
 {
-	Cast<UDamageWidget>(WidgetComp->GetWidget())->ShowAndHide();
+	//애니메이션 재생
+	DamageWidget->PlayShowAndHideAnimation();
+}
 
-	
+void ADamageActor::Deactivate()
+{
+	if (const auto GameInstance = GetGameInstance())
+	{
+		if (const auto PoolingSubsystem = GameInstance->GetSubsystem<UDamageActorPoolGameInstanceSubsystem>())
+		{
+			PoolingSubsystem->PushDamageActorToPool(this);
+		}
+	}
 }
