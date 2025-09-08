@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include  "Nom3/Public/Map/Elevator.h"
+#include  "Nom3/Public/Core/NomPlayer.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/Character.h" // 플레이어 캐릭터 확인을 위해 추가
@@ -62,14 +63,14 @@ void AElevator::Tick(float DeltaTime)
 }
 void AElevator::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// ACharacter* PlayerCharacter = Cast<ACharacter>(OtherActor);
-	// if (PlayerCharacter != nullptr)
-	// {
+	ACharacter* PlayerCharacter = Cast<ANomPlayer>(OtherActor);
+	if (PlayerCharacter != nullptr)
+		{
 		// bIsTriggered 상태를 반전시켜 엘리베이터의 목표 위치를 변경합니다.
 		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동합니다.
 		bIsTriggered = !bIsTriggered;
-		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었씁니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
-	// }
+		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었습니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
+	 }
 }
 
 void AElevator::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,

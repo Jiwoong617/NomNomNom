@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Nom3/Public/Map/AutoDoor.h"
+#include "Nom3/Public/Core/NomPlayer.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "TimerManager.h"
@@ -54,14 +55,14 @@ void AAutoDoor::Tick(float DeltaTime)
 
 void AAutoDoor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// ACharacter* PlayerCharacter = Cast<ACharacter>(OtherActor); 전과 동일 알아서 바꾸셈
-	// if (PlayerCharacter != nullptr)
-	// {
-	// 	// When the player enters, cancel any pending close timer and open the door.
-	// 	GetWorld()->GetTimerManager().ClearTimer(CloseTimerHandle);
+	 ACharacter* PlayerCharacter = Cast<ANomPlayer>(OtherActor); 
+	 if (PlayerCharacter != nullptr)
+	 {
+	 	// When the player enters, cancel any pending close timer and open the door.
+	 	GetWorld()->GetTimerManager().ClearTimer(CloseTimerHandle);
 		bShouldBeOpen = true;
 		UE_LOG(LogTemp, Warning, TEXT("플레이가 문을 열었습니다."));
-	// }
+	 }
 }
 
 void AAutoDoor::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
