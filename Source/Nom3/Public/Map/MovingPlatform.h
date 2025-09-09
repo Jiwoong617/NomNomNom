@@ -2,26 +2,44 @@
 
 #pragma once
 
-
 #include "CoreMinimal.h"
-#include "Interfaces/Interactable.h" 
-#include "Map/MovingObject.h"
+#include "MovingObject.h"
 #include "MovingPlatform.generated.h"
-
-
 UCLASS()
-class NOM3_API AMovingPlaform : public AMovingObject
+class NOM3_API AMovingPlatform : public AMovingObject
 {
 	GENERATED_BODY()
 
+public:
+	AMovingPlatform();
+
+
 protected:
-	// 게임 시작 시 호출됩니다.
+
 	virtual void BeginPlay() override;
 
 public:
-	// 매 프레임 호출됩니다.
+
 	virtual void Tick(float DeltaTime) override;
 
+<<<<<<< HEAD
 	FTimerHandle MovementHandle;
 	float Movementdelay = 2.f;
+=======
+		
+	UPROPERTY(EditAnywhere, Category = "Moving Platform")
+	float WaitTime;
+	
+	FTimerHandle MovementTimerHandle;
+
+	//이동 및 반향
+	void ToggleMovement();
+    
+	//원래 속도
+	float OriginalSpeed;
+
+private:
+
+	
+>>>>>>> parent of 3fb5483 ([MAP] moving 관련 코드 디버깅)
 };
