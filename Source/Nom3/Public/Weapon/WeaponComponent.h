@@ -47,38 +47,52 @@ private:
 	FName LeftHandSocket = TEXT("LeftHandSocket");
 	UPROPERTY(EditAnywhere)
 	FName RightHandSocket = TEXT("RightHandSocket");
+	UPROPERTY(EditAnywhere)
+	FName AimSocket = TEXT("AimSocket");
+	
 
-	//WeaponChange Timer
-	FTimerHandle ChangeHandle;
+	UPROPERTY(EditAnywhere)
+	float FireTime;
+	UPROPERTY(EditAnywhere)
+	bool bIsAiming = false;
+	UPROPERTY(EditAnywhere)
+	bool bIsFiring = false;
+	UPROPERTY(EditAnywhere)
+	bool bIsReloading = false;
+
+	//ADS
+	UPROPERTY(EditAnywhere)
+	float CameraFOV = 90.f;
+	UPROPERTY(EditAnywhere)
+	FVector CamOffset;
+	UPROPERTY(EditAnywhere)
+	FVector AimCamLoc;
+	UPROPERTY(EditAnywhere)
+	float AimTime;
+
+
+private:
+	UFUNCTION() void Init();
+
+	UFUNCTION() void Fire();
+	
+	UFUNCTION() void OnAiming();
 	
 public:
-	UFUNCTION()
-	void Init();
 	
-	UFUNCTION()
-	void FireStart();
-	UFUNCTION()
-	void FireEnd();
+	UFUNCTION() void FireStart();
+	UFUNCTION() void FireEnd();
 	
-	UFUNCTION()
-	void ReloadStart();
-	UFUNCTION()
-	void ReloadEnd();
+	UFUNCTION() void Reload();
 	
-	UFUNCTION()
-	void AimStart();
-	UFUNCTION()
-	void AimEnd();
+	UFUNCTION() void AimStart();
+	UFUNCTION() void AimEnd();
 	
-	UFUNCTION()
-	void ChangeWeapon(int32 idx);
-
-	//OnCancled - Weapon
-	UFUNCTION() void OnFireCanceled();
-	UFUNCTION() void OnReloadCanceled();
-	UFUNCTION() void OnAimCanceled();
-	UFUNCTION() void OnChangeWeaponCanceled();
+	UFUNCTION() void ChangeWeapon(int32 idx);
+	UFUNCTION() void OnWeaponChanged(int32 idx);
 	
 	UFUNCTION()
 	AWeaponBase* GetCurrentWeapon();
+	UFUNCTION()
+	int32 GetCurrentWeaponIdx();
 };

@@ -4,7 +4,9 @@
 #include "Weapon/WeaponComponent.h"
 
 
+#include "Camera/CameraComponent.h"
 #include "Core/NomPlayer.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Nom3/Nom3.h"
 #include "Weapon/WeaponBase.h"
 #include "Weapon/WeaponData.h"
@@ -33,6 +35,12 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                      FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (CurrentWeapon->IsHidden() == false)
+	{
+		Fire();
+		OnAiming();
+	}
 }
 
 void UWeaponComponent::Init()
@@ -63,36 +71,78 @@ void UWeaponComponent::Init()
 		CurrentWeapon = WeaponList[CurrentWeaponIdx];
 		CurrentWeapon->SetActorHiddenInGame(false);
 	}
+	
+	CamOffset = Owner->GetFpsCamArm()->GetRelativeLocation();
+	//에임 소켓 위치 월드 -> 로컬로 변환
+	FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
+	FVector AimSocketLocLocal = Owner->GetFpsCamArm()->GetAttachParent()->
+		GetComponentTransform().InverseTransformPosition(AimSocketLoc);
+	
+	AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
 }
 
 void UWeaponComponent::FireStart()
 {
-	CurrentWeapon->FireStart();
+	bIsFiring = true;
 }
 
 void UWeaponComponent::FireEnd()
 {
-	CurrentWeapon->FireEnd();
+	bIsFiring = false;
 }
 
-void UWeaponComponent::ReloadStart()
+void UWeaponComponent::Fire()
 {
-	CurrentWeapon->ReloadStart();
+	FireTime += GetWorld()->GetDeltaSeconds();
+	
+	if (FireTime > CurrentWeapon->GetData()->FireRate && bIsFiring)
+	{
+		FireTime = 0.0f;
+		if (bIsAiming)
+			CurrentWeapon->AimFire();
+		else
+			CurrentWeapon->NoAimFire();
+	}
 }
 
-void UWeaponComponent::ReloadEnd()
+void UWeaponComponent::Reload()
 {
-	CurrentWeapon->ReloadEnd();
+	CurrentWeapon->Reload();
 }
 
 void UWeaponComponent::AimStart()
 {
-	CurrentWeapon->AimStart();
+	if (CurrentWeapon->GetData()->IsAimable == false)
+	{
+		return;
+	}
+	
+	bIsAiming = true;
 }
 
 void UWeaponComponent::AimEnd()
 {
-	CurrentWeapon->AimEnd();
+	bIsAiming = false;
+}
+
+void UWeaponComponent::OnAiming()
+{
+	if (bIsAiming)
+	{
+		if (AimTime >= CurrentWeapon->GetData()->AimDuration) return;
+		AimTime += GetWorld()->GetDeltaSeconds();
+		
+		Owner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(CamOffset, AimCamLoc, AimTime / CurrentWeapon->GetData()->AimDuration));
+		Owner->GetFpsCam()->SetFieldOfView(FMath::Lerp(CameraFOV, CurrentWeapon->GetData()->ADS_FOV, AimTime / CurrentWeapon->GetData()->AimDuration));
+	}
+	else
+	{
+		if (AimTime <= 0) return;
+		AimTime -= GetWorld()->GetDeltaSeconds();
+		
+		Owner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(AimCamLoc, CamOffset, 1.f - AimTime / CurrentWeapon->GetData()->AimDuration));
+		Owner->GetFpsCam()->SetFieldOfView(FMath::Lerp(CurrentWeapon->GetData()->ADS_FOV, CameraFOV, 1.f - AimTime / CurrentWeapon->GetData()->AimDuration));
+	}
 }
 
 void UWeaponComponent::ChangeWeapon(int32 idx)
@@ -102,31 +152,29 @@ void UWeaponComponent::ChangeWeapon(int32 idx)
 		return;
 	}
 	
-	AimEnd();
-	
 	CurrentWeapon->SetActorHiddenInGame(true);
 	CurrentWeaponIdx = idx;
 	CurrentWeapon = WeaponList[idx];
-	CurrentWeapon->SetActorHiddenInGame(false);
+	WeaponList[idx]->SetActorHiddenInGame(false);
 }
 
-void UWeaponComponent::OnFireCanceled()
+void UWeaponComponent::OnWeaponChanged(int32 idx)
 {
-}
-
-void UWeaponComponent::OnReloadCanceled()
-{
-}
-
-void UWeaponComponent::OnAimCanceled()
-{
-}
-
-void UWeaponComponent::OnChangeWeaponCanceled()
-{
+	if (CurrentWeapon->GetData()->IsAimable == false)
+		return;
+	FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
+	FVector AimSocketLocLocal = Owner->GetFpsCamArm()->GetAttachParent()->
+		GetComponentTransform().InverseTransformPosition(AimSocketLoc);
+	
+	AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
 }
 
 AWeaponBase* UWeaponComponent::GetCurrentWeapon()
 {
 	return CurrentWeapon;
+}
+
+int32 UWeaponComponent::GetCurrentWeaponIdx()
+{
+	return CurrentWeaponIdx;
 }

@@ -2,10 +2,9 @@
 
 
 #include "Weapon/WeaponBase.h"
-
 #include "Camera/CameraComponent.h"
 #include "Core/NomPlayer.h"
-#include "GameFramework/SpringArmComponent.h"
+#include "Interfaces/Damagable.h"
 #include "Nom3/Nom3.h"
 #include "Weapon/WeaponData.h"
 
@@ -26,8 +25,6 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	CamOffset = WeaponOwner->GetFpsCamArm()->GetRelativeLocation();
 }
 
 // Called every frame
@@ -37,9 +34,7 @@ void AWeaponBase::Tick(float DeltaTime)
 
 	if (IsHidden() == false)
 	{
-		Fire();
 		ApplyingRecoil();
-		OnAiming();
 	}
 }
 
@@ -67,30 +62,6 @@ void AWeaponBase::ApplyingRecoil()
 	}
 }
 
-void AWeaponBase::FireStart()
-{
-	bIsFiring = true;
-}
-
-void AWeaponBase::FireEnd()
-{
-	bIsFiring = false;
-}
-
-void AWeaponBase::Fire()
-{
-	FireTime += GetWorld()->GetDeltaSeconds();
-	
-	if (FireTime > WeaponData->FireRate && bIsFiring)
-	{
-		FireTime = 0.0f;
-		if (bIsAiming)
-			AimFire();
-		else
-			NoAimFire();
-	}
-}
-
 void AWeaponBase::AimFire()
 {
 	if (CurrentAmmo > 0)
@@ -99,7 +70,14 @@ void AWeaponBase::AimFire()
 		FVector Pos = WeaponOwner->GetFpsCam()->GetComponentLocation();
 		FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
 		FHitResult Hit;
-		GetWorld()->LineTraceSingleByChannel(Hit, Pos,Pos + Dir * 10000, ECC_Visibility);
+		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + Dir * 10000,ECC_Visibility))
+		{
+			if (Hit.GetActor()->Implements<UDamagable>())
+			{
+				PRINTLOG(TEXT("Damagable"));
+				Cast<IDamagable>(Hit.GetActor())->OnDamaged(WeaponData->Damage);
+			}
+		}
 
 		//DrawDebugLine(GetWorld(), Pos, Dir * 10000, FColor::Red, false, 1);
 
@@ -130,7 +108,14 @@ void AWeaponBase::NoAimFire()
 		FVector FinalDir = SpreadRot.Vector();
 
 		FHitResult Hit;
-		GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + FinalDir * 10000,ECC_Visibility);
+		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + FinalDir * 10000,ECC_Visibility))
+		{
+			if (Hit.GetActor()->Implements<UDamagable>())
+			{
+				PRINTLOG(TEXT("Damagable"));
+				Cast<IDamagable>(Hit.GetActor())->OnDamaged(WeaponData->Damage);
+			}
+		}
 		
 		//DrawDebugLine(GetWorld(), Pos, Pos + FinalDir * 10000, FColor::Red, false, 1);
 		//DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
@@ -145,25 +130,6 @@ void AWeaponBase::NoAimFire()
 	}
 }
 
-void AWeaponBase::ReloadStart()
-{
-	if (CurrentAmmo == WeaponData->AmmoCount)
-		return;
-
-	bIsReloading = true;
-	//TODO : Player로 옮기기
-	// GetWorld()->GetTimerManager().SetTimer(ReloadHandle, [this]()
-	// {
-	// 	ReloadEnd();
-	// }, WeaponData->ReloadDuration, false);
-}
-
-void AWeaponBase::ReloadEnd()
-{
-	Reload();
-	bIsReloading = false;
-}
-
 void AWeaponBase::Reload()
 {
 	int32 NeededAmmo = FMath::Min(MaxAmmo, WeaponData->AmmoCount - CurrentAmmo);
@@ -171,60 +137,6 @@ void AWeaponBase::Reload()
 	MaxAmmo -= NeededAmmo;
 }
 
-void AWeaponBase::AimStart()
-{
-	if (WeaponData->IsAimable == false)
-	{
-		return;
-	}
-	
-	bIsAiming = true;
-
-	//에임 소켓 위치 월드 -> 로컬로 변환
-	FVector AimSocketLoc = GetSocketTransform(AimSocket).GetLocation();
-	FVector AimSocketLocLocal = WeaponOwner->GetFpsCamArm()->GetAttachParent()->
-		GetComponentTransform().InverseTransformPosition(AimSocketLoc);
-	
-	AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
-	AimTime = 0.f;
-}
-
-void AWeaponBase::AimEnd()
-{
-	bIsAiming = false;
-}
-
-void AWeaponBase::OnAiming()
-{
-	if (bIsAiming)
-	{
-		if (AimTime >= WeaponData->AimDuration) return;
-		AimTime += GetWorld()->GetDeltaSeconds();
-		
-		WeaponOwner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(CamOffset, AimCamLoc, AimTime/WeaponData->AimDuration));
-		WeaponOwner->GetFpsCam()->SetFieldOfView(FMath::Lerp(CameraFOV, WeaponData->ADS_FOV, AimTime/WeaponData->AimDuration));
-	}
-	else
-	{
-		if (AimTime <= 0) return;
-		AimTime -= GetWorld()->GetDeltaSeconds();
-		
-		WeaponOwner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(AimCamLoc, CamOffset, 1.f - AimTime/WeaponData->AimDuration));
-		WeaponOwner->GetFpsCam()->SetFieldOfView(FMath::Lerp(WeaponData->ADS_FOV, CameraFOV, 1.f - AimTime/WeaponData->AimDuration));
-	}
-}
-
-void AWeaponBase::OnFireCanceled()
-{
-}
-
-void AWeaponBase::OnReloadCanceled()
-{
-}
-
-void AWeaponBase::OnAimCanceled()
-{
-}
 
 void AWeaponBase::SetOwner(ANomPlayer* NewOwner)
 {
@@ -239,4 +151,14 @@ const UWeaponData* AWeaponBase::GetData() const
 FTransform AWeaponBase::GetSocketTransform(FName& SocketName)
 {
 	return WeaponMeshComp->GetSocketTransform(SocketName);
+}
+
+bool AWeaponBase::CanFire()
+{
+	return CurrentAmmo != 0;
+}
+
+bool AWeaponBase::CanReload()
+{
+	return (CurrentAmmo != WeaponData->AmmoCount && MaxAmmo != 0);
 }
