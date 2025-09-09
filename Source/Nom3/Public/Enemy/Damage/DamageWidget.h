@@ -20,7 +20,7 @@ public:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
-	void PlayShowAndHideAnimation();
+	void DisplayDamage(int32 Damage);
 
 	//애니메이션 시작 델리게이트
 	FOnWidgetAnimationStartedSignature OnAnimationStartedDelegate;

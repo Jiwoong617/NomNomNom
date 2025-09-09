@@ -54,8 +54,8 @@ public:
 	void PushDamageActorToPool(ADamageActor* DamageActor);
 
 	UFUNCTION()
-	void ShowNormalDamageActor(const FVector& Location);
+	void ShowNormalDamageActor(const FVector& Location, int32 Damage);
 
 	UFUNCTION()
-	void ShowCriticalDamageActor(const FVector& Location);
+	void ShowCriticalDamageActor(const FVector& Location, int32 Damage);
 };

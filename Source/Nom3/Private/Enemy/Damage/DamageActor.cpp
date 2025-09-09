@@ -32,10 +32,10 @@ void ADamageActor::BeginPlay()
 	}
 }
 
-void ADamageActor::Activate()
+void ADamageActor::DisplayDamage(const int32 Damage) const
 {
 	//애니메이션 재생
-	DamageWidget->PlayShowAndHideAnimation();
+	DamageWidget->DisplayDamage(Damage);
 }
 
 void ADamageActor::Deactivate()

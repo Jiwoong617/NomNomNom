@@ -109,7 +109,7 @@ void UDamageActorPoolGameInstanceSubsystem::PushDamageActorToPool(ADamageActor* 
 	}
 }
 
-void UDamageActorPoolGameInstanceSubsystem::ShowNormalDamageActor(const FVector& Location)
+void UDamageActorPoolGameInstanceSubsystem::ShowNormalDamageActor(const FVector& Location, const int32 Damage)
 {
 	//사용할 수 있는 데미지 액터 획득
 	const auto Pop = PopNormalDamageActorFromPool();
@@ -118,10 +118,10 @@ void UDamageActorPoolGameInstanceSubsystem::ShowNormalDamageActor(const FVector&
 	Pop->SetActorLocation(Location);
 
 	//데미지 액터 활성화
-	Pop->Activate();
+	Pop->DisplayDamage(Damage);
 }
 
-void UDamageActorPoolGameInstanceSubsystem::ShowCriticalDamageActor(const FVector& Location)
+void UDamageActorPoolGameInstanceSubsystem::ShowCriticalDamageActor(const FVector& Location, const int32 Damage)
 {
 	//사용할 수 있는 데미지 액터 획득
 	const auto Pop = PopCriticalDamageActorFromPool();
@@ -130,5 +130,5 @@ void UDamageActorPoolGameInstanceSubsystem::ShowCriticalDamageActor(const FVecto
 	Pop->SetActorLocation(Location);
 
 	//데미지 액터 활성화
-	Pop->Activate();
+	Pop->DisplayDamage(Damage);
 }

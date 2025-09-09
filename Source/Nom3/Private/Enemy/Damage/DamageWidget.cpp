@@ -4,6 +4,7 @@
 #include "Animation/WidgetAnimation.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/TextBlock.h"
 
 void UDamageWidget::NativeConstruct()
 {
@@ -40,10 +41,13 @@ void UDamageWidget::NativeConstruct()
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UDamageWidget::PlayShowAndHideAnimation()
+void UDamageWidget::DisplayDamage(const int32 Damage)
 {
 	//가시화
 	SetVisibility(ESlateVisibility::Visible);
+
+	//데미지 텍스트 설정
+	DamageText.Get()->SetText(FText::FromString(*FString::FromInt(Damage)));
 
 	//위젯 애니메이션 재생
 	PlayAnimation(ShowAndHideAnim);

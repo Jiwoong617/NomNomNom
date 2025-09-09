@@ -86,6 +86,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ThrottleHighToEvade();
+
+	UFUNCTION(BlueprintCallable)
+	void ReverseVectorThrust(float Accel);
 	
 	UFUNCTION(BlueprintCallable)
 	void VectorThrust(FVector VectorDir);

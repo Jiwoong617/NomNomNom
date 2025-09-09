@@ -28,7 +28,7 @@ protected:
 
 public:
 	UFUNCTION()
-	void Activate();
+	void DisplayDamage(int32 Damage) const;
 
 	UFUNCTION()
 	void Deactivate();

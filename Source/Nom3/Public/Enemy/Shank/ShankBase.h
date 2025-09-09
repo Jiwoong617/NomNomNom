@@ -3,13 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "ShankStateMachineBase.h"
+#include "Enemy/Core/EnemyBase.h"
+#include "Enemy/Interfaces/OnAimByPlayerSight.h"
 #include "ShankBase.generated.h"
 
-class UDamageActorPoolGameInstanceSubsystem;
+class UShankReverseThrustStateMachine;
+class UShankFindPathStateMachine;
+class UShankStateMachineBase;
 class UDroneMovementComponent;
 class USphereComponent;
-class UShankCircleStateMachine;
+class UShankFollowPathStateMachine;
 
 UENUM()
 enum class EShankType : uint8
@@ -22,13 +26,14 @@ UENUM()
 enum class EShankState : uint8
 {
 	Sleep = 0 UMETA(DisplayName = "Sleep"),
-	Circle = 1 UMETA(DisplayName = "Circle"),
-	Evade = 2 UMETA(DisplayName = "Evade"),
-	Splash = 3 UMETA(DisplayName = "Splash"),
+	FindPath = 1 UMETA(DisplayName = "FindPath"),
+	FollowPath = 2 UMETA(DisplayName = "FollowPath"),
+	ReverseThrust = 3 UMETA(DisplayName = "ReverseThrust"),
+	Splash = 4 UMETA(DisplayName = "Splash"),
 };
 
 UCLASS()
-class NOM3_API AShankBase : public AActor
+class NOM3_API AShankBase : public AEnemyBase, public IOnAimByPlayerSight
 {
 	GENERATED_BODY()
 
@@ -49,12 +54,15 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDroneMovementComponent> DroneMoveComp;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UShankFindPathStateMachine> FindPathStateMachine;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UShankFollowPathStateMachine> CircleStateMachine;
 
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UShankCircleStateMachine> CircleStateMachine;
-
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<AActor> TargetPawn;
+	TObjectPtr<UShankReverseThrustStateMachine> ReverseThrustStateMachine;
 
 	UPROPERTY(VisibleAnywhere)
 	FVector TargetLocation;
@@ -68,22 +76,29 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	FTimerHandle DodgeTimerHandle;
 
+	//플레이어 시선 노출 인터페이스 구현
+	UFUNCTION(BlueprintCallable)
+	virtual void OnAimByPlayerSight() override;
+
+	//생크 스테이트 프로퍼티
+	__declspec(property(get=GetCurrentState, put=SetCurrentState)) EShankState SHANK_STATE;
+	FORCEINLINE EShankState GetCurrentState() const { return CurrentState; }
+	void SetCurrentState(const EShankState Value);
+	
+private:
 	UPROPERTY(VisibleAnywhere)
 	EShankState CurrentState;
+
+	UPROPERTY()
+	UShankStateMachineBase* CurrentStateMachine;
 
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY()
-	TObjectPtr<UDamageActorPoolGameInstanceSubsystem> DamageActorPool;
- 	
 	UFUNCTION(BlueprintCallable)
-	void OnAimByPlayerSight();
-
-	UFUNCTION(BlueprintCallable)
-	void OnShotByPlayer(FVector ShotDir, int Damage);
+	void OnShotByPlayer(FVector ShotDir, int Attack);
 
 	UFUNCTION(BlueprintCallable)
 	void OnShotDown(const FVector ShotDir);

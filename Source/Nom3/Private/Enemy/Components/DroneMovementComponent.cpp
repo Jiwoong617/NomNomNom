@@ -54,8 +54,12 @@ void UDroneMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 	//속도의 방향을 드로우
 	const FVector Location = GetOwner()->GetActorLocation();
+
+	
 	DrawDebugLine(GetWorld(), Location, Location + Velocity, FColor::Red, false, -1, 0, 0 );
 
+	//DrawDebugLine(GetWorld(), Location, Location + ThrustDir * 500, FColor::Green, false, -1, 0, 1 );
+	
 	//안전 이동 이동
 	FHitResult Hit;
 	SafeMoveUpdatedComponent(Delta, UpdatedComponent->GetComponentRotation(), true, Hit);
@@ -116,10 +120,24 @@ void UDroneMovementComponent::ThrottleHighToEvade()
 	ThrottleThrustByLevel(EvadeThrustLevel);
 }
 
+void UDroneMovementComponent::ReverseVectorThrust(const float Accel)
+{
+	if (Velocity.IsNearlyZero())
+	{
+		return;
+	}
+	
+	//추진 방향 반대
+	ThrustDir = -Velocity.GetSafeNormal();
+
+	//추진력 조절
+	ThrustForce = Accel * Mass;
+}
+
 void UDroneMovementComponent::VectorThrust(const FVector VectorDir)
 {
 	//추진 방향 구면 보간
-	ThrustDir = FVector::SlerpVectorToDirection(ThrustDir, VectorDir, ThrustVectoringLevel);
+	ThrustDir = VectorDir.GetSafeNormal();
 }
 
 void UDroneMovementComponent::Fall()

@@ -26,4 +26,10 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere)
 	bool bReadyToExecute;
+
+	UPROPERTY(VisibleAnywhere)
+	float ElapsedTimeInState;
+
+	UPROPERTY(VisibleAnywhere)
+	float LimitTimeInState;
 };
