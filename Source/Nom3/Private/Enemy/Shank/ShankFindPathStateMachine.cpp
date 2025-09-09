@@ -30,7 +30,7 @@ void UShankFindPathStateMachine::EnterState()
 	DecideTargetLocation();
 	
 	//제한 시간 초기화
-	LimitTimeInState = 5;
+	LimitTimeInState = FMath::RandRange(1, 2);
 }
 
 void UShankFindPathStateMachine::ExecuteState()

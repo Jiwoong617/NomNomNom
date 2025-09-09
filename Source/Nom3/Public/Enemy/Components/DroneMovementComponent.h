@@ -88,6 +88,9 @@ public:
 	void ThrottleHighToEvade();
 
 	UFUNCTION(BlueprintCallable)
+	void ThrottleOff();
+	
+	UFUNCTION(BlueprintCallable)
 	void ReverseVectorThrust(float Accel);
 	
 	UFUNCTION(BlueprintCallable)

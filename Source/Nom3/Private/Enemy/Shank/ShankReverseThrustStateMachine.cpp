@@ -37,15 +37,24 @@ void UShankReverseThrustStateMachine::ExecuteState()
 		return;
 	}
 
-	//역추진 가속도 연산 - LimitTimeInState가 지나면 속도가 0이 되는 가속도 공식
-	const float Accel = -2 * InitVelocity / LimitTimeInState + (1 - ElapsedTimeInState / LimitTimeInState);
+	//역추진 가속도 연산 - LimitTimeInState가 지나면 속도가 0이 되는 2가지 스타일의 가속도 공식
+	//0에서 LimitTimeInState까지의 적분 결과는 항상 -InitVelocity로 결국 속도는 0이 된다
+
+	//초반에 강한 역추진 - 최후에는 가속도 최소, 별도의 처리는 필요없음
+	const float OutAccel = -2 * InitVelocity / LimitTimeInState * (1 - ElapsedTimeInState / LimitTimeInState);
+
+	//후반에 강한 역추진 - 최후에는 가속도 최대, 별도의 처리가 필요함
+	const float InAccel = -2 * InitVelocity * ElapsedTimeInState / LimitTimeInState;
 
 	//결과로 얻은 가속도를 기반으로 역추진 적용
-	OwnerShank->DroneMoveComp->ReverseVectorThrust(FMath::Abs(Accel));
+	OwnerShank->DroneMoveComp->ReverseVectorThrust(FMath::Abs(InAccel));
 
 	//역추진 제한시간 초과
 	if (ElapsedTimeInState > LimitTimeInState)
 	{
+		//추진력를 0으로 초기화해줘야 오류가 발생하지 않는다
+		OwnerShank->DroneMoveComp->ThrottleOff();
+		
 		//상태 머신 전환
 		OwnerShank->SHANK_STATE = EShankState::FindPath;
 	}

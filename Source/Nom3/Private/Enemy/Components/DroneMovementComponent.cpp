@@ -2,6 +2,7 @@
 
 #include "Enemy/Components/DroneMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Nom3/Nom3.h"
 
 UDroneMovementComponent::UDroneMovementComponent() :
 	bSimulate(false),
@@ -54,7 +55,6 @@ void UDroneMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 	//속도의 방향을 드로우
 	const FVector Location = GetOwner()->GetActorLocation();
-
 	
 	DrawDebugLine(GetWorld(), Location, Location + Velocity, FColor::Red, false, -1, 0, 0 );
 
@@ -118,6 +118,12 @@ void UDroneMovementComponent::ThrottleHighToEvade()
 	
 	//추진력 급상승
 	ThrottleThrustByLevel(EvadeThrustLevel);
+}
+
+void UDroneMovementComponent::ThrottleOff()
+{
+	//추진력을 0으로 초기화
+	ThrustForce = 0;
 }
 
 void UDroneMovementComponent::ReverseVectorThrust(const float Accel)

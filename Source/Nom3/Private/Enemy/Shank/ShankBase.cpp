@@ -73,8 +73,6 @@ void AShankBase::Tick(float DeltaTime)
 	//유효한 상태 머신이 설정되어 있다면
 	if (CurrentStateMachine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString::Printf(TEXT("%s"), *CurrentStateMachine->GetName()));
-		
 		//현재 생크 상태 머신 실행
 		CurrentStateMachine->ExecuteState();	
 
