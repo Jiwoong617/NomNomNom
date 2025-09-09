@@ -1,11 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Nom3/Public/Map/AutoDoor.h"
-#include "Nom3/Public/Core/NomPlayer.h"
 #include "Components/BoxComponent.h"
-#include "GameFramework/Character.h"
+#include "Nom3/Public/Map/MovingObject.h"
 #include "TimerManager.h"
-#include "Kismet/KismetMathLibrary.h"
+
 
 AAutoDoor::AAutoDoor()
 {
@@ -46,21 +45,6 @@ void AAutoDoor::Tick(float DeltaTime)
 		return;
 	}
 
-<<<<<<< HEAD
-	// 시작위치라면 목표로
-	if (GetActorLocation().Equals(StartLocation, 1.0f))
-	{
-		MovementState = EMovementState::MovingToTarget;
-	}
-	// 목표라면 시작 위치로
-	else if (GetActorLocation().Equals(GlobalTargetLocation, 1.0f))
-	{
-		MovementState = EMovementState::MovingToStart;
-	}
-	
-}
-
-=======
 	//이동 및 방향 구현
 	FVector Direction = (Destination - GetActorLocation()).GetSafeNormal();
 	FVector Movement = Direction * ObjectSpeed * DeltaTime;
@@ -70,14 +54,14 @@ void AAutoDoor::Tick(float DeltaTime)
 
 void AAutoDoor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	 ACharacter* PlayerCharacter = Cast<ANomPlayer>(OtherActor); 
-	 if (PlayerCharacter != nullptr)
-	 {
-	 	// When the player enters, cancel any pending close timer and open the door.
-	 	GetWorld()->GetTimerManager().ClearTimer(CloseTimerHandle);
+	// ACharacter* PlayerCharacter = Cast<ACharacter>(OtherActor); 전과 동일 알아서 바꾸셈
+	// if (PlayerCharacter != nullptr)
+	// {
+	// 	// When the player enters, cancel any pending close timer and open the door.
+	// 	GetWorld()->GetTimerManager().ClearTimer(CloseTimerHandle);
 		bShouldBeOpen = true;
 		UE_LOG(LogTemp, Warning, TEXT("플레이가 문을 열었습니다."));
-	 }
+	// }
 }
 
 void AAutoDoor::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -96,4 +80,3 @@ void AAutoDoor::CloseDoor()
 	bShouldBeOpen = false;
 	UE_LOG(LogTemp, Warning, TEXT("시간이 다 되었으니 문을 닫습니다."));
 }
->>>>>>> parent of 3fb5483 ([MAP] moving 관련 코드 디버깅)

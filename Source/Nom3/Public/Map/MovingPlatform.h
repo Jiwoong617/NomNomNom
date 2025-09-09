@@ -22,10 +22,6 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-<<<<<<< HEAD
-	FTimerHandle MovementHandle;
-	float Movementdelay = 2.f;
-=======
 		
 	UPROPERTY(EditAnywhere, Category = "Moving Platform")
 	float WaitTime;
@@ -41,5 +37,4 @@ public:
 private:
 
 	
->>>>>>> parent of 3fb5483 ([MAP] moving 관련 코드 디버깅)
 };

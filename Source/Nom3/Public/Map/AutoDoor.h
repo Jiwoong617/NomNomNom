@@ -3,12 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-<<<<<<< HEAD
-#include "Map/MovingObject.h"
-#include "Nom3/Public/Interfaces/Interactable.h"
-=======
 #include "MovingObject.h"
->>>>>>> parent of 3fb5483 ([MAP] moving 관련 코드 디버깅)
 #include "AutoDoor.generated.h"
 
 UCLASS()
@@ -17,9 +12,6 @@ class NOM3_API AAutoDoor : public AMovingObject
 	GENERATED_BODY()
 
 public:
-<<<<<<< HEAD
-	virtual void Interact_Implementation(AActor* Interactor) override;
-=======
 	AAutoDoor();
 
 protected:
@@ -55,5 +47,4 @@ private:
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
 	void CloseDoor();
->>>>>>> parent of 3fb5483 ([MAP] moving 관련 코드 디버깅)
 };

@@ -18,49 +18,23 @@ void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
 
-<<<<<<< HEAD
-	
-	MovementState = EMovementState::MovingToTarget;
-=======
 	//목표 지점으로
 	bIsTriggered = true; 
     
 	//원래 속도 저장
 	OriginalSpeed = ObjectSpeed;
 	
->>>>>>> parent of 3fb5483 ([MAP] moving 관련 코드 디버깅)
 }
 
 // Called every frame
 void AMovingPlatform::Tick(float DeltaTime)
 {
-<<<<<<< HEAD
-	
-	Super::Tick(DeltaTime);
-
-	
-	if (MovementState == EMovementState::Idle)
-	{
-		
-		if (GetActorLocation().Equals(GlobalTargetLocation, 1.0f))
-		{
-			GetWorldTimerManager().SetTimer(MovementHandle,AMovingPlaform::Movementdelay,true);
-			MovementState = EMovementState::MovingToStart;
-		}
-		
-		else if (GetActorLocation().Equals(StartLocation, 1.0f))
-		{
-			GetWorldTimerManager().SetTimer(MovementHandle,AMovingPlaform::Movementdelay,true);
-			MovementState = EMovementState::MovingToTarget;
-		}
-=======
 	Super::Tick(DeltaTime);
 
 	//타이머 활성화 중일떈 정지 하도록
 	if (GetWorld()->GetTimerManager().IsTimerActive(MovementTimerHandle))
 	{
 		return;
->>>>>>> parent of 3fb5483 ([MAP] moving 관련 코드 디버깅)
 	}
 
 	// 현재 위치 목표지점 간의 거리

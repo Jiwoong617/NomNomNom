@@ -23,23 +23,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-<<<<<<< HEAD
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	class UStaticMeshComponent* ObjectMesh;
-
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Moving Object | Movement")
-	float MoveSpeed;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Moving Object | Movement", Meta = (MakeEditWidget = true))
-	FVector TargetLocation;
-
-	
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Moving Object | State") EMovementState MovementState;
-=======
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MovingObject")
 	class UStaticMeshComponent* ObjectMesh;
 
@@ -54,7 +37,6 @@ public:
 	//움직임 트리거
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovingObject")
 	bool bIsTriggered; 
->>>>>>> parent of 3fb5483 ([MAP] moving 관련 코드 디버깅)
 
 	//게임 시작 시의 월드 위치
 	FVector StartLocation;
