@@ -31,21 +31,21 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
-	// The visual representation of the moving object
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class UStaticMeshComponent* ObjectMesh;
 
-	// --- Movement Properties ---
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Moving Object | Movement")
 	float MoveSpeed;
 
-	// The target location in local space (relative to the object's start position)
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Moving Object | Movement", Meta = (MakeEditWidget = true))
 	FVector TargetLocation;
 
-	// --- State ---
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Moving Object | State")
-	EMovementState MovementState;
+	
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Moving Object | State") EMovementState MovementState;
 
 protected:
 	// The world-space start and target locations

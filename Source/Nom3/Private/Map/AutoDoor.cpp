@@ -19,4 +19,6 @@ void AAutoDoor::Interact_Implementation(AActor* Interactor)
 	{
 		MovementState = EMovementState::MovingToStart;
 	}
+	
 }
+

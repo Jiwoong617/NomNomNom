@@ -21,4 +21,7 @@ protected:
 public:
 	// 매 프레임 호출됩니다.
 	virtual void Tick(float DeltaTime) override;
+
+	FTimerHandle MovementHandle;
+	float Movementdelay = 2.f;
 };

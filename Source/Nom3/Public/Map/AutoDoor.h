@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Map/MovingObject.h"
-#include "Interfaces/Interactable.h" 
+#include "Nom3/Public/Interfaces/Interactable.h"
 #include "AutoDoor.generated.h"
 
 
@@ -12,6 +12,5 @@ class NOM3_API AAutoDoor : public AMovingObject, public IInteractable
 	GENERATED_BODY()
 
 public:
-	// 플레이어 상호작용 시 호출될 함수입니다.
 	virtual void Interact_Implementation(AActor* Interactor) override;
 };
