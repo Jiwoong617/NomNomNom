@@ -57,11 +57,13 @@ protected:
 	EActionState ActionState = EActionState::Idle;
 	EMovingState MovingState = EMovingState::Idle;
 	bool bIsAiming = false;
+	bool bIsHoldFire = false;
+	bool bIsHoldAim = false;
 	
 	//Basic Status
-	float MaxSpeed = 800.f;
+	float MaxSpeed = 600.f;
 	float JumpForce = 600.f;
-	float GravityMultiplier = 0.75f;
+	float GravityMultiplier = 0.85f;
 
 	//Movement params
 	float InteractDuration = 0.f;
@@ -78,6 +80,16 @@ protected:
 	UPROPERTY(EditAnywhere)
 	USceneComponent* WeaponListSceneComp;
 
+	UPROPERTY(EditAnywhere)
+	FVector TpsCamOffset = FVector(0.f, 0.f, 50.f);
+	UPROPERTY(EditAnywhere)
+	float TpsSpringArmLength = 300.f;
+	
+	UPROPERTY(EditAnywhere)
+	USpringArmComponent* TpsSpringArmComp;
+	UPROPERTY(EditAnywhere)
+	UCameraComponent* TpsCameraComp;
+	
 	//Components
 	UPROPERTY(EditAnywhere)
 	UWeaponComponent* WeaponComp;
@@ -126,6 +138,8 @@ protected:
 	FTimerHandle ReloadHandle;
 	FTimerHandle PutWeaponHandle;
 	FTimerHandle ChangeWeaponHandle;
+	FTimerHandle LeftHandHandle;
+	FTimerHandle SkillHandle;
 public:
 
 protected:
@@ -161,15 +175,21 @@ protected:
 	UFUNCTION()
 	void ReloadEnd();
 	UFUNCTION()
-	virtual void Melee();
+	virtual void Melee(); //lefthand
 	UFUNCTION()
-	virtual void Throw();
+	virtual void Throw(); //lefthand
+	UFUNCTION()
+	virtual void LeftHandEnd();
 	UFUNCTION()
 	virtual void Skill();
 	UFUNCTION()
+	virtual void SkillEnd();
+	UFUNCTION()
 	virtual void UltimateSkill();
+	UFUNCTION()
+	virtual void UltimateSkillEnd();
 
-
+	UFUNCTION()
 	void ChangeWeapon(const FInputActionValue& Value);
 	UFUNCTION()
 	void OnWeaponChanged(float Idx);
@@ -178,6 +198,11 @@ protected:
 	UFUNCTION() void OnFireCanceled();
 	UFUNCTION() void OnReloadCanceled();
 	UFUNCTION() void OnAimCanceled();
+
+	//Camera
+	UFUNCTION() void ChangeToFps();
+	UFUNCTION() void ChangeToTps();
+
 
 public:
 	USpringArmComponent* GetFpsCamArm();
