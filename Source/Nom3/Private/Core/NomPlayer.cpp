@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Nom3/Nom3.h"
+#include "Weapon/Grenade.h"
 #include "Weapon/WeaponBase.h"
 #include "Weapon/WeaponComponent.h"
 #include "Weapon/WeaponData.h"
@@ -425,6 +426,8 @@ void ANomPlayer::Throw()
 
 	ActionState = EActionState::LeftHand;
 	//TODO : 몽타쥬로 바꿀 것
+	GetWorld()->SpawnActor<AGrenade>(AGrenade::StaticClass(), GetFpsCam()->GetComponentLocation(), FRotator(0))
+		->Init(GetFpsCam()->GetForwardVector(), 1000);	
 	PRINTINFO();
 	GetWorldTimerManager().SetTimer(LeftHandHandle, [this]()
 	{
