@@ -1,13 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Nom3/Public/Interfaces/Interactable.h"
 #include "Nom3/Public/Map/Elevator.h"
-
+#include "Nom3/Public/Interfaces/Interactable.h"
 #include "EnhancedInputSubsystems.h"
 #include "ViewportInteractionTypes.h"
 #include "Components/BoxComponent.h"
 #include "Core/NomPlayer.h"
+#include "Nom3/Nom3.h"
 #include "Nom3/Public/Map/MovingObject.h"
+
 
 
 // Sets default values
@@ -77,6 +78,20 @@ void AElevator::OnInteract(AActor OtherActor)
 	}
 
 	
+}
+
+void AElevator::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex)
+{
+	auto player = Cast<ANomPlayer>(GetOwner());
+	if (player != nullptr)
+	{
+		// bIsTriggered 상태를 반전시켜 엘리베이터의 목표 위치를 변경합니다.
+		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동
+		bIsTriggered = !bIsTriggered;
+		//PRINTLOG(TEXT("플레어 감지 했습니다 현재 트리거는 %s 입니다"));
+		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었씁니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
+	}
 }
 
 

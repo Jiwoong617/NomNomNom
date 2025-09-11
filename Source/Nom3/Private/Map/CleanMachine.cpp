@@ -23,7 +23,11 @@ ACleanMachine::ACleanMachine()
 void ACleanMachine::OnInteract(AActor OtherActor)
 {
 	auto player = Cast<ANomPlayer>(GetOwner());
-	// 나중에 player hp 정의 player -> --MaxHP;
+	//player->InputComponent->BindAction<UEnhancedInputComponent>();
+	if (player)
+	{
+		// player-> bOncompoverlap = --MaxHp 
+	}
 }
 
 // Called when the game starts or when spawned
@@ -79,5 +83,8 @@ void ACleanMachine::TraceMove(float DeltaTime)
 	const FVector TargetLocation = TargetSpline->GetLocationAtDistanceAlongSpline(0 + 300.f, ESplineCoordinateSpace::World);
 	
 }
+
+
+
 
 // 스플라인 따라갈떄 해머 무게추 달기

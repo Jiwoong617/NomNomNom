@@ -4,6 +4,7 @@
 #include "Components/BoxComponent.h"
 #include "Nom3/Public/Map/MovingObject.h"
 #include "TimerManager.h"
+#include "Core/NomPlayer.h"
 
 
 AAutoDoor::AAutoDoor()
@@ -54,25 +55,25 @@ void AAutoDoor::Tick(float DeltaTime)
 
 void AAutoDoor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// ACharacter* PlayerCharacter = Cast<ACharacter>(OtherActor); 전과 동일 알아서 바꾸셈
-	// if (PlayerCharacter != nullptr)
-	// {
-	// 	// When the player enters, cancel any pending close timer and open the door.
-	// 	GetWorld()->GetTimerManager().ClearTimer(CloseTimerHandle);
+	ACharacter* PlayerCharacter = Cast<ANomPlayer>(OtherActor); 
+	 if (PlayerCharacter != nullptr)
+	 {
+	
+	 	GetWorld()->GetTimerManager().ClearTimer(CloseTimerHandle);
 		bShouldBeOpen = true;
-		UE_LOG(LogTemp, Warning, TEXT("플레이가 문을 열었습니다."));
-	// }
+		UE_LOG(LogTemp, Warning, TEXT("플레이어가 문을 열었습니다."));
+	 }
 }
 
 void AAutoDoor::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	// ACharacter* PlayerCharacter = Cast<ACharacter>(OtherActor); 위와 동일
-	// if (PlayerCharacter != nullptr)
-	// {
-	// 	// When the player leaves, start a timer to close the door.
-	// 	GetWorld()->GetTimerManager().SetTimer(CloseTimerHandle, this, &AAutoDoor::CloseDoor, CloseDelay, false);
-		UE_LOG(LogTemp, Warning, TEXT("플레이거 지나갔으니 문을 닫습니다."));
-	// }
+	 ACharacter* PlayerCharacter = Cast<ANomPlayer>(OtherActor); 
+	 if (PlayerCharacter != nullptr)
+	 {
+		// When the player leaves, start a timer to close the door.
+	 	GetWorld()->GetTimerManager().SetTimer(CloseTimerHandle, this, &AAutoDoor::CloseDoor, CloseDelay, false);
+		UE_LOG(LogTemp, Warning, TEXT("플레이어가 지나갔으니 문을 닫습니다."));
+	 }
 }
 
 void AAutoDoor::CloseDoor()

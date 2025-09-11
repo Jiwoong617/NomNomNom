@@ -57,7 +57,6 @@ public:
 	FTimerManager DelayTimer;
 	// 상호작용 함수
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
 	void TraceMove(float DeltaTime);
 private:
 	UPROPERTY()

@@ -42,7 +42,7 @@ void AMovingObject::Tick(float DeltaTime)
 	// 현재 위치와 목표 지점 사이의 거리
 	float DistanceToDestination = FVector::Dist(GetActorLocation(), Destination);
 
-	// 목표 지점에 거의 도달했다면 이동을 멈춥니다. (정확히 위치를 고정시켜 떨림 방지)
+	// 목표 지점에 거의 도달했다면 이동멈춤
 	if (DistanceToDestination < 1.0f)
 	{
 		SetActorLocation(Destination);
