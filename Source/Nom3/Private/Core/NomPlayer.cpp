@@ -9,6 +9,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Interfaces/Damagable.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Nom3/Nom3.h"
 #include "Weapon/Grenade.h"
 #include "Weapon/WeaponBase.h"
@@ -450,6 +452,30 @@ void ANomPlayer::Melee()
 		MovingState = EMovingState::Idle;
 
 	ActionState = EActionState::LeftHand;
+
+	
+	EObjectTypeQuery ObjType = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2);
+	TArray<AActor*> ActorsToIgnore;
+	TArray<FHitResult> OutHits;
+	FVector Offset = FpsCameraComp->GetForwardVector() * 60.f
+			   + FpsCameraComp->GetRightVector() * -15.f
+			   + FpsCameraComp->GetUpVector() * 40.f;
+
+	FVector Start = GetActorLocation() + Offset;
+	FVector End   = GetActorLocation() + Offset + FpsCameraComp->GetForwardVector() * 40.f;
+	if (UKismetSystemLibrary::BoxTraceMultiForObjects(GetWorld(), Start, End, FVector(32,32,50),
+		FpsCameraComp->GetComponentRotation(), TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType}, false, ActorsToIgnore, EDrawDebugTrace::ForDuration,OutHits,
+		true, FColor::Red, FColor::Green, 10))
+	{
+		for (FHitResult& hits : OutHits)
+		{
+			if (IDamagable* act = Cast<IDamagable>(hits.GetActor()))
+			{
+				act->OnDamaged(FistDamage);
+			}
+		}
+	}
+	
 	//TODO : 몽타쥬로 바꿀 것
 	PRINTINFO();
 	GetWorldTimerManager().SetTimer(LeftHandHandle, [this]()

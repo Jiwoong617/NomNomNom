@@ -64,6 +64,7 @@ protected:
 	float MaxSpeed = 600.f;
 	float JumpForce = 600.f;
 	float GravityMultiplier = 0.85f;
+	float FistDamage = 100.f;
 
 	//Movement params
 	float InteractDuration = 0.f;
