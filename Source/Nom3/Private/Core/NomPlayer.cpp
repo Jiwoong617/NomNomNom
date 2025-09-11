@@ -3,6 +3,8 @@
 #include "Core/NomPlayer.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InputAction.h"
+#include "InputMappingContext.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -83,6 +85,57 @@ ANomPlayer::ANomPlayer()
 
 	//Add Component
 	WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
+
+	//////////////////////////////Input/////////////////////////////////
+	{
+		ConstructorHelpers::FObjectFinder<UInputMappingContext> TempIMC(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Input/IMC_Player.IMC_Player'"));
+		if (TempIMC.Succeeded())
+			IMC_NomPlayer = TempIMC.Object;
+
+		// Input Actions (IA_*)
+		ConstructorHelpers::FObjectFinder<UInputAction> FndMove(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Move.IA_Move'"));
+		if (FndMove.Succeeded())
+			IA_Move = FndMove.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndJump(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Jump.IA_Jump'"));
+		if (FndJump.Succeeded())
+			IA_Jump = FndJump.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndLook(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Look.IA_Look'"));
+		if (FndLook.Succeeded())
+			IA_Look = FndLook.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndRun(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Run.IA_Run'"));
+		if (FndRun.Succeeded())
+			IA_Run = FndRun.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndCrouch(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Crouch.IA_Crouch'"));
+		if (FndCrouch.Succeeded())
+			IA_Crouch = FndCrouch.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndInteract(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Interact.IA_Interact'"));
+		if (FndInteract.Succeeded())
+			IA_Interact = FndInteract.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndFire(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Fire.IA_Fire'"));
+		if (FndFire.Succeeded())
+			IA_Fire = FndFire.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndAim(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Aim.IA_Aim'"));
+		if (FndAim.Succeeded())
+			IA_Aim = FndAim.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndReload(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Reload.IA_Reload'"));
+		if (FndReload.Succeeded())
+			IA_Reload = FndReload.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndMelee(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Melee.IA_Melee'"));
+		if (FndMelee.Succeeded())
+			IA_Melee = FndMelee.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndThrow(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Throw.IA_Throw'"));
+		if (FndThrow.Succeeded())
+			IA_Throw = FndThrow.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndSkill(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Skill.IA_Skill'"));
+		if (FndSkill.Succeeded())
+			IA_Skill = FndSkill.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndUltimate(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Ultimate.IA_Ultimate'"));
+		if (FndUltimate.Succeeded())
+			IA_Ultimate = FndUltimate.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndChangeWeapon(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_ChangeWeapon.IA_ChangeWeapon'"));
+		if (FndChangeWeapon.Succeeded())
+			IA_ChangeWeapon = FndChangeWeapon.Object;
+	}
 }
 
 void ANomPlayer::BeginPlay()
