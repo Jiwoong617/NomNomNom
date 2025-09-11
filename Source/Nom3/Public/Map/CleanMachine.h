@@ -28,14 +28,16 @@ public:
 	class UBoxComponent* HitPoint;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setting")
 	AActor* TargetSplineActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setting")
+	class USplineComponent* PathSpline;
 
 
 	// 이동 관련 함수
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Setting")
-	float speed = 5000.f;
-	float Maxspeed = 50000.f;
+	float speed = 500.f;
+	float Maxspeed = 5000.f;
 	float SuspensionForce = 5000.f;
-	float SuspensionHeight = 100.f;
+	float SuspensionHeight = 10.f;
 	float lookDistance = 1000.f;
 
 	//스플라인 맥터 지정용
@@ -58,6 +60,8 @@ public:
 	// 상호작용 함수
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	void TraceMove(float DeltaTime);
+	void FollwSpline(float DeltaTime);
+	float DistanceAlongSpline;
 private:
 	UPROPERTY()
 	class USplineComponent* TargetSpline;

@@ -19,6 +19,9 @@ AElevator::AElevator()
 	
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
 	TriggerBox->SetupAttachment(RootComponent);
+	TriggerBox->OnComponentBeginOverlap.AddDynamic(this,&AElevator::OnOverlap);
+	
+	
 
 	MinSpeed = 500.0f;
 	Acceleration = 10.0f;
@@ -64,34 +67,38 @@ void AElevator::Tick(float DeltaTime)
 	
 }
 
-void AElevator::OnInteract(AActor OtherActor)
-{
-	auto player = Cast<ANomPlayer>(GetOwner());
-	//player->InputComponent->BindAction<UEnhancedInputComponent>();
-	// 나중에 player hp 정의 player -> --MaxHP
-	 if (player != nullptr)
-	 {
-		// bIsTriggered 상태를 반전시켜 엘리베이터의 목표 위치를 변경합니다.
-		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동합니다.
-		bIsTriggered = !bIsTriggered;
-		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었씁니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
-	}
-
-	
-}
-
 void AElevator::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex)
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	auto player = Cast<ANomPlayer>(GetOwner());
-	if (player != nullptr)
+	ACharacter* PlayerCharacter = Cast<ANomPlayer>(OtherActor); 
+	if (PlayerCharacter != nullptr)
 	{
 		// bIsTriggered 상태를 반전시켜 엘리베이터의 목표 위치를 변경합니다.
 		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동
 		bIsTriggered = !bIsTriggered;
+		bIsTriggered = true;
 		//PRINTLOG(TEXT("플레어 감지 했습니다 현재 트리거는 %s 입니다"));
 		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었씁니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
+	
+		
+	
 	}
 }
+
+// 캐릭터상호작용 키 적용하면 
+// void AElevator::OnInteract(AActor OtherActor)
+// {
+// 	auto player = Cast<ANomPlayer>(GetOwner());
+// 	//player->InputComponent->BindAction<UEnhancedInputComponent>();
+// 	// 나중에 player hp 정의 player -> --MaxHP
+// 	 if (player != nullptr)
+// 	 {
+// 		// bIsTriggered 상태를 반전시켜 엘리베이터의 목표 위치를 변경합니다.
+// 		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동합니다.
+// 		bIsTriggered = !bIsTriggered;
+// 		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었씁니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
+// 	}
+// }
+
 
 
