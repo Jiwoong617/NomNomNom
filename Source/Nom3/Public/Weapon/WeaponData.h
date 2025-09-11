@@ -44,6 +44,8 @@ public:
 	bool IsAimable;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ADS_FOV;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AimDuration;
 
 	//반동 pitch-상하, yaw-좌우
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -54,4 +56,8 @@ public:
 	float RecoilYawMin;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float RecoilYawMax;
+
+	//비조준 시 탄 퍼짐
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BulletSpread;
 };

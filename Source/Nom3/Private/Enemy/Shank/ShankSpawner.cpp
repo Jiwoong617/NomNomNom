@@ -65,7 +65,7 @@ void AShankSpawner::LaunchShanks(const int32 Count)
 		const FVector SpawnLocation = LaunchDirection->GetComponentLocation();
 		const FRotator SpawnRotation = RandomDirection.Rotation();
 		const FTransform SpawnTransform(SpawnRotation, SpawnLocation);
-			
+		
 		//정찰 생크 스폰
 		if (const AShankBase* SpawnShank = GetWorld()->SpawnActor<AShankBase>(ScoutShankClass, SpawnTransform);
 			SpawnShank && SpawnShank->DroneMoveComp)

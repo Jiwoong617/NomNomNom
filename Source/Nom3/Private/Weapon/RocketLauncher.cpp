@@ -39,18 +39,3 @@ void ARocketLauncher::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-void ARocketLauncher::Fire()
-{
-	Super::Fire();
-}
-
-void ARocketLauncher::AimFire()
-{
-	Super::AimFire();
-}
-
-void ARocketLauncher::Reload()
-{
-	Super::Reload();
-}

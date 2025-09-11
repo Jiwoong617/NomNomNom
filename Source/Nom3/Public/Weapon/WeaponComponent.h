@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Components/TimelineComponent.h"
 #include "WeaponComponent.generated.h"
 
 
@@ -12,16 +11,6 @@ class ANomPlayer;
 class AWeaponBase;
 enum class EWeaponType : uint8;
 class UWeaponData;
-struct FTimeline;
-
-UENUM(BlueprintType)
-enum class EWeaponState : uint8
-{
-	Idle,
-	Fire,
-	Reload,
-	Changing
-};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class NOM3_API UWeaponComponent : public UActorComponent
@@ -60,18 +49,18 @@ private:
 	FName RightHandSocket = TEXT("RightHandSocket");
 	UPROPERTY(EditAnywhere)
 	FName AimSocket = TEXT("AimSocket");
-
-	//Shoot 관련
-	UPROPERTY(EditAnywhere)
-	EWeaponState WeaponState = EWeaponState::Idle;
-	FTimerHandle ReloadHandle;
-	FTimerHandle ChangeHandle;
-	float FireTime = 0;
-	bool bIsFiring = false;
-	bool bIsAim = false;
-
 	
-	//Aim
+
+	UPROPERTY(EditAnywhere)
+	float FireTime;
+	UPROPERTY(EditAnywhere)
+	bool bIsAiming = false;
+	UPROPERTY(EditAnywhere)
+	bool bIsFiring = false;
+	UPROPERTY(EditAnywhere)
+	bool bIsReloading = false;
+
+	//ADS
 	UPROPERTY(EditAnywhere)
 	float CameraFOV = 90.f;
 	UPROPERTY(EditAnywhere)
@@ -79,35 +68,31 @@ private:
 	UPROPERTY(EditAnywhere)
 	FVector AimCamLoc;
 	UPROPERTY(EditAnywhere)
-	FTimeline AimTimeline;
-	UPROPERTY(EditAnywhere)
-	UCurveFloat* AimCurve;
+	float AimTime;
+
+
+private:
+	UFUNCTION() void Init();
+
+	UFUNCTION() void Fire();
+	
+	UFUNCTION() void OnAiming();
 	
 public:
-	UFUNCTION()
-	void Init();
+	
+	UFUNCTION() void FireStart();
+	UFUNCTION() void FireEnd();
+	
+	UFUNCTION() void Reload();
+	
+	UFUNCTION() void AimStart();
+	UFUNCTION() void AimEnd();
+	
+	UFUNCTION() void ChangeWeapon(int32 idx);
+	UFUNCTION() void OnWeaponChanged(int32 idx);
 	
 	UFUNCTION()
-	void FireStart();
+	AWeaponBase* GetCurrentWeapon();
 	UFUNCTION()
-	void FireEnd();
-	UFUNCTION()
-	void Fire();
-	
-	UFUNCTION()
-	void ReloadStart();
-	UFUNCTION()
-	void ReloadEnd();
-	
-	UFUNCTION()
-	void AimStart();
-	UFUNCTION()
-	void AimEnd();
-	UFUNCTION()
-	void OnAiming(float Value);
-	
-	UFUNCTION()
-	void ChangeWeapon(int32 idx);
-	UFUNCTION()
-	void ResetToIdle();
+	int32 GetCurrentWeaponIdx();
 };

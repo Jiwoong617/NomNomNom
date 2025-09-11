@@ -14,6 +14,25 @@ class UInputMappingContext;
 class UInputAction;
 class USceneComponent;
 
+UENUM(BlueprintType)
+enum class EActionState : uint8
+{
+	Idle = 0		UMETA(DisplayName = "Idle"),
+	Reloading = 1	UMETA(DisplayName = "Reloading"),
+	ChangeWeapon = 2	UMETA(DisplayName = "ChangeWeapon"),
+	Firing = 3		UMETA(DisplayName = "WeaponSwap"),
+	LeftHand = 4	UMETA(DisplayName = "LeftHand"),
+	Skill = 5		UMETA(DisplayName = "Skill"),
+};
+
+UENUM(BlueprintType)
+enum class EMovingState : uint8
+{
+	Idle = 0		UMETA(DisplayName = "Idle"),
+	Running = 1		UMETA(DisplayName = "Running"),
+	Crouch = 2		UMETA(DisplayName = "Crouch"),
+};
+
 UCLASS()
 class NOM3_API ANomPlayer : public ACharacter
 {
@@ -26,7 +45,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual bool CanJumpInternal_Implementation() const override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -35,16 +54,18 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 protected:
+	EActionState ActionState = EActionState::Idle;
+	EMovingState MovingState = EMovingState::Idle;
+	bool bIsAiming = false;
+	bool bIsHoldFire = false;
+	bool bIsHoldAim = false;
+	
 	//Basic Status
-	float MaxSpeed = 800.f;
+	float MaxSpeed = 600.f;
 	float JumpForce = 600.f;
-	float GravityMultiplier = 0.75f;
+	float GravityMultiplier = 0.85f;
 
 	//Movement params
-	bool bIsFiring = false;
-	bool bIsRunning = false;
-	bool bIsCrouching = false;
-	bool bIsAiming = false;
 	float InteractDuration = 0.f;
 	
 	//Fps Mesh
@@ -59,6 +80,16 @@ protected:
 	UPROPERTY(EditAnywhere)
 	USceneComponent* WeaponListSceneComp;
 
+	UPROPERTY(EditAnywhere)
+	FVector TpsCamOffset = FVector(0.f, 0.f, 50.f);
+	UPROPERTY(EditAnywhere)
+	float TpsSpringArmLength = 300.f;
+	
+	UPROPERTY(EditAnywhere)
+	USpringArmComponent* TpsSpringArmComp;
+	UPROPERTY(EditAnywhere)
+	UCameraComponent* TpsCameraComp;
+	
 	//Components
 	UPROPERTY(EditAnywhere)
 	UWeaponComponent* WeaponComp;
@@ -102,12 +133,13 @@ protected:
 	
 	//Weapon Swap
 	UPROPERTY(EditAnywhere)
-	UInputAction* IA_Weapon1;
-	UPROPERTY(EditAnywhere)
-	UInputAction* IA_Weapon2;
-	UPROPERTY(EditAnywhere)
-	UInputAction* IA_Weapon3;
+	UInputAction* IA_ChangeWeapon;
 
+	FTimerHandle ReloadHandle;
+	FTimerHandle PutWeaponHandle;
+	FTimerHandle ChangeWeaponHandle;
+	FTimerHandle LeftHandHandle;
+	FTimerHandle SkillHandle;
 public:
 
 protected:
@@ -128,8 +160,6 @@ protected:
 	virtual void LookFunc(float Yaw, float Pitch);
 	UFUNCTION()
 	virtual void MoveFunc(float Right, float Forward);
-	UFUNCTION()
-	void CrouchOrSlide();
 
 	//interaction
 	UFUNCTION()
@@ -141,22 +171,38 @@ protected:
 	UFUNCTION()
 	void Aim(const FInputActionValue& Value);
 	UFUNCTION()
-	void Reload();
+	void ReloadStart();
 	UFUNCTION()
-	virtual void Melee();
+	void ReloadEnd();
 	UFUNCTION()
-	virtual void Throw();
+	virtual void Melee(); //lefthand
+	UFUNCTION()
+	virtual void Throw(); //lefthand
+	UFUNCTION()
+	virtual void LeftHandEnd();
 	UFUNCTION()
 	virtual void Skill();
 	UFUNCTION()
+	virtual void SkillEnd();
+	UFUNCTION()
 	virtual void UltimateSkill();
+	UFUNCTION()
+	virtual void UltimateSkillEnd();
 
 	UFUNCTION()
-	void ChangeWeapon1();
+	void ChangeWeapon(const FInputActionValue& Value);
 	UFUNCTION()
-	void ChangeWeapon2();
-	UFUNCTION()
-	void ChangeWeapon3();
+	void OnWeaponChanged(float Idx);
+
+	//OnCancled - Weapon
+	UFUNCTION() void OnFireCanceled();
+	UFUNCTION() void OnReloadCanceled();
+	UFUNCTION() void OnAimCanceled();
+
+	//Camera
+	UFUNCTION() void ChangeToFps();
+	UFUNCTION() void ChangeToTps();
+
 
 public:
 	USpringArmComponent* GetFpsCamArm();

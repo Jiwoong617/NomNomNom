@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "WeaponData.h"
 #include "GameFramework/Actor.h"
 #include "WeaponBase.generated.h"
 
@@ -26,17 +25,17 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
 protected:
 	UPROPERTY(EditAnywhere)
 	const UWeaponData* WeaponData;
 	
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* WeaponMeshComp;
-
+	
 	UPROPERTY(VisibleAnywhere)
 	ANomPlayer* WeaponOwner;
-
+	
 	UPROPERTY(EditAnywhere)
 	FName FireSocketName = TEXT("FireSocket");
 
@@ -46,8 +45,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FRotator TargetRecoil; //목표 반동
 	UPROPERTY(EditAnywhere)
-	FRotator LastAppliedRecoil;   // 직전 프레임에 적용한 반동
-
+	FRotator LastAppliedRecoil; // 직전 프레임에 적용한 반동
+	
 public:
 	UPROPERTY(EditAnywhere)
 	int32 CurrentAmmo;
@@ -55,17 +54,18 @@ public:
 	int32 MaxAmmo;
 
 protected:
-	UFUNCTION()
-	void ApplyRecoil();
-
-	float EaseElasticOut(float t);
+	UFUNCTION() void ApplyRecoil();
+	UFUNCTION() void ApplyingRecoil();
 	
 public:
-	virtual void Fire();
-	virtual void AimFire();
-	virtual void Reload();
+	UFUNCTION() virtual void AimFire();
+	UFUNCTION() virtual void NoAimFire();
+	
+	UFUNCTION() virtual void Reload();
 
 	void SetOwner(ANomPlayer* NewOwner);
 	const UWeaponData* GetData() const;
 	FTransform GetSocketTransform(FName& SocketName);
+	bool CanFire();
+	bool CanReload();
 };
