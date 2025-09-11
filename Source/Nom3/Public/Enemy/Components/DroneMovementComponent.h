@@ -82,10 +82,16 @@ public:
 	void ThrottleThrustByLevel(float Level);
 
 	UFUNCTION(BlueprintCallable)
-	void ThrottleToCruiseThrust();
+	void ThrottleToCruise();
 
 	UFUNCTION(BlueprintCallable)
-	void ThrottleHighToEvade();
+	void ThrottleToHighManeuver(float Level);
+
+	UFUNCTION(BlueprintCallable)
+	void ThrottleOff();
+	
+	UFUNCTION(BlueprintCallable)
+	void ReverseVectorThrust(float Accel);
 	
 	UFUNCTION(BlueprintCallable)
 	void VectorThrust(FVector VectorDir);

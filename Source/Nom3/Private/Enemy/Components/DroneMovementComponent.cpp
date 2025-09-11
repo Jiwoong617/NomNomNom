@@ -2,20 +2,21 @@
 
 #include "Enemy/Components/DroneMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Nom3/Nom3.h"
 
 UDroneMovementComponent::UDroneMovementComponent() :
 	bSimulate(false),
 	GravityForce(0),
 	GravityDir(FVector::DownVector),
-	CruiseThrustForce(500),
-	EvadeThrustLevel(40),
-	ThrustForce(500),
+	CruiseThrustForce(2500),
+	EvadeThrustLevel(30),
+	ThrustForce(0),
 	ThrustDir(FVector::ZeroVector),
 	ThrustVectoringLevel(0.75),
-	LaunchSpeed(0),
+	LaunchSpeed(1000),
 	SplashSpeed(500),
-	Bounciness(0.5),
-	DragCoefficient(5),
+	Bounciness(0.25),
+	DragCoefficient(4.0),
 	Mass(10)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -54,8 +55,11 @@ void UDroneMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 	//속도의 방향을 드로우
 	const FVector Location = GetOwner()->GetActorLocation();
+	
 	DrawDebugLine(GetWorld(), Location, Location + Velocity, FColor::Red, false, -1, 0, 0 );
 
+	//DrawDebugLine(GetWorld(), Location, Location + ThrustDir * 500, FColor::Green, false, -1, 0, 1 );
+	
 	//안전 이동 이동
 	FHitResult Hit;
 	SafeMoveUpdatedComponent(Delta, UpdatedComponent->GetComponentRotation(), true, Hit);
@@ -101,25 +105,45 @@ void UDroneMovementComponent::ThrottleThrustByLevel(const float Level)
 	ThrustForce = CruiseThrustForce * Level;
 }
 
-void UDroneMovementComponent::ThrottleToCruiseThrust()
+void UDroneMovementComponent::ThrottleToCruise()
 {
 	//순항 추진력을 향해 점진적 보간
 	ThrustForce = FMath::Lerp(ThrustForce, CruiseThrustForce, 0.1);
 }
 
-void UDroneMovementComponent::ThrottleHighToEvade()
+void UDroneMovementComponent::ThrottleToHighManeuver(const float Level)
 {
 	//기존 속도 급감
-	Velocity = FMath::Lerp(Velocity, FVector::ZeroVector, 0.5);
+	Velocity = FMath::Lerp(Velocity, FVector::ZeroVector, 0.8);
 	
 	//추진력 급상승
-	ThrottleThrustByLevel(EvadeThrustLevel);
+	ThrottleThrustByLevel(Level);
+}
+
+void UDroneMovementComponent::ThrottleOff()
+{
+	//추진력을 0으로 초기화
+	ThrustForce = 0;
+}
+
+void UDroneMovementComponent::ReverseVectorThrust(const float Accel)
+{
+	if (Velocity.IsNearlyZero())
+	{
+		return;
+	}
+	
+	//추진 방향 반대
+	ThrustDir = -Velocity.GetSafeNormal();
+
+	//추진력 조절
+	ThrustForce = Accel * Mass;
 }
 
 void UDroneMovementComponent::VectorThrust(const FVector VectorDir)
 {
 	//추진 방향 구면 보간
-	ThrustDir = FVector::SlerpVectorToDirection(ThrustDir, VectorDir, ThrustVectoringLevel);
+	ThrustDir = VectorDir.GetSafeNormal();
 }
 
 void UDroneMovementComponent::Fall()
