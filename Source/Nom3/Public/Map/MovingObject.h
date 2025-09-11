@@ -44,5 +44,5 @@ public:
 	FVector GlobalTargetLocation;
 
 private:
-	
+
 };

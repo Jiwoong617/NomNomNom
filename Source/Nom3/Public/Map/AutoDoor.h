@@ -25,7 +25,7 @@ public:
 
 	//문이 닫히기까지의 시간
 	UPROPERTY(EditAnywhere, Category = "Door")
-	float CloseDelay = 3.0f;
+	float CloseDelay = 5.0f;
 	
 	//최대 속도까지 도달하는 가속도
 	UPROPERTY(EditAnywhere, Category = "Door")

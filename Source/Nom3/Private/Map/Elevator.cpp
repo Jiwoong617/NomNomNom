@@ -1,9 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include  "Nom3/Public/Map/Elevator.h"
+#include "Nom3/Public/Map/Elevator.h"
+#include "Nom3/Public/Interfaces/Interactable.h"
+#include "EnhancedInputSubsystems.h"
+#include "ViewportInteractionTypes.h"
 #include "Components/BoxComponent.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "GameFramework/Character.h" // 플레이어 캐릭터 확인을 위해 추가
+#include "Core/NomPlayer.h"
+#include "Nom3/Nom3.h"
+#include "Nom3/Public/Map/MovingObject.h"
+
+
 
 // Sets default values
 AElevator::AElevator()
@@ -13,10 +19,10 @@ AElevator::AElevator()
 	
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
 	TriggerBox->SetupAttachment(RootComponent);
-
-	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AElevator::OnOverlapBegin);
-	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AElevator::OnOverlapEnd);
+	TriggerBox->OnComponentBeginOverlap.AddDynamic(this,&AElevator::OnOverlap);
 	
+	
+
 	MinSpeed = 500.0f;
 	Acceleration = 10.0f;
 	// 이거 처음에 안움직이게 할려고 한거임 재민아 까먹지 말아라
@@ -60,20 +66,39 @@ void AElevator::Tick(float DeltaTime)
 	SetActorLocation(GetActorLocation() + Movement);
 	
 }
-void AElevator::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+
+void AElevator::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// ACharacter* PlayerCharacter = Cast<ACharacter>(OtherActor);
-	// if (PlayerCharacter != nullptr)
-	// {
+	ACharacter* PlayerCharacter = Cast<ANomPlayer>(OtherActor); 
+	if (PlayerCharacter != nullptr)
+	{
 		// bIsTriggered 상태를 반전시켜 엘리베이터의 목표 위치를 변경합니다.
-		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동합니다.
+		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동
 		bIsTriggered = !bIsTriggered;
+		bIsTriggered = true;
+		//PRINTLOG(TEXT("플레어 감지 했습니다 현재 트리거는 %s 입니다"));
 		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었씁니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
-	// }
+	
+		
+	
+	}
 }
 
-void AElevator::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex)
-{
-	return;
-}
+// 캐릭터상호작용 키 적용하면 
+// void AElevator::OnInteract(AActor OtherActor)
+// {
+// 	auto player = Cast<ANomPlayer>(GetOwner());
+// 	//player->InputComponent->BindAction<UEnhancedInputComponent>();
+// 	// 나중에 player hp 정의 player -> --MaxHP
+// 	 if (player != nullptr)
+// 	 {
+// 		// bIsTriggered 상태를 반전시켜 엘리베이터의 목표 위치를 변경합니다.
+// 		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동합니다.
+// 		bIsTriggered = !bIsTriggered;
+// 		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었씁니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
+// 	}
+// }
+
+
+

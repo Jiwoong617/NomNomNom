@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MovingObject.h" // 부모 클래스
+#include "MovingObject.h"
 #include "Elevator.generated.h"
 
 UCLASS()
@@ -12,6 +12,7 @@ class NOM3_API AElevator : public AMovingObject
 	GENERATED_BODY()
 
 public:
+	void OnInteract(TObjectPtr<class UInputComponent> Object);
 	AElevator();
 
 protected:
@@ -19,6 +20,7 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+	void OnInteract(AActor OtherActor);
 
 	// 플레이어 감지를 위한 트리거 볼륨
 	UPROPERTY(VisibleAnywhere, Category = "Elevator")
@@ -35,14 +37,12 @@ public:
 	// 원래 설정된 최대 속도를 저장할 변수
 	float MaxSpeed;
 
-	// 플레이어가 올라탔을 때 호출될 함수
-	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	// 플레이어가 내렸을 때 호출될 함수
-	UFUNCTION()
-	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-
-
+	// // 플레이어가 올라탔을 때 호출될 함수
+	// UFUNCTION()
+	// void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	//
+	// // 플레이어가 내렸을 때 호출될 함수
+	 UFUNCTION()
+	 void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
 };
