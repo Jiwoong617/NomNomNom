@@ -29,14 +29,24 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	UProjectileMovementComponent* Projectile;
+	bool IsHit = false;
+
+	float ExplodeRadius = 500.f;
+	float MinDamage = 100.f;
+	float MaxDamage = 1000.f;
+	
+	//UPROPERTY(EditAnywhere)
+	//UProjectileMovementComponent* Projectile;
 	UPROPERTY(EditAnywhere)
 	USphereComponent* CollisionComponent;
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;
 
+	FTimerHandle TimerHandle;
+	
 private:
 	UFUNCTION() void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	UFUNCTION() void OnExplode();
 public:
 	UFUNCTION() void Init(FVector Direction, float Speed);
 };

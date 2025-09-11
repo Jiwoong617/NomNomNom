@@ -4,7 +4,9 @@
 #include "Weapon/Grenade.h"
 
 #include "Components/SphereComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
+#include "Interfaces/Damagable.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Nom3/Nom3.h"
 
 
 // Sets default values
@@ -15,23 +17,25 @@ AGrenade::AGrenade()
 
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
 	SetRootComponent(CollisionComponent);
-	CollisionComponent->SetSphereRadius(50.f);
+	CollisionComponent->SetSphereRadius(20.f);
+	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Block);
+	CollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	CollisionComponent->SetSimulatePhysics(true);
+	CollisionComponent->SetNotifyRigidBodyCollision(true);
+	CollisionComponent->SetLinearDamping(0.01f);
 	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	ConstructorHelpers::FObjectFinder<UStaticMesh> TempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
+	Mesh->SetupAttachment(CollisionComponent);
+	
+	ConstructorHelpers::FObjectFinder<UStaticMesh> TempMesh(TEXT("/Script/Engine.StaticMesh'/Game/Asset/Grenade/GrenadeMesh.GrenadeMesh'"));
 	if (TempMesh.Succeeded())
 	{
 		Mesh->SetStaticMesh(TempMesh.Object);
+		Mesh->SetRelativeScale3D(FVector(50));
+		Mesh->SetRelativeLocation(FVector(0, -7, 0));
+		Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
-	Mesh->SetupAttachment(CollisionComponent);
-	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	Projectile = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
-	Projectile->bRotationFollowsVelocity = true;
-	Projectile->bShouldBounce = true;
-	Projectile->Bounciness = 0.3f;
-	Projectile->Friction = 0.5f;
 }
 
 // Called when the game starts or when spawned
@@ -51,10 +55,48 @@ void AGrenade::Tick(float DeltaTime)
 void AGrenade::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (IsHit) return;
+	CollisionComponent->SetLinearDamping(2.f);
+	
+	if (IDamagable* enemy = Cast<IDamagable>(OtherActor))
+	{
+		OnExplode();
+		return;
+	}
+
+	GetWorldTimerManager().SetTimer(TimerHandle,this, &AGrenade::OnExplode, 2.f, false);
+	
+	IsHit = true;
+}
+
+void AGrenade::OnExplode()
+{
+	EObjectTypeQuery ObjType = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2);
+	TArray<AActor*> OutActors;
+	TArray<AActor*> ActorsToIgnore;
+	
+	if (UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), ExplodeRadius,
+		TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType}, nullptr, ActorsToIgnore, OutActors))
+	{
+		for (AActor* actor : OutActors)
+		{
+			if (IDamagable* act = Cast<IDamagable>(actor))
+			{
+				float Damage = FVector::Dist(GetActorLocation(), actor->GetActorLocation()) / ExplodeRadius;
+				act->OnDamaged(FMath::Lerp(MaxDamage, MinDamage, Damage));
+			}
+		}
+	}
+
+	
+	//TODO : 이펙트 넣기
+	DrawDebugSphere(GetWorld(), GetActorLocation(), ExplodeRadius, 12, FColor::Red, false, 2.f, 0, 10);
+	
+	PRINTINFO();
+	Destroy();
 }
 
 void AGrenade::Init(FVector Direction, float Speed)
 {
-	Projectile->MaxSpeed = Speed;
-	Projectile->Velocity = Direction * Speed;
+	CollisionComponent->AddImpulse(Direction * Speed * CollisionComponent->GetMass());
 }
