@@ -23,7 +23,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Fire() override;
+	virtual void NoAimFire() override;
 	virtual void AimFire() override;
-	virtual void Reload() override;
 };

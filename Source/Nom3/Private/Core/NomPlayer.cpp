@@ -1,10 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Core/NomPlayer.h"
-
-#include <rapidjson/document.h>
-
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
@@ -12,9 +8,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Nom3/Nom3.h"
+#include "Weapon/Grenade.h"
+#include "Weapon/WeaponBase.h"
 #include "Weapon/WeaponComponent.h"
+#include "Weapon/WeaponData.h"
 
-// Sets default values
 ANomPlayer::ANomPlayer()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -49,7 +47,8 @@ ANomPlayer::ANomPlayer()
 	//FPS Cam Settings
 	FpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("FPS Spring Arm");
 	FpsSpringArmComp->SetupAttachment(RootComponent);
-	FpsSpringArmComp->SetRelativeLocation(FVector(320.000000,0.000000,80.000000));
+	FpsSpringArmComp->TargetArmLength = 0;
+	FpsSpringArmComp->SetRelativeLocation(FVector(20,0,80));
 	FpsCameraComp = CreateDefaultSubobject<UCameraComponent>("FPS Cam");
 	FpsCameraComp->SetupAttachment(FpsSpringArmComp);
 	FpsCameraComp->bUsePawnControlRotation = true;
@@ -58,13 +57,24 @@ ANomPlayer::ANomPlayer()
 	FpsCameraComp->FirstPersonFieldOfView = 70.0f;
 	FpsCameraComp->FirstPersonScale = 0.6f;
 
+	//TPS Cam Settings
+	TpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("TPS Spring Arm");
+	TpsSpringArmComp->SetupAttachment(RootComponent);
+	TpsSpringArmComp->bUsePawnControlRotation = true;
+	TpsSpringArmComp->SetRelativeLocation(FVector(0, 0, 50));
+	TpsCameraComp = CreateDefaultSubobject<UCameraComponent>("TPS Cam");
+	TpsCameraComp->SetupAttachment(TpsSpringArmComp);
+	TpsCameraComp->bUsePawnControlRotation = false;
+	TpsCameraComp->SetActive(false);
+	
+
 	//FPS WeaponList
 	WeaponListSceneComp = CreateDefaultSubobject<USceneComponent>("WeaponList");
 	WeaponListSceneComp->SetupAttachment(RootComponent);
 	
 
 	//Basic Init
-	JumpMaxCount = 2;
+	JumpMaxCount = 3;
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
 	GetCharacterMovement()->JumpZVelocity = JumpForce;
@@ -75,7 +85,6 @@ ANomPlayer::ANomPlayer()
 	WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
 }
 
-// Called when the game starts or when spawned
 void ANomPlayer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -92,14 +101,20 @@ void ANomPlayer::BeginPlay()
 
 }
 
-// Called every frame
+bool ANomPlayer::CanJumpInternal_Implementation() const
+{
+	return Super::CanJumpInternal_Implementation() || bIsCrouched;
+}
+
 void ANomPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//PRINTLOG(TEXT("ACTION STATE : %s"), *UEnum::GetValueAsString(ActionState));
+	GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Cyan,
+		FString::Printf(TEXT("%s / %s"), *UEnum::GetValueAsString(MovingState), *UEnum::GetValueAsString(ActionState)), false);
 }
 
-// Called to bind functionality to input
 void ANomPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -120,16 +135,14 @@ void ANomPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		EnhancedInputComponent->BindAction(IA_Aim, ETriggerEvent::Started, this, &ANomPlayer::Aim);
 		EnhancedInputComponent->BindAction(IA_Aim, ETriggerEvent::Completed, this, &ANomPlayer::Aim);
 		
-		EnhancedInputComponent->BindAction(IA_Reload, ETriggerEvent::Started, this, &ANomPlayer::Reload);
+		EnhancedInputComponent->BindAction(IA_Reload, ETriggerEvent::Started, this, &ANomPlayer::ReloadStart);
 		
 		EnhancedInputComponent->BindAction(IA_Melee, ETriggerEvent::Started, this, &ANomPlayer::Melee);
 		EnhancedInputComponent->BindAction(IA_Throw, ETriggerEvent::Started, this, &ANomPlayer::Throw);
 		EnhancedInputComponent->BindAction(IA_Skill, ETriggerEvent::Started, this, &ANomPlayer::Skill);
 		EnhancedInputComponent->BindAction(IA_Ultimate, ETriggerEvent::Started, this, &ANomPlayer::UltimateSkill);
 
-		EnhancedInputComponent->BindAction(IA_Weapon1, ETriggerEvent::Started, this, &ANomPlayer::ChangeWeapon1);
-		EnhancedInputComponent->BindAction(IA_Weapon2, ETriggerEvent::Started, this, &ANomPlayer::ChangeWeapon2);
-		EnhancedInputComponent->BindAction(IA_Weapon3, ETriggerEvent::Started, this, &ANomPlayer::ChangeWeapon3);
+		EnhancedInputComponent->BindAction(IA_ChangeWeapon, ETriggerEvent::Started, this, &ANomPlayer::ChangeWeapon);
 	}
 }
 
@@ -138,7 +151,7 @@ void ANomPlayer::MoveInput(const FInputActionValue& Value)
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	if (MovementVector == FVector2D::ZeroVector)
 	{
-		bIsRunning = false;
+		MovingState = EMovingState::Idle;
 	}
 	
 	MoveFunc(MovementVector.X, MovementVector.Y);
@@ -152,44 +165,59 @@ void ANomPlayer::LookInput(const FInputActionValue& Value)
 
 void ANomPlayer::JumpInput()
 {
-	if (bIsCrouching)
+	if (ActionState == EActionState::Skill)
+		return;
+	
+	if (MovingState == EMovingState::Crouch)
 	{
-		bIsCrouching = false;
 		UnCrouch();
 	}
+	
 	Jump();
+	MovingState = (MovingState == EMovingState::Running ? EMovingState::Running : EMovingState::Idle);
 }
 
 void ANomPlayer::RunToggle()
 {
-	if (bIsFiring)
+	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
+		return;
+	if (ActionState == EActionState::Firing)
 	{
-		WeaponComp->FireEnd();
-		bIsFiring = false;
+		OnFireCanceled();
 	}
 	if (bIsAiming)
 	{
-		WeaponComp->AimEnd();
-		bIsAiming = false;
+		OnAimCanceled();
 	}
-	if (bIsCrouching)
+	if (ActionState == EActionState::Reloading)
 	{
-		UnCrouch();
-		bIsCrouching = false;
+		OnReloadCanceled();
 	}
 	
-	bIsRunning = !bIsRunning;
+	if (MovingState == EMovingState::Crouch)
+		UnCrouch();
+
+	ActionState = EActionState::Idle;
+	MovingState = MovingState == EMovingState::Running ? EMovingState::Idle : EMovingState::Running;
+	PRINTINFO();
 }
 
 void ANomPlayer::CrouchToggle()
 {
-	if (GetMovementComponent()->IsFalling())
+	if (GetMovementComponent()->IsFalling() || ActionState == EActionState::Skill)
 	{
 		return;
 	}
 	
-	CrouchOrSlide();
-	bIsCrouching = !bIsCrouching;
+	if (MovingState == EMovingState::Running)
+		MovingState = EMovingState::Idle;
+	
+	if (MovingState == EMovingState::Crouch)
+		UnCrouch();
+	else
+		Crouch();
+	
+	MovingState = (MovingState == EMovingState::Crouch ? EMovingState::Idle : EMovingState::Crouch);
 }
 
 void ANomPlayer::LookFunc(float Yaw, float Pitch)
@@ -206,26 +234,17 @@ void ANomPlayer::MoveFunc(float Right, float Forward)
 {
 	if (GetController())
 	{
-		GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? MaxSpeed/2 : (bIsRunning ? MaxSpeed * 2 : MaxSpeed);
+		if (bIsAiming)
+			GetCharacterMovement()->MaxWalkSpeed = MaxSpeed * 0.85;
+		else if (MovingState == EMovingState::Running)
+			GetCharacterMovement()->MaxWalkSpeed = MaxSpeed * 2;
+		else
+			GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
 		
 		// pass the move inputs
 		AddMovementInput(GetActorRightVector(), Right);
 		AddMovementInput(GetActorForwardVector(), Forward);
 	}
-}
-
-void ANomPlayer::CrouchOrSlide()
-{
-	if (bIsRunning)
-	{
-		//슬라이드 없애기로 했음
-		bIsRunning =false;
-	}
-	
-	if (bIsCrouching)
-		UnCrouch();
-	else
-		Crouch();
 }
 
 void ANomPlayer::InteractHold(const FInputActionValue& Value)
@@ -249,88 +268,382 @@ void ANomPlayer::InteractHold(const FInputActionValue& Value)
 
 void ANomPlayer::Fire(const FInputActionValue& Value)
 {
-	bool isFireing = Value.Get<bool>();
-	
-	if (isFireing)
+	if (Value.Get<bool>())
 	{
-		bIsRunning = false;
-		
+		if (WeaponComp->GetCurrentWeapon()->CanFire() == false)
+		{
+			if (WeaponComp->GetCurrentWeapon()->CanReload())
+				ReloadStart();
+			else
+				return;
+		}
+
+		if (ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand
+			|| ActionState == EActionState::Skill || ActionState == EActionState::Reloading)
+			return;
+	
+		if (MovingState == EMovingState::Running)
+			MovingState = EMovingState::Idle;
+
 		WeaponComp->FireStart();
-		bIsFiring = true;
+		ActionState = EActionState::Firing;
+		bIsHoldFire = true;
 	}
 	else
 	{
 		WeaponComp->FireEnd();
-		bIsFiring = false;
+		ActionState = (ActionState == EActionState::Firing ? EActionState::Idle : ActionState);
+		bIsHoldFire = false;
 	}
 }
 
 void ANomPlayer::Aim(const FInputActionValue& Value)
 {
-	bool isAiming = Value.Get<bool>();
-	if (isAiming)
+	if (Value.Get<bool>())
 	{
-		if (bIsRunning) bIsRunning = false;
+		if (WeaponComp->GetCurrentWeapon()->GetData()->IsAimable == false)
+		{
+			bIsHoldAim = false;
+			return;
+		}
+		
+		if (ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand
+			|| ActionState == EActionState::Skill || ActionState == EActionState::Reloading)
+			return;
+
+		if (MovingState == EMovingState::Running)
+			MovingState = EMovingState::Idle;
 		
 		bIsAiming = true;
 		WeaponComp->AimStart();
+		bIsHoldAim = true;
 	}
 	else
 	{
 		bIsAiming = false;
 		WeaponComp->AimEnd();
+		bIsHoldAim = false;
 	}
 }
 
-void ANomPlayer::Reload()
+void ANomPlayer::ReloadStart()
 {
-	bIsRunning = false;
+	if (WeaponComp->GetCurrentWeapon()->CanReload() == false)
+		return;
+	
+	if (ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand
+		|| ActionState == EActionState::Skill || ActionState == EActionState::Reloading)
+		return;
+	
+	if (MovingState == EMovingState::Running)
+		MovingState = EMovingState::Idle;
+	if (ActionState == EActionState::Firing)
+	{
+		OnFireCanceled();
+	}
 	if (bIsAiming)
 	{
-		bIsAiming = false;
-		WeaponComp->AimEnd();
+		OnAimCanceled();
 	}
-	if (bIsFiring)
+
+
+	ActionState = EActionState::Reloading;
+	
+	//TODO : 시간이 지나면 리로딩 성공 이벤트 설정 (몽타쥬)- 현재는 타임라인으로
+	GetWorldTimerManager().SetTimer(ReloadHandle, [this]()
 	{
-		bIsFiring = false;
-		WeaponComp->FireEnd();
+		ReloadEnd();
+	}, WeaponComp->GetCurrentWeapon()->GetData()->ReloadDuration, false);
+}
+
+void ANomPlayer::ReloadEnd()
+{
+	WeaponComp->Reload();
+	if (ActionState == EActionState::Reloading)
+		ActionState = EActionState::Idle;
+
+	if (bIsHoldFire)
+	{
+		ActionState = EActionState::Firing;
+		WeaponComp->FireStart();
+		bIsHoldFire = false;
+		
 	}
-	WeaponComp->ReloadStart();
+	if (bIsHoldAim)
+	{
+		bIsAiming = true;
+		bIsHoldAim = false;
+		WeaponComp->AimStart();
+	}
 }
 
 void ANomPlayer::Melee()
 {
+	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
+		return;
+	if (ActionState == EActionState::Firing)
+	{
+		OnFireCanceled();
+	}
+	if (bIsAiming)
+	{
+		OnAimCanceled();
+	}
+	if (ActionState == EActionState::Reloading)
+	{
+		OnReloadCanceled();
+	}
+	if (MovingState == EMovingState::Running)
+		MovingState = EMovingState::Idle;
+
+	ActionState = EActionState::LeftHand;
+	//TODO : 몽타쥬로 바꿀 것
 	PRINTINFO();
+	GetWorldTimerManager().SetTimer(LeftHandHandle, [this]()
+	{
+		LeftHandEnd();
+	}, 1.f, false);
 }
 
 void ANomPlayer::Throw()
 {
+	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
+		return;
+	if (ActionState == EActionState::Firing)
+	{
+		OnFireCanceled();
+	}
+	if (bIsAiming)
+	{
+		OnAimCanceled();
+	}
+	if (ActionState == EActionState::Reloading)
+	{
+		OnReloadCanceled();
+	}
+	if (MovingState == EMovingState::Running)
+		MovingState = EMovingState::Idle;
+
+	ActionState = EActionState::LeftHand;
+	//TODO : 몽타쥬로 바꿀 것
+	GetWorld()->SpawnActor<AGrenade>(AGrenade::StaticClass(), GetFpsCam()->GetComponentLocation(), FRotator(0))
+		->Init(GetFpsCam()->GetForwardVector(), 1000);	
 	PRINTINFO();
+	GetWorldTimerManager().SetTimer(LeftHandHandle, [this]()
+	{
+		LeftHandEnd();
+	}, 1.f, false);
+}
+
+void ANomPlayer::LeftHandEnd()
+{
+	ActionState = EActionState::Idle;
+	if (bIsHoldFire)
+	{
+		ActionState = EActionState::Firing;
+		bIsHoldFire = false;
+		WeaponComp->FireStart();
+	}
+	if (bIsHoldAim)
+	{
+		bIsAiming = true;
+		bIsHoldAim = false;
+		WeaponComp->AimStart();
+	}
 }
 
 void ANomPlayer::Skill()
 {
+	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
+		return;
+	if (ActionState == EActionState::Firing)
+	{
+		OnFireCanceled();
+	}
+	if (bIsAiming)
+	{
+		OnAimCanceled();
+	}
+	if (ActionState == EActionState::Reloading)
+	{
+		OnReloadCanceled();
+	}
+	if (MovingState == EMovingState::Crouch)
+	{
+		MovingState = EMovingState::Idle;
+		UnCrouch();
+	}
+	if (MovingState == EMovingState::Running)
+		MovingState = EMovingState::Idle;
+
+	ChangeToTps();
+
+	//TODO : 몽타쥬로 바꿀 것
 	PRINTINFO();
+	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
+	{
+		SkillEnd();
+	}, 1.f, false);
+}
+
+void ANomPlayer::SkillEnd()
+{
+	ActionState = EActionState::Idle;
+	ChangeToFps();
+	if (bIsHoldFire)
+	{
+		ActionState = EActionState::Firing;
+		bIsHoldFire = false;
+		WeaponComp->FireStart();
+	}
+	if (bIsHoldAim)
+	{
+		bIsAiming = true;
+		bIsHoldAim = false;
+		WeaponComp->AimStart();
+	}
 }
 
 void ANomPlayer::UltimateSkill()
 {
+	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
+		return;
+	if (ActionState == EActionState::Firing)
+	{
+		OnFireCanceled();
+	}
+	if (bIsAiming)
+	{
+		OnAimCanceled();
+	}
+	if (ActionState == EActionState::Reloading)
+	{
+		OnReloadCanceled();
+	}
+	if (MovingState == EMovingState::Crouch)
+	{
+		MovingState = EMovingState::Idle;
+		UnCrouch();
+	}
+	if (MovingState == EMovingState::Running)
+		MovingState = EMovingState::Idle;
+
+	ChangeToTps();
 	PRINTINFO();
+	//TODO : 몽타쥬로 바꿀 것
+	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
+	{
+		UltimateSkillEnd();
+	}, 1.f, false);
 }
 
-void ANomPlayer::ChangeWeapon1()
+void ANomPlayer::UltimateSkillEnd()
 {
-	WeaponComp->ChangeWeapon(0);
+	ActionState = EActionState::Idle;
+	ChangeToFps();
+	if (bIsHoldFire)
+	{
+		ActionState = EActionState::Firing;
+		bIsHoldFire = false;
+		WeaponComp->FireStart();
+	}
+	if (bIsHoldAim)
+	{
+		bIsAiming = true;
+		bIsHoldAim = false;
+		WeaponComp->AimStart();
+	}
 }
 
-void ANomPlayer::ChangeWeapon2()
+void ANomPlayer::ChangeWeapon(const FInputActionValue& Value)
 {
-	WeaponComp->ChangeWeapon(1);
+	int32 WeaponIndex = static_cast<int32>(Value.Get<float>());
+	if (WeaponComp->GetCurrentWeaponIdx() == WeaponIndex - 1)
+		return;
+	
+	if (ActionState == EActionState::Skill || ActionState == EActionState::LeftHand || ActionState == EActionState::ChangeWeapon)
+		return;
+	if (ActionState == EActionState::Reloading)
+	{
+		OnReloadCanceled();
+	}
+	if (ActionState == EActionState::Firing)
+		OnFireCanceled();
+	if (bIsAiming)
+		OnAimCanceled();
+	
+	if (MovingState == EMovingState::Running)
+		MovingState = EMovingState::Idle;
+
+	ActionState = EActionState::ChangeWeapon;
+
+	GetWorldTimerManager().SetTimer(PutWeaponHandle, [this, WeaponIndex]()
+	{
+		WeaponComp->ChangeWeapon(WeaponIndex - 1);
+	}, WeaponComp->GetCurrentWeapon()->GetData()->AimDuration, false);
+	
+	//TODO : 몽타쥬로 바꿀것
+	GetWorldTimerManager().SetTimer(ChangeWeaponHandle, [this, WeaponIndex]()
+	{
+		OnWeaponChanged(WeaponIndex - 1);
+	}, WeaponComp->GetCurrentWeapon()->GetData()->EquipDuration, false);
+
+	
 }
 
-void ANomPlayer::ChangeWeapon3()
+void ANomPlayer::OnWeaponChanged(float Idx)
 {
-	WeaponComp->ChangeWeapon(2);
+	WeaponComp->OnWeaponChanged(Idx);
+	ActionState = EActionState::Idle;
+	if (bIsHoldFire)
+	{
+		ActionState = EActionState::Firing;
+		bIsHoldFire = false;
+		WeaponComp->FireStart();
+	}
+	if (bIsHoldAim)
+	{
+		bIsAiming = true;
+		bIsHoldAim = false;
+		WeaponComp->AimStart();
+	}
+}
+
+void ANomPlayer::OnReloadCanceled()
+{
+	ActionState = EActionState::Idle;
+	if (GetWorldTimerManager().IsTimerActive(ReloadHandle))
+		GetWorldTimerManager().ClearTimer(ReloadHandle);
+}
+
+void ANomPlayer::OnFireCanceled()
+{
+	ActionState = EActionState::Idle;
+	WeaponComp->FireEnd();
+}
+
+void ANomPlayer::OnAimCanceled()
+{
+	bIsAiming = false;
+	WeaponComp->AimEnd();
+}
+
+void ANomPlayer::ChangeToFps()
+{
+	GetMesh()->SetOwnerNoSee(true);
+	FpsMeshComp->SetOwnerNoSee(false);
+	FpsCameraComp->SetActive(true);
+	TpsCameraComp->SetActive(false);
+}
+
+void ANomPlayer::ChangeToTps()
+{
+	ActionState = EActionState::Skill;
+	
+	GetMesh()->SetOwnerNoSee(false);
+	FpsMeshComp->SetOwnerNoSee(true);
+	FpsCameraComp->SetActive(false);
+	TpsCameraComp->SetActive(true);
 }
 
 USpringArmComponent* ANomPlayer::GetFpsCamArm()
@@ -342,4 +655,3 @@ UCameraComponent* ANomPlayer::GetFpsCam()
 {
 	return FpsCameraComp;
 }
-

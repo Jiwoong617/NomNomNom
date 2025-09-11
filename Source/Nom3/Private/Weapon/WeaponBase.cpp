@@ -2,9 +2,9 @@
 
 
 #include "Weapon/WeaponBase.h"
-
 #include "Camera/CameraComponent.h"
 #include "Core/NomPlayer.h"
+#include "Interfaces/Damagable.h"
 #include "Nom3/Nom3.h"
 #include "Weapon/WeaponData.h"
 
@@ -18,6 +18,7 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 	WeaponMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	RootComponent = WeaponMeshComp;
 	WeaponMeshComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	
 }
 
 // Called when the game starts or when spawned
@@ -31,12 +32,9 @@ void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsHidden() == false && CurrentRecoil != TargetRecoil)
+	if (IsHidden() == false)
 	{
-		CurrentRecoil = FMath::RInterpTo(CurrentRecoil, TargetRecoil, DeltaTime, 20.f);
-		FRotator DeltaRecoil = CurrentRecoil - LastAppliedRecoil;
-		WeaponOwner->GetController()->SetControlRotation(WeaponOwner->GetControlRotation() + DeltaRecoil);
-		LastAppliedRecoil = CurrentRecoil;
+		ApplyingRecoil();
 	}
 }
 
@@ -53,18 +51,35 @@ void AWeaponBase::ApplyRecoil()
 	TargetRecoil.Yaw = FRotator::NormalizeAxis(TargetRecoil.Yaw);
 }
 
-void AWeaponBase::Fire()
+void AWeaponBase::ApplyingRecoil()
+{
+	if (CurrentRecoil != TargetRecoil)
+	{
+		CurrentRecoil = FMath::RInterpTo(CurrentRecoil, TargetRecoil, GetWorld()->GetDeltaSeconds(), 20.f);
+		FRotator DeltaRecoil = CurrentRecoil - LastAppliedRecoil;
+		WeaponOwner->GetController()->SetControlRotation(WeaponOwner->GetControlRotation() + DeltaRecoil);
+		LastAppliedRecoil = CurrentRecoil;
+	}
+}
+
+void AWeaponBase::AimFire()
 {
 	if (CurrentAmmo > 0)
 	{
 		CurrentAmmo--;
 		FVector Pos = WeaponOwner->GetFpsCam()->GetComponentLocation();
+		FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
 		FHitResult Hit;
-		GetWorld()->LineTraceSingleByChannel(Hit, Pos,
-			Pos + WeaponOwner->GetFpsCam()->GetForwardVector() * 10000, ECC_Visibility);
+		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + Dir * 10000,ECC_Visibility))
+		{
+			if (Hit.GetActor()->Implements<UDamagable>())
+			{
+				PRINTLOG(TEXT("Damagable"));
+				Cast<IDamagable>(Hit.GetActor())->OnDamaged(WeaponData->Damage);
+			}
+		}
 
-		DrawDebugLine(GetWorld(), Pos,
-			Pos + WeaponOwner->GetFpsCam()->GetForwardVector() * 10000, FColor::Red, false, 1);
+		//DrawDebugLine(GetWorld(), Pos, Dir * 10000, FColor::Red, false, 1);
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan,
 			FString::Printf(TEXT("%d/%d - %d"), CurrentAmmo, WeaponData->AmmoCount, MaxAmmo));
@@ -74,9 +89,45 @@ void AWeaponBase::Fire()
 	}
 }
 
-void AWeaponBase::AimFire()
+void AWeaponBase::NoAimFire()
 {
-	PRINTINFO();
+	if (CurrentAmmo > 0)
+	{
+		CurrentAmmo--;
+
+		//탄퍼짐
+		float SpreadHalf = WeaponData->BulletSpread * 0.5f;
+		float RandPitch = FMath::RandRange(-SpreadHalf, SpreadHalf);
+		float RandYaw   = FMath::RandRange(-SpreadHalf, SpreadHalf);
+
+		FVector Pos = WeaponOwner->GetFpsCam()->GetComponentLocation();
+		FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
+		FRotator SpreadRot = Dir.Rotation();
+		SpreadRot.Pitch += RandPitch;
+		SpreadRot.Yaw += RandYaw;
+		FVector FinalDir = SpreadRot.Vector();
+
+		FHitResult Hit;
+		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + FinalDir * 10000,ECC_Visibility))
+		{
+			if (Hit.GetActor()->Implements<UDamagable>())
+			{
+				PRINTLOG(TEXT("Damagable"));
+				Cast<IDamagable>(Hit.GetActor())->OnDamaged(WeaponData->Damage);
+			}
+		}
+		
+		//DrawDebugLine(GetWorld(), Pos, Pos + FinalDir * 10000, FColor::Red, false, 1);
+		//DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
+		
+		GEngine->AddOnScreenDebugMessage(
+			-1, 5.0f, FColor::Cyan,
+			FString::Printf(TEXT("%d/%d - %d"), CurrentAmmo, WeaponData->AmmoCount, MaxAmmo)
+		);
+
+		//Recoil
+		ApplyRecoil();
+	}
 }
 
 void AWeaponBase::Reload()
@@ -85,6 +136,7 @@ void AWeaponBase::Reload()
 	CurrentAmmo += NeededAmmo;
 	MaxAmmo -= NeededAmmo;
 }
+
 
 void AWeaponBase::SetOwner(ANomPlayer* NewOwner)
 {
@@ -101,12 +153,12 @@ FTransform AWeaponBase::GetSocketTransform(FName& SocketName)
 	return WeaponMeshComp->GetSocketTransform(SocketName);
 }
 
-
-float AWeaponBase::EaseElasticOut(float t)
+bool AWeaponBase::CanFire()
 {
-	if (t == 0.f) return 0.f;
-	if (t == 1.f) return 1.f;
+	return CurrentAmmo != 0;
+}
 
-	float p = 0.3f;
-	return FMath::Pow(2.f, -10.f * t) * FMath::Sin((t - p / 4.f) * (2 * PI) / p) + 1.f;
+bool AWeaponBase::CanReload()
+{
+	return (CurrentAmmo != WeaponData->AmmoCount && MaxAmmo != 0);
 }
