@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "ShankStateMachineBase.h"
-#include "Enemy/Core/StateMachineBase.h"
 #include "ShankReverseThrustStateMachine.generated.h"
 
 //전방 선언

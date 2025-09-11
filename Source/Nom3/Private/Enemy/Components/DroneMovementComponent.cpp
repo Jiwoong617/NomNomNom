@@ -8,15 +8,15 @@ UDroneMovementComponent::UDroneMovementComponent() :
 	bSimulate(false),
 	GravityForce(0),
 	GravityDir(FVector::DownVector),
-	CruiseThrustForce(500),
-	EvadeThrustLevel(40),
-	ThrustForce(500),
+	CruiseThrustForce(2500),
+	EvadeThrustLevel(30),
+	ThrustForce(0),
 	ThrustDir(FVector::ZeroVector),
 	ThrustVectoringLevel(0.75),
-	LaunchSpeed(0),
+	LaunchSpeed(1000),
 	SplashSpeed(500),
-	Bounciness(0.5),
-	DragCoefficient(5),
+	Bounciness(0.25),
+	DragCoefficient(4.0),
 	Mass(10)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -105,19 +105,19 @@ void UDroneMovementComponent::ThrottleThrustByLevel(const float Level)
 	ThrustForce = CruiseThrustForce * Level;
 }
 
-void UDroneMovementComponent::ThrottleToCruiseThrust()
+void UDroneMovementComponent::ThrottleToCruise()
 {
 	//순항 추진력을 향해 점진적 보간
 	ThrustForce = FMath::Lerp(ThrustForce, CruiseThrustForce, 0.1);
 }
 
-void UDroneMovementComponent::ThrottleHighToEvade()
+void UDroneMovementComponent::ThrottleToHighManeuver(const float Level)
 {
 	//기존 속도 급감
-	Velocity = FMath::Lerp(Velocity, FVector::ZeroVector, 0.5);
+	Velocity = FMath::Lerp(Velocity, FVector::ZeroVector, 0.8);
 	
 	//추진력 급상승
-	ThrottleThrustByLevel(EvadeThrustLevel);
+	ThrottleThrustByLevel(Level);
 }
 
 void UDroneMovementComponent::ThrottleOff()

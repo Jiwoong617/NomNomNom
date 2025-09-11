@@ -25,4 +25,7 @@ protected:
 
 	UFUNCTION()
 	void DecideTargetLocation() const;
+
+	UFUNCTION()
+	void CalculatePaths() const;
 };

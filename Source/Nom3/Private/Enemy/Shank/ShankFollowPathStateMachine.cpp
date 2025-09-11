@@ -19,6 +19,15 @@ void UShankFollowPathStateMachine::EnterState()
 	{
 		return;
 	}
+
+	//목표 위치
+	if (FVector Value; OwnerShank->PathQueue.Dequeue(Value))
+	{
+		OwnerShank->TargetLocation = Value;	
+	}
+
+	//초반 가속
+	OwnerShank->DroneMoveComp->ThrottleThrustByLevel(20);
 }
 
 void UShankFollowPathStateMachine::ExecuteState()
@@ -37,14 +46,15 @@ void UShankFollowPathStateMachine::ExecuteState()
 	const FVector TargetDir = TargetDiff.GetSafeNormal();
 	
 	//순항 속도로 추력 조절
-	OwnerShank->DroneMoveComp->ThrottleToCruiseThrust();
+	OwnerShank->DroneMoveComp->ThrottleToCruise();
 	
 	//추력 편향
 	OwnerShank->DroneMoveComp->VectorThrust(TargetDir);
 
-	//목표까지의 거리가 1m 미만이라면
-	if (TargetDiff.Length() < 100)
+	//목표까지의 거리가 1.5m 미만이라면
+	if (TargetDiff.Length() < 200)
 	{
+		//역추진
 		OwnerShank->SHANK_STATE = EShankState::ReverseThrust;
 	}
 }

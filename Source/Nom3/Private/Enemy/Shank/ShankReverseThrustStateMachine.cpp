@@ -25,7 +25,7 @@ void UShankReverseThrustStateMachine::EnterState()
 	InitVelocity = OwnerShank->DroneMoveComp->Velocity.Length();
 
 	//역추진 제한 시간 초기화
-	LimitTimeInState = 2;
+	LimitTimeInState = 0.5;
 }
 
 void UShankReverseThrustStateMachine::ExecuteState()
@@ -52,11 +52,19 @@ void UShankReverseThrustStateMachine::ExecuteState()
 	//역추진 제한시간 초과
 	if (ElapsedTimeInState > LimitTimeInState)
 	{
-		//추진력를 0으로 초기화해줘야 오류가 발생하지 않는다
-		OwnerShank->DroneMoveComp->ThrottleOff();
+		if (OwnerShank->PathQueue.IsEmpty())
+		{
+			//추진력를 0으로 초기화해줘야 오류가 발생하지 않는다
+			OwnerShank->DroneMoveComp->ThrottleOff();
 		
-		//상태 머신 전환
-		OwnerShank->SHANK_STATE = EShankState::FindPath;
+			//상태 머신 전환
+			OwnerShank->SHANK_STATE = EShankState::FindPath;	
+		}
+		else
+		{
+			//상태 머신 전환
+			OwnerShank->SHANK_STATE = EShankState::FollowPath;
+		}
 	}
 }
 
