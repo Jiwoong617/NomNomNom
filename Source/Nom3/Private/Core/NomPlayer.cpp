@@ -471,7 +471,7 @@ void ANomPlayer::Melee()
 		{
 			if (IDamagable* act = Cast<IDamagable>(hits.GetActor()))
 			{
-				act->OnDamaged(FistDamage);
+				//act->OnDamaged(FistDamage);
 			}
 		}
 	}
