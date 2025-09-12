@@ -3,26 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/BoxComponent.h"
-#include "Interfaces/Damagable.h"
-#include "DamageComponent.generated.h"
+#include "DamageComponent.h"
+#include "PlayerDamageComponent.generated.h"
 
-UENUM(BlueprintType)
-enum class EBodyType : uint8
-{
-	None = 0		UMETA(DisplayName = "None"),
-	Body = 1		UMETA(DisplayName = "Body"),
-	Head = 1		UMETA(DisplayName = "Head")
-};
+
+class ANomPlayer;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class NOM3_API UDamageComponent : public UBoxComponent, public IDamagable
+class NOM3_API UPlayerDamageComponent : public UDamageComponent
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this component's properties
-	UDamageComponent();
+	UPlayerDamageComponent();
 
 protected:
 	// Called when the game starts
@@ -32,17 +26,15 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
+
 	
-protected:
-	EBodyType BodyType = EBodyType::None;
+private:
+	ANomPlayer* Owner;
 	
 protected:
 	virtual void OnHitBody(FFireInfo& info);
 	virtual void OnHitHead(FFireInfo& info);
 	
 public:
-	virtual void OnDamaged(FFireInfo FireInfo) override;
-	
-	virtual void Init(FVector boxSize, AActor* owner, ECollisionChannel channel,
-		FName collisionPresetName, EBodyType bodyType);
+	virtual void Init(FVector boxSize, AActor* owner, ECollisionChannel channel, FName collisionPresetName, EBodyType bodyType) override;
 };
