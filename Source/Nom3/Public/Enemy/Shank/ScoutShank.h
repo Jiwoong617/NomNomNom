@@ -6,6 +6,8 @@
 #include "ShankBase.h"
 #include "ScoutShank.generated.h"
 
+class UScoutShankShooter;
+
 UCLASS()
 class NOM3_API AScoutShank : public AShankBase
 {
@@ -14,20 +16,16 @@ class NOM3_API AScoutShank : public AShankBase
 public:
 	AScoutShank();
 
-	//플레이어를 향해 총탄 발사
-	UFUNCTION(BlueprintCallable)
-	void FireBullet(FVector SightLocation) const;
-
 	//플레이어 시선 노출 인터페이스 구현
 	virtual void OnAimByPlayerSight() override;
 
 protected:
 	virtual void BeginPlay() override;
 
-	//정찰 생크가 발사하는 총탄 클래스
+	//사격 컴포넌트
 	UPROPERTY(VisibleAnywhere)
-	TSubclassOf<AScoutShankBullet> ScoutShankBulletClass;
-
+	TObjectPtr<UScoutShankShooter> ShooterComp;
+	
 public:
 	virtual void Tick(float DeltaTime) override;
 };

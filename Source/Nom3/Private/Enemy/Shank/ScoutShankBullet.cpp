@@ -18,7 +18,7 @@ AScoutShankBullet::AScoutShankBullet()
 	SphereComp->SetCollisionProfileName(FName("Projectile"), true);
 	
 	//발사체 속도 설정
-	ProjectileMoveComp->InitialSpeed = 3000;
+	ProjectileMoveComp->InitialSpeed = 2000;
 	
 	//총탄이 속도를 따라 회전하도록 설정
 	ProjectileMoveComp->bRotationFollowsVelocity = true;
