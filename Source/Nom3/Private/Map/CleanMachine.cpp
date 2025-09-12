@@ -66,15 +66,7 @@ void ACleanMachine::BeginPlay()
 void ACleanMachine::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//if (TargetSpline)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("Tick 실행중! Dist=%f, SplineLength=%f"),
-	// 		DistanceAlongSpline, TargetSpline->GetSplineLength());
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Error, TEXT("TargetSpline이 nullptr 입니다!"));
-	// }
+
 
 	if (!TargetSpline || TargetSpline->GetSplineLength() <= 0.0f)
 	{
