@@ -5,7 +5,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
+#include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -16,6 +18,8 @@
 #include "Weapon/WeaponBase.h"
 #include "Weapon/WeaponComponent.h"
 #include "Weapon/WeaponData.h"
+#include "Core/PlayerDamageComponent.h"
+#include "Core/PlayerUI.h"
 
 ANomPlayer::ANomPlayer()
 {
@@ -85,9 +89,20 @@ ANomPlayer::ANomPlayer()
 	GetCharacterMovement()->GravityScale *= GravityMultiplier;
 	GetCharacterMovement()->AirControl = 0.5f;
 
+	//Damage Comp
+	HeadBox = CreateDefaultSubobject<UPlayerDamageComponent>("HeadBox");
+	HeadBox->SetupAttachment(FpsMeshComp, TEXT("HeadSocket"));
+	
+	BodyBox = CreateDefaultSubobject<UPlayerDamageComponent>("BodyBox");
+	BodyBox->SetupAttachment(FpsMeshComp, TEXT("BodySocket"));
+
+	//UI
+	ConstructorHelpers::FClassFinder<UPlayerUI> playerui(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/BluePrints/WBP/WBP_PlayerUI.WBP_PlayerUI_C'"));
+	if (playerui.Succeeded())
+		PlayerUIClass = playerui.Class;
+	
 	//Add Component
 	WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
-
 	//////////////////////////////Input/////////////////////////////////
 	{
 		ConstructorHelpers::FObjectFinder<UInputMappingContext> TempIMC(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Input/IMC_Player.IMC_Player'"));
@@ -154,6 +169,13 @@ void ANomPlayer::BeginPlay()
 		}
 	}
 
+	PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
+	WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
+	PlayerUI->AddToViewport();
+
+	//TODO : Mesh 바뀌면 값 조정해줘야됨
+	HeadBox->Init(FVector(10), this, ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
+	BodyBox->Init(FVector(50, 15, 20), this, ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
 }
 
 bool ANomPlayer::CanJumpInternal_Implementation() const

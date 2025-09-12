@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "NomPlayer.generated.h"
 
+class UPlayerUI;
+class UPlayerDamageComponent;
 class UWeaponComponent;
 class UCameraComponent;
 class USpringArmComponent;
@@ -64,7 +66,6 @@ protected:
 	float MaxSpeed = 600.f;
 	float JumpForce = 600.f;
 	float GravityMultiplier = 0.85f;
-	float FistDamage = 100.f;
 
 	//Movement params
 	float InteractDuration = 0.f;
@@ -141,6 +142,18 @@ protected:
 	FTimerHandle ChangeWeaponHandle;
 	FTimerHandle LeftHandHandle;
 	FTimerHandle SkillHandle;
+
+	//Damage, Hp
+	int32 MaxHp = 50;
+	int32 Hp = 50;
+	float FistDamage = 100.f;
+	UPROPERTY(EditAnywhere) UPlayerDamageComponent* HeadBox;
+	UPROPERTY(EditAnywhere) UPlayerDamageComponent* BodyBox;
+
+	//UI
+	TSubclassOf<UPlayerUI> PlayerUIClass;
+	UPlayerUI* PlayerUI;
+	
 public:
 
 protected:

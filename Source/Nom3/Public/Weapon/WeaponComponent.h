@@ -12,6 +12,8 @@ class AWeaponBase;
 enum class EWeaponType : uint8;
 class UWeaponData;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnBulletChangeDelegate, int32, currentammo, int32, maxammo);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class NOM3_API UWeaponComponent : public UActorComponent
 {
@@ -70,6 +72,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	float AimTime;
 
+public:
+	FOnBulletChangeDelegate OnBulletChangeDelegate;
 
 private:
 	UFUNCTION() void Init();
