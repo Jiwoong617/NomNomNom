@@ -2,6 +2,8 @@
 
 #include "Core/DamageComponent.h"
 
+#include "Core/NomPlayer.h"
+#include "Enemy/Core/EnemyBase.h"
 #include "Enemy/Core/ProjectileBase.h"
 #include "Interfaces/Damagable.h"
 
@@ -24,6 +26,18 @@ void UDamageComponent::BeginPlay()
 
 	//이 충돌 컴포넌트만의 충돌 처리 메서드 바인딩
 	OnComponentBeginOverlap.AddDynamic(this, &UDamageComponent::OnBeginOverlap);
+
+	//Enemy의 인터페이스 메서드 바인딩
+	if (const auto Enemy = Cast<AEnemyBase>(GetOwner()))
+	{
+		OnDamagedDelegate.AddDynamic(Enemy, &AEnemyBase::OnDamaged);
+	}
+
+	//Player의 인터페이스 메서드 바인딩
+	if (const auto Player = Cast<ANomPlayer>(GetOwner()))
+	{
+		OnDamagedDelegate.AddDynamic(Player, &ANomPlayer::OnDamaged);
+	}
 }
 
 // Called every frame

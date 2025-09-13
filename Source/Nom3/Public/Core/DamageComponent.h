@@ -30,33 +30,31 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	EBodyType BodyType = EBodyType::None;
+	
+	virtual void OnHitBody(FFireInfo& Info);
+	
+	virtual void OnHitHead(FFireInfo& Info);
+
+	FOnDamagedDelegate OnDamagedDelegate;
+
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
-protected:
-	EBodyType BodyType = EBodyType::None;
-	
-	virtual void OnHitBody(FFireInfo& info);
-	
-	virtual void OnHitHead(FFireInfo& info);
-	
-public:
-	FOnDamagedDelegate OnDamagedDelegate;
-	
+
 	//충돌 델리게이트 함수
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	//박스 범위를 조절하는 초기화 메서드
-	virtual void Init(FVector boxSize, ECollisionChannel channel,
-		FName collisionPresetName, EBodyType bodyType);
+	virtual void Init(FVector BoxSize, ECollisionChannel Channel,
+		FName CollisionPresetName, EBodyType BodyType);
 
 	//박스 범위를 조절하지 않는 초기화 메서드
-	virtual void Init(ECollisionChannel channel,
-	FName collisionPresetName, EBodyType bodyType);
+	virtual void Init(ECollisionChannel Channel,
+	FName CollisionPresetName, EBodyType BodyType);
 
-	virtual void OnDamaged(FFireInfo info);
+	virtual void OnDamaged(FFireInfo Info);
 	
 	//소유자 사망 시 비활성화하기 위한 메서드
 	UFUNCTION()
