@@ -218,9 +218,8 @@ protected:
 	UFUNCTION() void ChangeToFps();
 	UFUNCTION() void ChangeToTps();
 
+	public:
 	UFUNCTION() virtual void OnDamaged(FFireInfo Info) override;
-	
-public:
 	USpringArmComponent* GetFpsCamArm();
 	UCameraComponent* GetFpsCam();
 };

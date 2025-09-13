@@ -176,8 +176,6 @@ void ANomPlayer::BeginPlay()
 	//TODO : Mesh 바뀌면 값 조정해줘야됨
 	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
 	BodyBox->Init(FVector(50, 15, 20), ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
-	HeadBox->OnDamagedDelegate.AddDynamic(this, &ANomPlayer::OnDamaged);
-	BodyBox->OnDamagedDelegate.AddDynamic(this, &ANomPlayer::OnDamaged);
 }
 
 bool ANomPlayer::CanJumpInternal_Implementation() const
@@ -493,9 +491,9 @@ void ANomPlayer::Melee()
 	{
 		for (FHitResult& hits : OutHits)
 		{
-			if (IDamagable* act = Cast<IDamagable>(hits.GetActor()))
+			if (UDamageComponent* act = Cast<UDamageComponent>(hits.GetActor()))
 			{
-				//act->OnDamaged(FistDamage);
+				act->OnDamaged(FFireInfo(FistDamage, GetActorLocation(), ETeamInfo::Player, false));
 			}
 		}
 	}

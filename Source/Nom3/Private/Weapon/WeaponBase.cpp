@@ -3,6 +3,7 @@
 
 #include "Weapon/WeaponBase.h"
 #include "Camera/CameraComponent.h"
+#include "Core/DamageComponent.h"
 #include "Core/NomPlayer.h"
 #include "Interfaces/Damagable.h"
 #include "Nom3/Nom3.h"
@@ -72,10 +73,11 @@ void AWeaponBase::AimFire()
 		FHitResult Hit;
 		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + Dir * 10000,ECC_Visibility))
 		{
-			if (Hit.GetActor()->Implements<UDamagable>())
+			if (auto dmg = Cast<UDamageComponent>(Hit.GetActor()))
 			{
 				PRINTLOG(TEXT("Damagable"));
-				//Cast<IDamagable>(Hit.GetActor())->OnDamaged(WeaponData->Damage);
+				dmg->OnDamaged(FFireInfo(WeaponData->Damage,
+					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
 		}
 
@@ -110,10 +112,11 @@ void AWeaponBase::NoAimFire()
 		FHitResult Hit;
 		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + FinalDir * 10000,ECC_Visibility))
 		{
-			if (Hit.GetActor()->Implements<UDamagable>())
+			if (auto dmg = Cast<UDamageComponent>(Hit.GetActor()))
 			{
 				PRINTLOG(TEXT("Damagable"));
-				//Cast<IDamagable>(Hit.GetActor())->OnDamaged(WeaponData->Damage);
+				dmg->OnDamaged(FFireInfo(WeaponData->Damage,
+					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
 		}
 		
