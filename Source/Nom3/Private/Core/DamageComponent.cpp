@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Core/DamageComponent.h"
-#include "Interfaces/Damagable.h"
 
+#include "Enemy/Core/ProjectileBase.h"
+#include "Interfaces/Damagable.h"
 
 // Sets default values for this component's properties
 UDamageComponent::UDamageComponent()
@@ -17,20 +17,17 @@ UDamageComponent::UDamageComponent()
 	SetGenerateOverlapEvents(true);
 }
 
-
 // Called when the game starts
 void UDamageComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	//이 충돌 컴포넌트만의 충돌 처리 메서드 바인딩
+	OnComponentBeginOverlap.AddDynamic(this, &UDamageComponent::OnBeginOverlap);
 }
 
-
 // Called every frame
-void UDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                     FActorComponentTickFunction* ThisTickFunction)
+void UDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -39,22 +36,44 @@ void UDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UDamageComponent::OnHitBody(FFireInfo& info)
 {
+	
 }
 
 void UDamageComponent::OnHitHead(FFireInfo& info)
 {
+	
 }
 
-void UDamageComponent::OnDamaged(FFireInfo FireInfo)
+void UDamageComponent::OnBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
 {
-	if (BodyType == EBodyType::Body)
-		OnHitBody(FireInfo);
-	else
-		OnHitHead(FireInfo);
+	//충돌 대상이 발사체 기반 액터
+	if (const auto HitProjectile = Cast<AProjectileBase>(OtherActor))
+	{
+		//발사체 정보
+		FFireInfo Info = HitProjectile->ProjectileFireInfo;
+		
+		//데미지 처리을 위하여 호출
+		if (BodyType == EBodyType::Body)
+		{
+			OnHitBody(Info);
+		}
+		else if (BodyType == EBodyType::Head)
+		{
+			OnHitHead(Info);
+		}
+
+		//정보를 전달한 충돌 발사체는 파괴
+		HitProjectile->Destroy();
+	}
 }
 
-void UDamageComponent::Init(FVector boxSize, AActor* owner, ECollisionChannel channel, FName collisionPresetName,
-                            EBodyType bodyType)
+void UDamageComponent::Init(FVector boxSize, ECollisionChannel channel, FName collisionPresetName, EBodyType bodyType)
 {
 	BoxExtent = boxSize;
 	SetCollisionObjectType(channel);
@@ -62,3 +81,18 @@ void UDamageComponent::Init(FVector boxSize, AActor* owner, ECollisionChannel ch
 	BodyType = bodyType;
 }
 
+void UDamageComponent::Init(ECollisionChannel channel, FName collisionPresetName, EBodyType bodyType)
+{
+	//박스 범위 지정 없이 초기화
+	SetCollisionObjectType(channel);
+	SetCollisionProfileName(collisionPresetName);
+	BodyType = bodyType;
+}
+
+void UDamageComponent::Inactive()
+{
+	//완전히 비활성화
+	SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetGenerateOverlapEvents(false);
+	SetCollisionProfileName(FName("NoCollision"));
+}

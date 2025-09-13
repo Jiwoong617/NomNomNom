@@ -48,7 +48,7 @@ void AElevator::Tick(float DeltaTime)
     
 	//목표 속도 설정 
 	float TargetSpeed = FVector::Dist(GetActorLocation(), Destination) > 1.0f ? MaxSpeed : 0.0f;
-    
+	
 	//현재 속도에서 목표 속도로 부드럽게 변경
 	ObjectSpeed = FMath::FInterpTo(ObjectSpeed, TargetSpeed, DeltaTime, Acceleration);
 
@@ -64,6 +64,8 @@ void AElevator::Tick(float DeltaTime)
     
 	//실제로 액터 이동
 	SetActorLocation(GetActorLocation() + Movement);
+
+
 	
 }
 

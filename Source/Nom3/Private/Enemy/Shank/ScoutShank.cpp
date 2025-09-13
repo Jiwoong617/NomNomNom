@@ -2,7 +2,8 @@
 
 #include "Enemy/Shank/ScoutShank.h"
 #include "Enemy/Components/DroneMovementComponent.h"
-#include "Enemy/Shank/ScoutShankBullet.h"
+#include "Enemy/Shank/ScoutShankDamageComponent.h"
+#include "Enemy/Shank/ScoutShankShooterComponent.h"
 #include "Enemy/Shank/ShankFollowPathStateMachine.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -11,43 +12,25 @@ AScoutShank::AScoutShank()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//일반 총탄 블루프린트 클래스
-	if (static ConstructorHelpers::FClassFinder<AScoutShankBullet>
-		Finder(TEXT("/Game/Enemies/Shank/BP_ScoutShankBullet.BP_ScoutShankBullet_C"));
-		Finder.Succeeded())
-	{
-		ScoutShankBulletClass = Finder.Class;
-	}
-}
+	//정찰 생크 전용의 사격 컴포넌트 부착
+	ShooterComp = CreateDefaultSubobject<UScoutShankShooterComponent>(TEXT("ShooterComp"));
+	ShooterComp->SetupAttachment(GetRootComponent());
+	ShooterComp->SetRelativeLocation(FVector(0, 0, -50));
 
-void AScoutShank::FireBullet(const FVector SightLocation) const
-{
-	//랜덤화된 목표 위치
-	const FVector RandomizedSightLocation = SightLocation + FMath::VRand() * FMath::RandRange(0, 50);
-	
-	//목표 방향 로테이터
-	const FRotator FireRotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), RandomizedSightLocation);
-			
-	//목표 방향을 향해 사격
-	GetWorld()->SpawnActor<AScoutShankBullet>(ScoutShankBulletClass, GetActorLocation() - 100, FireRotator);	
+	//일반 데이지 컴포넌트
+	NormalDamageComp = CreateDefaultSubobject<UScoutShankDamageComponent>(TEXT("NormalDamageComp"));
+	NormalDamageComp->SetupAttachment(RootComponent);
 }
 
 void AScoutShank::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//2초마다 플레이어 폰을 향해 사격
-	FTimerHandle Shoot;
-	GetWorld()->GetTimerManager().SetTimer(Shoot, [this]()
-	{
-		if (CurrentStateMachine)
-		{
-			if (TargetPawn)
-			{
-				FireBullet(TargetPawn->GetActorLocation());	
-			}
-		}
-	}, 2, true);
+	//자동 사격
+	ShooterComp->ActiveAutoFire();
+
+	//데미지 컴포넌트 초기화
+	NormalDamageComp->Init(ECC_EngineTraceChannel1, FName("Body"), EBodyType::Body);
 }
 
 void AScoutShank::OnAimByPlayerSight()
@@ -155,4 +138,12 @@ void AScoutShank::OnAimByPlayerSight()
 void AScoutShank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AScoutShank::OnShotDown(const FVector ShotDir)
+{
+	Super::OnShotDown(ShotDir);
+
+	//비활성화
+	NormalDamageComp->Inactive();
 }

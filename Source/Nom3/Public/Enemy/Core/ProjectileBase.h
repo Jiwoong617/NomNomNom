@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/Damagable.h"
 #include "ProjectileBase.generated.h"
 
+//전방 선언
 class USphereComponent;
 class UProjectileMovementComponent;
 
@@ -17,15 +19,25 @@ class NOM3_API AProjectileBase : public AActor
 public:
 	AProjectileBase();
 
-protected:
-	virtual void BeginPlay() override;
+	//발사 구조체
+	UPROPERTY(VisibleAnywhere)
+	FFireInfo ProjectileFireInfo;
 
+	//활성화
+	UFUNCTION()
+	void Active(const FVector& Location, const FRotator& Rotation);
+
+	//비활성화
+	UFUNCTION()
+	void Inactivate();
+
+protected:
+
+	//충돌체 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> SphereComp;
 
+	//발사체 무브 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMoveComp;
-
-public:
-	virtual void Tick(float DeltaTime) override;
 };

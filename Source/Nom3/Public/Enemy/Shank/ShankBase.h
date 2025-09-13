@@ -6,11 +6,13 @@
 #include "ShankStateMachineBase.h"
 #include "Containers/Queue.h"
 #include "Enemy/Core/EnemyBase.h"
-#include "Enemy/Interfaces/OnAimByPlayerSight.h"
+#include "Interfaces/Damagable.h"
 #include "ShankBase.generated.h"
 
+//전방 선언
+class UDamageComponent;
 class UArrowComponent;
-class AScoutShankBullet;
+class AScoutShankProjectile;
 class UShankReverseThrustStateMachine;
 class UShankFindPathStateMachine;
 class UShankStateMachineBase;
@@ -36,7 +38,7 @@ enum class EShankState : uint8
 };
 
 UCLASS()
-class NOM3_API AShankBase : public AEnemyBase, public IOnAimByPlayerSight
+class NOM3_API AShankBase : public AEnemyBase
 {
 	GENERATED_BODY()
 
@@ -50,14 +52,6 @@ public:
 	//스켈레탈 메시 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComp;
-
-	//일반 공격 컴포넌트
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USphereComponent> NormalHitComp;
-
-	//치명타 공격 컴포넌트
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USphereComponent> CriticalHitComp;
 
 	//드론 무브 컴포넌트
 	UPROPERTY(VisibleAnywhere)
@@ -92,8 +86,10 @@ public:
 	void SetCurrentState(const EShankState Value);
 
 	//플레이어 시선 노출 인터페이스 구현
-	UFUNCTION(BlueprintCallable)
 	virtual void OnAimByPlayerSight() override;
+
+	//데미지 인터페이스 구현
+	virtual void OnDamaged(FFireInfo Info) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -107,10 +103,7 @@ protected:
 	//현재 상태 머신
 	UPROPERTY()
 	UShankStateMachineBase* CurrentStateMachine;
-	
-	UFUNCTION(BlueprintCallable)
-	void OnShotByPlayer(FVector ShotDir, int Attack);
 
 	UFUNCTION(BlueprintCallable)
-	void OnShotDown(const FVector ShotDir);
+	virtual void OnShotDown(const FVector ShotDir);
 };
