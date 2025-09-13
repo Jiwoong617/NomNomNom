@@ -1,106 +1,76 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Nom3/Public/Map/Elevator.h"
-#include "Nom3/Public/Interfaces/Interactable.h"
-#include "EnhancedInputSubsystems.h"
-#include "ViewportInteractionTypes.h"
-#include "Components/BoxComponent.h"
-#include "Core/NomPlayer.h"
-#include "Nom3/Nom3.h"
-#include "Nom3/Public/Map/MovingObject.h"
+  #include "Nom3/Public/Map/Elevator.h"
+  #include "Components/BoxComponent.h"
+  #include "Core/NomPlayer.h"
 
+  // 생성자
+  AElevator::AElevator()
+  {
+        PrimaryActorTick.bCanEverTick = true;
 
+        TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
+        TriggerBox->SetupAttachment(RootComponent);
 
-// Sets default values
-AElevator::AElevator()
-{
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-	
-	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
-	TriggerBox->SetupAttachment(RootComponent);
-	TriggerBox->OnComponentBeginOverlap.AddDynamic(this,&AElevator::OnOverlap);
-	
-	
-
-	MinSpeed = 500.0f;
-	Acceleration = 10.0f;
-	// 이거 처음에 안움직이게 할려고 한거임 재민아 까먹지 말아라
-	bIsTriggered = false;
-}
-
-// Called when the game starts or when spawned
-void AElevator::BeginPlay()
-{
-	Super::BeginPlay();
-	MaxSpeed = ObjectSpeed;
-	ObjectSpeed = 0.0f;
-	
-}
-
-// Called every frame
-void AElevator::Tick(float DeltaTime)
-{
-	// Super::Tick(DeltaTime); 상속된 부모 틱 안쓸꺼라서 주석 처리함 gpt 가 이렇게 하래요
-	
-	//목표 지점 설정
-	FVector Destination = bIsTriggered ? GlobalTargetLocation : StartLocation;
     
-	//목표 속도 설정 
-	float TargetSpeed = FVector::Dist(GetActorLocation(), Destination) > 1.0f ? MaxSpeed : 0.0f;
-	
-	//현재 속도에서 목표 속도로 부드럽게 변경
-	ObjectSpeed = FMath::FInterpTo(ObjectSpeed, TargetSpeed, DeltaTime, Acceleration);
+  }
 
-	//속도가 0에 가까우면 더 이상 계산하지 않음
-	if (FMath::IsNearlyZero(ObjectSpeed))
-	{
-		return;
-	}
-
-	//이동 방향과 거리 계산
-	FVector Direction = (Destination - GetActorLocation()).GetSafeNormal();
-	FVector Movement = Direction * ObjectSpeed * DeltaTime;
-    
-	//실제로 액터 이동
-	SetActorLocation(GetActorLocation() + Movement);
+ 
+  void AElevator::BeginPlay()
+  {
+        Super::BeginPlay();
+        TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AElevator::OnOverlap);
+  }
 
 
-	
-}
+  void AElevator::Tick(float DeltaTime)
+  {
+        // Super::Tick(DeltaTime);
 
-void AElevator::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	ACharacter* PlayerCharacter = Cast<ANomPlayer>(OtherActor); 
-	if (PlayerCharacter != nullptr)
-	{
-		// bIsTriggered 상태를 반전시켜 엘리베이터의 목표 위치를 변경합니다.
-		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동
-		bIsTriggered = !bIsTriggered;
-		bIsTriggered = true;
-		//PRINTLOG(TEXT("플레어 감지 했습니다 현재 트리거는 %s 입니다"));
-		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었씁니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
-	
-		
-	
-	}
-}
+        // 목표 지점 설정
+        const FVector Destination = bIsTriggered ? GlobalTargetLocation : StartLocation;
 
-// 캐릭터상호작용 키 적용하면 
-// void AElevator::OnInteract(AActor OtherActor)
-// {
-// 	auto player = Cast<ANomPlayer>(GetOwner());
-// 	//player->InputComponent->BindAction<UEnhancedInputComponent>();
-// 	// 나중에 player hp 정의 player -> --MaxHP
-// 	 if (player != nullptr)
-// 	 {
-// 		// bIsTriggered 상태를 반전시켜 엘리베이터의 목표 위치를 변경합니다.
-// 		// true이면 위(GlobalTargetLocation)로, false이면 아래(StartLocation)로 이동합니다.
-// 		bIsTriggered = !bIsTriggered;
-// 		UE_LOG(LogTemp, Warning, TEXT("플레이어가 감지되었씁니다 현재 트리거는: %s 입니다"), bIsTriggered ? TEXT("true") : TEXT("false"));
-// 	}
-// }
+        // 목표 속도 설정
+        const float TargetSpeed = FVector::Dist(GetActorLocation(), Destination) > 10.0f ? 200.0f : 0.0f; // 예시: 최고 속도를 200으로 설정
+
+        // 보간
+        float CurrentSpeed = FMath::FInterpTo(ObjectSpeed, TargetSpeed, DeltaTime, 2.0f);
+        ObjectSpeed = CurrentSpeed; 
+
+        // 속도가 거의 0이면 이동을 멈춥
+        if (FMath::IsNearlyZero(ObjectSpeed))
+        {
+                // 위치를 한 번 더 고정
+                if (!GetActorLocation().Equals(Destination, 0.5f))
+                {
+                        SetActorLocation(Destination);
+                }
+                return;
+        }
+
+        // 이동할 거리 계산
+        const FVector Direction = (Destination - GetActorLocation()).GetSafeNormal();
+        const FVector Movement = Direction * ObjectSpeed * DeltaTime;
+
+        //액터 이동
+        SetActorLocation(GetActorLocation() + Movement);
+  }
 
 
-
+  void AElevator::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+      int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+  {
+      ANomPlayer* PlayerCharacter = Cast<ANomPlayer>(OtherActor);
+      if (PlayerCharacter != nullptr)
+      {
+          
+          if (GetActorLocation().Equals(StartLocation, 1.0f))
+          {
+              bIsTriggered = true;
+          }
+         
+          else if (GetActorLocation().Equals(GlobalTargetLocation, 1.0f))
+          {
+              bIsTriggered = false;
+          }
+      }
+  }
