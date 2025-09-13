@@ -4,6 +4,7 @@
 #include "Weapon/Grenade.h"
 
 #include "Components/SphereComponent.h"
+#include "Core/DamageComponent.h"
 #include "Interfaces/Damagable.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Nom3/Nom3.h"
@@ -80,10 +81,11 @@ void AGrenade::OnExplode()
 	{
 		for (AActor* actor : OutActors)
 		{
-			if (IDamagable* act = Cast<IDamagable>(actor))
+			if (UDamageComponent* act = Cast<UDamageComponent>(actor))
 			{
-				float Damage = FVector::Dist(GetActorLocation(), actor->GetActorLocation()) / ExplodeRadius;
-				//act->OnDamaged(FMath::Lerp(MaxDamage, MinDamage, Damage));
+				float alpha = FVector::Dist(GetActorLocation(), actor->GetActorLocation()) / ExplodeRadius;
+				float damage = FMath::Lerp(MaxDamage, MinDamage, alpha);
+				act->OnDamaged(FFireInfo(damage, GetActorLocation(), ETeamInfo::Player, false));
 			}
 		}
 	}
