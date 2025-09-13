@@ -89,6 +89,10 @@ void UDamageComponent::Init(ECollisionChannel channel, FName collisionPresetName
 	BodyType = bodyType;
 }
 
+void UDamageComponent::OnDamaged(FFireInfo info)
+{
+}
+
 void UDamageComponent::Inactive()
 {
 	//완전히 비활성화

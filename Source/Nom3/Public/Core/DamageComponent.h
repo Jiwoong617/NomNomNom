@@ -15,6 +15,8 @@ enum class EBodyType : uint8
 	Head = 2		UMETA(DisplayName = "Head")
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDamagedDelegate, FFireInfo, info);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class NOM3_API UDamageComponent : public UBoxComponent
 {
@@ -40,6 +42,8 @@ protected:
 	virtual void OnHitHead(FFireInfo& info);
 	
 public:
+	FOnDamagedDelegate OnDamagedDelegate;
+	
 	//충돌 델리게이트 함수
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -52,6 +56,8 @@ public:
 	virtual void Init(ECollisionChannel channel,
 	FName collisionPresetName, EBodyType bodyType);
 
+	virtual void OnDamaged(FFireInfo info);
+	
 	//소유자 사망 시 비활성화하기 위한 메서드
 	UFUNCTION()
 	void Inactive();

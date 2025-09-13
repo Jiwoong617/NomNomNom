@@ -39,20 +39,18 @@ void UPlayerDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UPlayerDamageComponent::OnHitBody(FFireInfo& info)
 {
-	Super::OnHitBody(info);
+	OnDamagedDelegate.Broadcast(info);
 }
 
 void UPlayerDamageComponent::OnHitHead(FFireInfo& info)
 {
-	Super::OnHitHead(info);
+	OnDamagedDelegate.Broadcast(FFireInfo(info.Damage *  2, info.FireLocation, info.TeamInfo, info.bIsIgnoreTeam));
 }
 
-
-void UPlayerDamageComponent::Init(FVector boxSize, AActor* owner, ECollisionChannel channel, FName collisionPresetName,
-	EBodyType bodyType)
+void UPlayerDamageComponent::OnDamaged(FFireInfo info)
 {
-	Super::Init(boxSize, owner, channel, collisionPresetName, bodyType);
-
-	Owner = Cast<ANomPlayer>(owner);
+	if (BodyType == EBodyType::Body)
+		OnHitBody(info);
+	else if (BodyType == EBodyType::Head)
+		OnHitHead(info);
 }
-

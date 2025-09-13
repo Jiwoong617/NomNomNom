@@ -27,14 +27,12 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-	
 private:
-	ANomPlayer* Owner;
 	
 protected:
 	virtual void OnHitBody(FFireInfo& info);
 	virtual void OnHitHead(FFireInfo& info);
-	
+
 public:
-	virtual void Init(FVector boxSize, AActor* owner, ECollisionChannel channel, FName collisionPresetName, EBodyType bodyType) override;
+	virtual void OnDamaged(FFireInfo info) override;
 };

@@ -174,8 +174,10 @@ void ANomPlayer::BeginPlay()
 	PlayerUI->AddToViewport();
 
 	//TODO : Mesh 바뀌면 값 조정해줘야됨
-	HeadBox->Init(FVector(10), this, ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
-	BodyBox->Init(FVector(50, 15, 20), this, ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
+	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
+	BodyBox->Init(FVector(50, 15, 20), ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
+	HeadBox->OnDamagedDelegate.AddDynamic(this, &ANomPlayer::OnDamaged);
+	BodyBox->OnDamagedDelegate.AddDynamic(this, &ANomPlayer::OnDamaged);
 }
 
 bool ANomPlayer::CanJumpInternal_Implementation() const
@@ -745,6 +747,12 @@ void ANomPlayer::ChangeToTps()
 	FpsMeshComp->SetOwnerNoSee(true);
 	FpsCameraComp->SetActive(false);
 	TpsCameraComp->SetActive(true);
+}
+
+//여기에 데미지 함수 구현
+void ANomPlayer::OnDamaged(FFireInfo Info)
+{
+	
 }
 
 USpringArmComponent* ANomPlayer::GetFpsCamArm()
