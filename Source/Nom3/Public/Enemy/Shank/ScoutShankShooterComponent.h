@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Enemy/Components/FireProjectileComponentBase.h"
-#include "ScoutShankShooter.generated.h"
+#include "ScoutShankShooterComponent.generated.h"
 
 class ANomPlayer;
-class AScoutShankBullet;
+class AScoutShankProjectile;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class NOM3_API UScoutShankShooter : public UFireProjectileComponentBase
+class NOM3_API UScoutShankShooterComponent : public UFireProjectileComponentBase
 {
 	GENERATED_BODY()
 
@@ -18,7 +18,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UScoutShankShooter();
+	UScoutShankShooterComponent();
 
 	//목표로 하는 플레이어 캐릭터
 	UPROPERTY(VisibleAnywhere)
@@ -26,7 +26,7 @@ public:
 
 	//정찰 생크가 발사하는 총탄 클래스
 	UPROPERTY(VisibleAnywhere)
-	TSubclassOf<AScoutShankBullet> ScoutShankBulletClass;
+	TSubclassOf<AScoutShankProjectile> ScoutShankBulletClass;
 	
 	//오버라이드
 	virtual void FireBulletOnce() const override;

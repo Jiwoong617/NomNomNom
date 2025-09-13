@@ -1,12 +1,13 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ScoutShankShooter.h"
-#include "Core/NomPlayer.h"
-#include "Enemy/Shank/ScoutShankBullet.h"
+#include "Enemy/Shank/ScoutShankShooterComponent.h"
+
+#include "Core/ProjectilePoolWorldSubSystem.h"
+#include "Enemy/Shank/ScoutShankProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
-void UScoutShankShooter::BeginPlay()
+void UScoutShankShooterComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -14,14 +15,14 @@ void UScoutShankShooter::BeginPlay()
 	PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
 }
 
-UScoutShankShooter::UScoutShankShooter()
+UScoutShankShooterComponent::UScoutShankShooterComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
 	//일반 총탄 블루프린트 클래스
-	if (static ConstructorHelpers::FClassFinder<AScoutShankBullet>
+	if (static ConstructorHelpers::FClassFinder<AScoutShankProjectile>
 		Finder(TEXT("/Game/Enemies/Shank/BP_ScoutShankBullet.BP_ScoutShankBullet_C"));
 		Finder.Succeeded())
 	{
@@ -29,7 +30,7 @@ UScoutShankShooter::UScoutShankShooter()
 	}
 }
 
-void UScoutShankShooter::FireBulletOnce() const
+void UScoutShankShooterComponent::FireBulletOnce() const
 {
 	//목표 위치 획득
 	const FVector TargetLocation = PlayerPawn->GetActorLocation();
@@ -45,7 +46,11 @@ void UScoutShankShooter::FireBulletOnce() const
 	
 	//목표 방향 로테이터
 	const FRotator FireRotator = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), RandomizedSightLocation);
-	
-	//목표 방향을 향해 사격
-	GetWorld()->SpawnActor<AScoutShankBullet>(ScoutShankBulletClass, GetComponentLocation(), FireRotator);	
+
+	//발사체 풀링 월드 서브시스템 획득
+	if (const auto ProjectilePoolWorldSubSystem = GetWorld()->GetSubsystem<UProjectilePoolWorldSubSystem>())
+	{
+		//서브시스템에 발사체 풀링 요청
+		ProjectilePoolWorldSubSystem->PopProjectile(ScoutShankBulletClass, GetComponentLocation(), FireRotator);
+	}
 }

@@ -11,15 +11,14 @@ enum class ETeamInfo : uint8
 {
 	None = 0		UMETA(DisplayName = "None"),
 	Player = 1		UMETA(DisplayName = "Player"),
-	Enemy = 1		UMETA(DisplayName = "Enemy"),
+	Enemy = 2		UMETA(DisplayName = "Enemy"),
 };
 
 USTRUCT(BlueprintType)
 struct FFireInfo
 {
 	GENERATED_BODY()
-
-public:
+	
 	FFireInfo()
 		:Damage(0.f), FireLocation(FVector::ZeroVector), TeamInfo(ETeamInfo::None), bIsIgnoreTeam(false){}
 	FFireInfo(float dmg, FVector loc, ETeamInfo teamInfo, bool isIgnore)
@@ -36,7 +35,7 @@ public:
 };
 
 // This class does not need to be modified.
-UINTERFACE()
+UINTERFACE(Blueprintable)
 class UDamagable : public UInterface
 {
 	GENERATED_BODY()

@@ -11,6 +11,7 @@ AProjectileBase::AProjectileBase()
 
 	//충돌체 부착
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	SphereComp->SetCollisionProfileName(FName("Projectile"), true);
 	SetRootComponent(SphereComp);
 
 	//발사체 이동 컴포넌트 부착
@@ -20,14 +21,18 @@ AProjectileBase::AProjectileBase()
 	AActor::SetLifeSpan(10);
 }
 
-void AProjectileBase::BeginPlay()
+void AProjectileBase::Active(const FVector& Location, const FRotator& Rotation)
 {
-	Super::BeginPlay();
-	
+	//활성화
+	SetActorLocationAndRotation(Location, Rotation);
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	ProjectileFireInfo.FireLocation = Location;
 }
 
-void AProjectileBase::Tick(float DeltaTime)
+void AProjectileBase::Inactivate()
 {
-	Super::Tick(DeltaTime);
+	//비활성화
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
 }
-

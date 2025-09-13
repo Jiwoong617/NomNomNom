@@ -3,6 +3,7 @@
 #include "Enemy/Shank/ShankBase.h"
 #include "Enemy/Shank/ShankFollowPathStateMachine.h"
 #include "Components/SphereComponent.h"
+#include "Core/DamageComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
 #include "Enemy/Damage/DamageActorPoolGameInstanceSubsystem.h"
 #include "Enemy/Shank/ShankFindPathStateMachine.h"
@@ -20,19 +21,9 @@ AShankBase::AShankBase() :
 	SphereComp->SetCollisionProfileName(FName("BlockAllDynamic"));
 	SetRootComponent(SphereComp);
 
-	//노말 히트 컴포넌트
-	NormalHitComp = CreateDefaultSubobject<USphereComponent>(TEXT("NormalHitComp"));
-	NormalHitComp->SetCollisionProfileName(FName("Body"));
-	NormalHitComp->SetupAttachment(SphereComp);
-
-	//크리티컬 히트 컴포넌트
-	CriticalHitComp = CreateDefaultSubobject<USphereComponent>(TEXT("CriticalHitComp"));
-	CriticalHitComp->SetCollisionProfileName(FName("Head"));
-	CriticalHitComp->SetupAttachment(SphereComp);
-
 	//스켈레탈 컴포넌트
 	SkeletalMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComp"));
-	SkeletalMeshComp->SetupAttachment(SphereComp);
+	SkeletalMeshComp->SetupAttachment(RootComponent);
 
 	//드론 무브먼트 컴포넌트
 	DroneMoveComp = CreateDefaultSubobject<UDroneMovementComponent>(TEXT("DroneMoveComp"));
@@ -48,9 +39,6 @@ AShankBase::AShankBase() :
 	
 	//체력
 	HP = 10000;
-
-	//방어력
-	ARMOR = 0.9;
 }
 
 void AShankBase::BeginPlay()
@@ -133,7 +121,7 @@ void AShankBase::OnAimByPlayerSight()
 	PRINTLOG(TEXT("FatalError! You Should Fully Override this Interface On Subclass!"));
 }
 
-void AShankBase::OnShotByPlayer(const FVector ShotDir, const int Attack)
+void AShankBase::OnDamaged(const FFireInfo Info)
 {
 	//격추 상태에서는 더 이상 피격될 수 없다
 	if (CurrentState == EShankState::Splash)
@@ -142,12 +130,12 @@ void AShankBase::OnShotByPlayer(const FVector ShotDir, const int Attack)
 	}
 
 	//방어력을 통해 데미지 연산
-	const int32 Damage = FMath::FloorToInt(static_cast<float>(Attack) * (1.0 - ARMOR));
+	const int32 Damage = FMath::FloorToInt(Info.Damage);
 
 	//체력 처리
 	HP -= Damage;
 	
-	//데미지 출력
+	//자산의 위치에 데미지 액터 풀링
 	DamageActorPool->ShowNormalDamageActor(GetActorLocation(), Damage);
 }
 
@@ -162,10 +150,6 @@ void AShankBase::OnShotDown(const FVector ShotDir)
 	//랜덤 방향 충격 적용
 	DroneMoveComp->Splash(ShotDir);
 
-	//명중 콜라이더 비활성화
-	NormalHitComp->SetCollisionProfileName("NoCollision");
-	CriticalHitComp->SetCollisionProfileName("NoCollision");
-	
 	//10초 뒤에 소멸
 	FTimerHandle DestroyHandle;
 	GetWorld()->GetTimerManager().SetTimer(DestroyHandle, [this]()

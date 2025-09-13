@@ -2,8 +2,8 @@
 
 #include "Enemy/Shank/ScoutShank.h"
 #include "Enemy/Components/DroneMovementComponent.h"
-#include "Enemy/Shank/ScoutShankBullet.h"
-#include "Enemy/Shank/ScoutShankShooter.h"
+#include "Enemy/Shank/ScoutShankDamageComponent.h"
+#include "Enemy/Shank/ScoutShankShooterComponent.h"
 #include "Enemy/Shank/ShankFollowPathStateMachine.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -13,9 +13,13 @@ AScoutShank::AScoutShank()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//정찰 생크 전용의 사격 컴포넌트 부착
-	ShooterComp = CreateDefaultSubobject<UScoutShankShooter>(TEXT("ShooterComp"));
+	ShooterComp = CreateDefaultSubobject<UScoutShankShooterComponent>(TEXT("ShooterComp"));
 	ShooterComp->SetupAttachment(GetRootComponent());
 	ShooterComp->SetRelativeLocation(FVector(0, 0, -50));
+
+	//일반 데이지 컴포넌트
+	NormalDamageComp = CreateDefaultSubobject<UScoutShankDamageComponent>(TEXT("NormalDamageComp"));
+	NormalDamageComp->SetupAttachment(RootComponent);
 }
 
 void AScoutShank::BeginPlay()
@@ -24,6 +28,9 @@ void AScoutShank::BeginPlay()
 
 	//자동 사격
 	ShooterComp->ActiveAutoFire();
+
+	//데미지 컴포넌트 초기화
+	NormalDamageComp->Init(ECC_EngineTraceChannel1, FName("Body"), EBodyType::Body);
 }
 
 void AScoutShank::OnAimByPlayerSight()
@@ -131,4 +138,12 @@ void AScoutShank::OnAimByPlayerSight()
 void AScoutShank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AScoutShank::OnShotDown(const FVector ShotDir)
+{
+	Super::OnShotDown(ShotDir);
+
+	//비활성화
+	NormalDamageComp->Inactive();
 }

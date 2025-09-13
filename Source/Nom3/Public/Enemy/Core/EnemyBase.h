@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enemy/Interfaces/OnAimByPlayerSight.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/Damagable.h"
 #include "EnemyBase.generated.h"
 
 //델리게이트 선언
@@ -15,7 +17,7 @@ DECLARE_MULTICAST_DELEGATE(FOnDeathEventSignature);
 class UDamageActorPoolGameInstanceSubsystem;
 
 UCLASS(Abstract)
-class NOM3_API AEnemyBase : public AActor
+class NOM3_API AEnemyBase : public AActor, public IOnAimByPlayerSight, public IDamagable
 {
 	GENERATED_BODY()
 
@@ -41,29 +43,27 @@ public:
 	FOnHealthChangedEventSignature OnHPChanged;
 	FOnDeathEventSignature OnDeath;
 
-	//아머 관련 프로퍼티와 델리게이트
-	__declspec(property(get=GetArmor, put=SetArmor)) float ARMOR;
-	FORCEINLINE float GetArmor() const { return Armor; };
-	FORCEINLINE void SetArmor(const float Value)
-	{
-		this->Armor = Value;
-		OnArmorChanged.Broadcast(Armor);
-	};
-	FOnArmorChangedEventSignature OnArmorChanged;
+	//피조준 인터페이스
+	UFUNCTION(BlueprintCallable)
+	virtual void OnAimByPlayerSight() override;
+
+	//데미지 인터페이스
+	virtual void OnDamaged(FFireInfo Info) override;
 
 protected:
 	virtual void BeginPlay() override;
 
+	//체력 프로퍼티
 	UPROPERTY(VisibleAnywhere)
 	int32 Health;
 
-	UPROPERTY(VisibleAnywhere)
-	float Armor;
-
+	//데미지 액터 풀링 게임 인스턴스 서브시스템 참조
 	UPROPERTY()
 	TObjectPtr<UDamageActorPoolGameInstanceSubsystem> DamageActorPool;
 
 public:
+
+	//현재 목표로 하는 폰
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<AActor> TargetPawn;
 };

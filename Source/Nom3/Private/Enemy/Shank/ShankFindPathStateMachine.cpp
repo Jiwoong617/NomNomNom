@@ -1,10 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy/Shank/ShankFindPathStateMachine.h"
-
-#include "Enemy/Components/DroneMovementComponent.h"
 #include "Enemy/Shank/ShankBase.h"
-#include "Kismet/KismetMathLibrary.h"
 
 UShankFindPathStateMachine::UShankFindPathStateMachine()
 {
