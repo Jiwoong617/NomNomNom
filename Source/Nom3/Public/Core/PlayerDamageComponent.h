@@ -27,12 +27,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-private:
-	
 protected:
 	virtual void OnHitBody(FFireInfo& info);
 	virtual void OnHitHead(FFireInfo& info);
-
-public:
-	virtual void OnDamaged(FFireInfo info) override;
 };
