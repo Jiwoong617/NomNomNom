@@ -14,8 +14,7 @@ UDamageComponent::UDamageComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
-	SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+	UPrimitiveComponent::SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 	SetGenerateOverlapEvents(true);
 }
 
@@ -70,7 +69,7 @@ void UDamageComponent::OnBeginOverlap(
 	if (const auto HitProjectile = Cast<AProjectileBase>(OtherActor))
 	{
 		//발사체 정보
-		FFireInfo Info = HitProjectile->ProjectileFireInfo;
+		FFireInfo Info = HitProjectile->FireInfo;
 		
 		//데미지 처리을 위하여 호출
 		if (BodyType == EBodyType::Body)
@@ -82,8 +81,8 @@ void UDamageComponent::OnBeginOverlap(
 			OnHitHead(Info);
 		}
 
-		//정보를 전달한 충돌 발사체는 파괴
-		HitProjectile->Destroy();
+		//정보를 전달한 충돌 발사체는 풀링
+		HitProjectile->Inactivate();
 	}
 }
 
@@ -103,8 +102,12 @@ void UDamageComponent::Init(ECollisionChannel channel, FName collisionPresetName
 	BodyType = bodyType;
 }
 
-void UDamageComponent::OnDamaged(FFireInfo info)
+void UDamageComponent::OnDamaged(FFireInfo Info)
 {
+	if (BodyType == EBodyType::Body)
+		OnHitBody(Info);
+	else if (BodyType == EBodyType::Head)
+		OnHitHead(Info);
 }
 
 void UDamageComponent::Inactive()

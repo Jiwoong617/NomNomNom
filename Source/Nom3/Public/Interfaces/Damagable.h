@@ -19,19 +19,44 @@ struct FFireInfo
 {
 	GENERATED_BODY()
 	
-	FFireInfo()
-		:Damage(0.f), FireLocation(FVector::ZeroVector), TeamInfo(ETeamInfo::None), bIsIgnoreTeam(false){}
-	FFireInfo(float dmg, FVector loc, ETeamInfo teamInfo, bool isIgnore)
-		:Damage(dmg), FireLocation(loc), TeamInfo(teamInfo), bIsIgnoreTeam(isIgnore){}
-	
+	FFireInfo() :
+		Damage(0.f),
+		FireLocation(FVector::ZeroVector),
+		TeamInfo(ETeamInfo::None),
+		bIsIgnoreTeam(false),
+		ProjectileSpeed(-1) {}
+
+	FFireInfo(const float Damage, const FVector& Location, const ETeamInfo TeamInfo, const bool bIsIgnore) :
+		Damage(Damage),
+		FireLocation(Location),
+		TeamInfo(TeamInfo),
+		bIsIgnoreTeam(bIsIgnore),
+		ProjectileSpeed(-1){}
+
+	FFireInfo(const float Damage, const FVector& Location, const ETeamInfo TeamInfo, const bool bIsIgnore, const float Speed) :
+		Damage(Damage),
+		FireLocation(Location),
+		TeamInfo(TeamInfo),
+		bIsIgnoreTeam(bIsIgnore),
+		ProjectileSpeed(Speed) {}
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireInfo")
 	float Damage;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireInfo")
 	FVector FireLocation;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireInfo")
 	ETeamInfo TeamInfo;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireInfo")
 	bool bIsIgnoreTeam;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireInfo")
+	float ProjectileSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireInfo")
+	TObjectPtr<UCurveFloat> DamageByDistanceCurve;
 };
 
 // This class does not need to be modified.
