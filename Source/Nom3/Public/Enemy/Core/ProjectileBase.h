@@ -11,6 +11,28 @@
 class USphereComponent;
 class UProjectileMovementComponent;
 
+USTRUCT(BlueprintType)
+struct FProjectileInfo
+{
+	GENERATED_BODY()
+
+	FProjectileInfo() : Damage(0), Speed(0) {};
+	
+	FProjectileInfo(const float Damage, const float Speed) : Damage(Damage), Speed(Speed) {};
+
+	//발사체의 기본 피해량
+	UPROPERTY(BlueprintReadWrite)
+	float Damage;
+
+	//발사체의 기본 속력
+	UPROPERTY(BlueprintReadWrite)
+	float Speed;
+
+	//발사체의 거리에 따른 데미지 경감 커브
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<UCurveFloat> DamageCurve;
+};
+
 UCLASS()
 class NOM3_API AProjectileBase : public AActor
 {
@@ -19,7 +41,11 @@ class NOM3_API AProjectileBase : public AActor
 public:
 	AProjectileBase();
 
-	//발사 구조체
+	//발사체 정보 구조체
+	UPROPERTY(VisibleAnywhere)
+	FProjectileInfo ProjectileInfo;
+	
+	//발사 정보 구조체
 	UPROPERTY(VisibleAnywhere)
 	FFireInfo ProjectileFireInfo;
 
@@ -32,6 +58,9 @@ public:
 	void Inactivate();
 
 protected:
+
+	//풀링 타이머 핸들
+	FTimerHandle PoolingTimerHandle;
 
 	//충돌체 컴포넌트
 	UPROPERTY(VisibleAnywhere)

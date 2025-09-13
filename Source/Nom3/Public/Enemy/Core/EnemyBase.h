@@ -48,7 +48,7 @@ public:
 	virtual void OnAimByPlayerSight() override;
 
 	//데미지 인터페이스
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	virtual void OnDamaged(FFireInfo Info) override;
 
 protected:

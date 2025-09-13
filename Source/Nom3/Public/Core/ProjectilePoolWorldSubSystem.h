@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
+#include "Containers/Map.h"
 #include "Containers/Queue.h"
 #include "ProjectilePoolWorldSubSystem.generated.h"
 
@@ -13,8 +14,6 @@ class NOM3_API UProjectilePoolWorldSubSystem : public UWorldSubsystem
 	GENERATED_BODY()
 
 public:
-	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-
 	virtual void Deinitialize() override;
 
 	UFUNCTION()
@@ -25,7 +24,7 @@ public:
 
 private:
 	//클래스를 토대로 발사체를 저장하는 풀링
-	TMap<UClass*, TQueue<AProjectileBase*>> ProjectilePools;
+	TMap<UClass*, TSharedPtr<TQueue<AProjectileBase*>>> ProjectilePools;
 
 	//요청한 발사체를 스폰한다
 	UFUNCTION()

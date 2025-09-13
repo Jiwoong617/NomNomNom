@@ -40,12 +40,12 @@ void UScoutShankShooterComponent::FireBulletOnce() const
 
 	//목표 방향 랜덤
 	TargetDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(TargetDirection, ShootRandConeAngle);
-	
-	//랜덤화된 목표 위치
-	const FVector RandomizedSightLocation = TargetLocation + TargetDirection;
+
+	//발사 방향 디버그 드로우
+	DrawDebugLine(GetWorld(), GetComponentLocation(), GetComponentLocation() + TargetDirection * 1000, FColor::Cyan, false, 5, 0, 0);
 	
 	//목표 방향 로테이터
-	const FRotator FireRotator = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), RandomizedSightLocation);
+	const FRotator FireRotator = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), GetComponentLocation() + TargetDirection);
 
 	//발사체 풀링 월드 서브시스템 획득
 	if (const auto ProjectilePoolWorldSubSystem = GetWorld()->GetSubsystem<UProjectilePoolWorldSubSystem>())

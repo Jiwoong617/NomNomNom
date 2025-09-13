@@ -2,6 +2,7 @@
 
 #include "Enemy/Core/ProjectileBase.h"
 #include "Components/SphereComponent.h"
+#include "Core/ProjectilePoolWorldSubSystem.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 AProjectileBase::AProjectileBase()
@@ -16,9 +17,6 @@ AProjectileBase::AProjectileBase()
 
 	//발사체 이동 컴포넌트 부착
 	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMoveComp"));
-
-	//생명 주기 설정
-	AActor::SetLifeSpan(10);
 }
 
 void AProjectileBase::Active(const FVector& Location, const FRotator& Rotation)
@@ -27,12 +25,36 @@ void AProjectileBase::Active(const FVector& Location, const FRotator& Rotation)
 	SetActorLocationAndRotation(Location, Rotation);
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
+
+	//사격 정보 업데이트
 	ProjectileFireInfo.FireLocation = Location;
+
+	//이동 방향 전환
+	ProjectileMoveComp->Velocity = ProjectileInfo.Speed * GetActorForwardVector();
+
+	//10초 후에 풀에 반환
+	GetWorldTimerManager().SetTimer(PoolingTimerHandle, [this]()
+	{
+		//반환 호출
+		Inactivate();
+	}, 10, false);
 }
 
 void AProjectileBase::Inactivate()
 {
+	//풀링 타이머 핸들 비활성
+	if (PoolingTimerHandle.IsValid())
+	{
+		GetWorldTimerManager().ClearTimer(PoolingTimerHandle);
+	}
+	
 	//비활성화
 	SetActorHiddenInGame(true);
 	SetActorEnableCollision(false);
+
+	//풀에 반환한다
+	if (const auto Subsystem = GetWorld()->GetSubsystem<UProjectilePoolWorldSubSystem>())
+	{
+		Subsystem->PushProjectile(this);
+	}
 }
