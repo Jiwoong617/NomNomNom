@@ -47,10 +47,10 @@ void UScoutShankShooterComponent::FireBulletOnce() const
 	//목표 방향 로테이터
 	const FRotator FireRotator = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), RandomizedSightLocation);
 
-	//발사체 풀링 월드 서브시스템 획득
-	if (const auto ProjectilePoolWorldSubSystem = GetWorld()->GetSubsystem<UProjectilePoolWorldSubSystem>())
-	{
-		//서브시스템에 발사체 풀링 요청
-		ProjectilePoolWorldSubSystem->PopProjectile(ScoutShankBulletClass, GetComponentLocation(), FireRotator);
-	}
+	// //발사체 풀링 월드 서브시스템 획득
+	// if (const auto ProjectilePoolWorldSubSystem = GetWorld()->GetSubsystem<UProjectilePoolWorldSubSystem>())
+	// {
+	// 	//서브시스템에 발사체 풀링 요청
+	// 	ProjectilePoolWorldSubSystem->PopProjectile(ScoutShankBulletClass, GetComponentLocation(), FireRotator);
+	// }
 }
