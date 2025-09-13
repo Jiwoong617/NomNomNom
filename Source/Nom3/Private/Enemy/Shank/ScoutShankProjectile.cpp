@@ -20,7 +20,7 @@ AScoutShankProjectile::AScoutShankProjectile()
 	ProjectileMoveComp->bRotationFollowsVelocity = true;
 
 	//발사체 정보 초기화
-	ProjectileInfo = FProjectileInfo(1500, ProjectileMoveComp->InitialSpeed);
+	FireInfo = FFireInfo(1500, FVector::ZeroVector, ETeamInfo::Enemy, true, ProjectileMoveComp->InitialSpeed);
 }
 
 void AScoutShankProjectile::NotifyActorBeginOverlap(AActor* OtherActor)

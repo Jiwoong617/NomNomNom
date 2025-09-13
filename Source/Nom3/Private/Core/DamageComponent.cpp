@@ -70,7 +70,7 @@ void UDamageComponent::OnBeginOverlap(
 	if (const auto HitProjectile = Cast<AProjectileBase>(OtherActor))
 	{
 		//발사체 정보
-		FFireInfo Info = HitProjectile->ProjectileFireInfo;
+		FFireInfo Info = HitProjectile->FireInfo;
 		
 		//데미지 처리을 위하여 호출
 		if (BodyType == EBodyType::Body)

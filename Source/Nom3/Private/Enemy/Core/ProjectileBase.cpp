@@ -27,10 +27,10 @@ void AProjectileBase::Active(const FVector& Location, const FRotator& Rotation)
 	SetActorEnableCollision(true);
 
 	//사격 정보 업데이트
-	ProjectileFireInfo.FireLocation = Location;
+	FireInfo.FireLocation = Location;
 
 	//이동 방향 전환
-	ProjectileMoveComp->Velocity = ProjectileInfo.Speed * GetActorForwardVector();
+	ProjectileMoveComp->Velocity = FireInfo.ProjectileSpeed * GetActorForwardVector();
 
 	//10초 후에 풀에 반환
 	GetWorldTimerManager().SetTimer(PoolingTimerHandle, [this]()
