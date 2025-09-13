@@ -15,6 +15,7 @@ public:
 	void OnInteract(TObjectPtr<class UInputComponent> Object);
 	AElevator();
 
+
 protected:
 	virtual void BeginPlay() override;
 

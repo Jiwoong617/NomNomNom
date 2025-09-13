@@ -35,21 +35,44 @@ void AMovingObject::Tick(float DeltaTime)
 
 	//true 면 지정 위치 false 시작위치
 	FVector Destination = bIsTriggered ? GlobalTargetLocation : StartLocation;
-
-	// 방향 구하기
-	FVector Direction = (Destination - GetActorLocation()).GetSafeNormal();
-
-	// 현재 위치와 목표 지점 사이의 거리
-	float DistanceToDestination = FVector::Dist(GetActorLocation(), Destination);
-
-	// 목표 지점에 거의 도달했다면 이동멈춤
-	if (DistanceToDestination < 1.0f)
+	// 목저지가 아니라면 실행
+	if (!GetActorLocation().Equals(Destination,1.0f))
 	{
-		SetActorLocation(Destination);
-		return;
+		// 방향 계산
+		const FVector Direction = (Destination - GetActorLocation()).GetSafeNormal();
+		//거리 계싼
+		const float DistaceToDestination = FVector::Dist(GetActorLocation(), Destination);
+		// 프레임 마다 움직일 거리
+		FVector MovementThsisFrame = Direction * ObjectSpeed * DeltaTime;
+		// 멈춰라 
+		if (MovementThsisFrame.Size() >= DistaceToDestination)
+		{
+			SetActorLocation(Destination);
+			
+		}
+		// 아니면 더 가라
+		else
+		{
+			SetActorLocation(GetActorLocation() + MovementThsisFrame);
+		}
 	}
 
-	// 이동
-	FVector Movement = Direction * ObjectSpeed * DeltaTime;
-	SetActorLocation(GetActorLocation() + Movement);
+	// // 방향 구하기
+	// FVector Direction = (Destination - GetActorLocation()).GetSafeNormal();
+	//
+	// // 현재 위치와 목표 지점 사이의 거리
+	// float DistanceToDestination = FVector::Dist(GetActorLocation(), Destination);
+	//
+	// // 목표 지점에 거의 도달했다면 이동멈춤
+	// if (DistanceToDestination < 1.0f)
+	// {
+	// 	SetActorLocation(Destination);
+	// 	return;
+	// }
+	//
+	// // 이동
+	// FVector Movement = Direction * ObjectSpeed * DeltaTime;
+	// SetActorLocation(GetActorLocation() + Movement);
+
+	
 }
