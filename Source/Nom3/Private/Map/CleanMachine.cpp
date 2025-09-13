@@ -26,13 +26,22 @@ ACleanMachine::ACleanMachine()
 	
 }
 
-void ACleanMachine::OnInteract(AActor OtherActor)
+// void on
+// {
+// 	if (hitpoint0)
+// 	{
+// 		OnInteract	
+// 	}
+// 	
+// 	
+// }
+
+void ACleanMachine::OnInteract(AActor *OtherActor)
 {
-	auto player = Cast<ANomPlayer>(GetOwner());
-	//player->InputComponent->BindAction<UEnhancedInputComponent>();
+	auto player = Cast<ANomPlayer>(OtherActor);
 	if (player)
 	{
-		// player-> bOncompoverlap = --MaxHp 
+		player->OnDamaged(FFireInfo(100.f,GetActorLocation(),ETeamInfo::Enemy,false));
 	}
 }
 
