@@ -4,24 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "Enemy/Core/ProjectileBase.h"
-#include "ScoutShankBullet.generated.h"
+#include "ScoutShankProjectile.generated.h"
 
 UCLASS()
-class NOM3_API AScoutShankBullet : public AProjectileBase
+class NOM3_API AScoutShankProjectile : public AProjectileBase
 {
 	GENERATED_BODY()
 
 public:
-	AScoutShankBullet();
+	AScoutShankProjectile();
 
 protected:
-	virtual void BeginPlay() override;
-
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStaticMeshComponent> MeshComp;
-
-public:
-	virtual void Tick(float DeltaTime) override;
 };

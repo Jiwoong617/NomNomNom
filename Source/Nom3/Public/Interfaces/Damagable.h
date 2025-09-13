@@ -6,8 +6,36 @@
 #include "UObject/Interface.h"
 #include "Damagable.generated.h"
 
+UENUM(BlueprintType)
+enum class ETeamInfo : uint8
+{
+	None = 0		UMETA(DisplayName = "None"),
+	Player = 1		UMETA(DisplayName = "Player"),
+	Enemy = 2		UMETA(DisplayName = "Enemy"),
+};
+
+USTRUCT(BlueprintType)
+struct FFireInfo
+{
+	GENERATED_BODY()
+	
+	FFireInfo()
+		:Damage(0.f), FireLocation(FVector::ZeroVector), TeamInfo(ETeamInfo::None), bIsIgnoreTeam(false){}
+	FFireInfo(float dmg, FVector loc, ETeamInfo teamInfo, bool isIgnore)
+		:Damage(dmg), FireLocation(loc), TeamInfo(teamInfo), bIsIgnoreTeam(isIgnore){}
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireInfo")
+	float Damage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireInfo")
+	FVector FireLocation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireInfo")
+	ETeamInfo TeamInfo;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FireInfo")
+	bool bIsIgnoreTeam;
+};
+
 // This class does not need to be modified.
-UINTERFACE()
+UINTERFACE(Blueprintable)
 class UDamagable : public UInterface
 {
 	GENERATED_BODY()
@@ -23,5 +51,6 @@ class NOM3_API IDamagable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	virtual void OnDamaged(float Value) = 0;
+	//총탄 구조체 : 데미지, 발사 지점, 사격자의 팀 정보, 동일팀 무시여부
+	virtual void OnDamaged(FFireInfo Info) = 0;
 };

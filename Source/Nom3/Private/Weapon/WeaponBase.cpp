@@ -75,7 +75,7 @@ void AWeaponBase::AimFire()
 			if (Hit.GetActor()->Implements<UDamagable>())
 			{
 				PRINTLOG(TEXT("Damagable"));
-				Cast<IDamagable>(Hit.GetActor())->OnDamaged(WeaponData->Damage);
+				//Cast<IDamagable>(Hit.GetActor())->OnDamaged(WeaponData->Damage);
 			}
 		}
 
@@ -113,7 +113,7 @@ void AWeaponBase::NoAimFire()
 			if (Hit.GetActor()->Implements<UDamagable>())
 			{
 				PRINTLOG(TEXT("Damagable"));
-				Cast<IDamagable>(Hit.GetActor())->OnDamaged(WeaponData->Damage);
+				//Cast<IDamagable>(Hit.GetActor())->OnDamaged(WeaponData->Damage);
 			}
 		}
 		

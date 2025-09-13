@@ -70,6 +70,8 @@ void UWeaponComponent::Init()
 		CurrentWeaponIdx = 0;
 		CurrentWeapon = WeaponList[CurrentWeaponIdx];
 		CurrentWeapon->SetActorHiddenInGame(false);
+
+		OnBulletChangeDelegate.Broadcast(CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 	}
 	
 	CamOffset = Owner->GetFpsCamArm()->GetRelativeLocation();
@@ -102,12 +104,16 @@ void UWeaponComponent::Fire()
 			CurrentWeapon->AimFire();
 		else
 			CurrentWeapon->NoAimFire();
+
+		OnBulletChangeDelegate.Broadcast(CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 	}
 }
 
 void UWeaponComponent::Reload()
 {
 	CurrentWeapon->Reload();
+
+	OnBulletChangeDelegate.Broadcast(CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 }
 
 void UWeaponComponent::AimStart()
@@ -167,6 +173,8 @@ void UWeaponComponent::OnWeaponChanged(int32 idx)
 		GetComponentTransform().InverseTransformPosition(AimSocketLoc);
 	
 	AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
+
+	OnBulletChangeDelegate.Broadcast(CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 }
 
 AWeaponBase* UWeaponComponent::GetCurrentWeapon()

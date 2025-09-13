@@ -83,7 +83,7 @@ void AGrenade::OnExplode()
 			if (IDamagable* act = Cast<IDamagable>(actor))
 			{
 				float Damage = FVector::Dist(GetActorLocation(), actor->GetActorLocation()) / ExplodeRadius;
-				act->OnDamaged(FMath::Lerp(MaxDamage, MinDamage, Damage));
+				//act->OnDamaged(FMath::Lerp(MaxDamage, MinDamage, Damage));
 			}
 		}
 	}

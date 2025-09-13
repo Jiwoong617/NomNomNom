@@ -3,15 +3,23 @@
 #include "Core/NomPlayer.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InputAction.h"
+#include "InputMappingContext.h"
+#include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Interfaces/Damagable.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Nom3/Nom3.h"
 #include "Weapon/Grenade.h"
 #include "Weapon/WeaponBase.h"
 #include "Weapon/WeaponComponent.h"
 #include "Weapon/WeaponData.h"
+#include "Core/PlayerDamageComponent.h"
+#include "Core/PlayerUI.h"
 
 ANomPlayer::ANomPlayer()
 {
@@ -81,8 +89,70 @@ ANomPlayer::ANomPlayer()
 	GetCharacterMovement()->GravityScale *= GravityMultiplier;
 	GetCharacterMovement()->AirControl = 0.5f;
 
+	//Damage Comp
+	HeadBox = CreateDefaultSubobject<UPlayerDamageComponent>("HeadBox");
+	HeadBox->SetupAttachment(FpsMeshComp, TEXT("HeadSocket"));
+	
+	BodyBox = CreateDefaultSubobject<UPlayerDamageComponent>("BodyBox");
+	BodyBox->SetupAttachment(FpsMeshComp, TEXT("BodySocket"));
+
+	//UI
+	ConstructorHelpers::FClassFinder<UPlayerUI> playerui(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/BluePrints/WBP/WBP_PlayerUI.WBP_PlayerUI_C'"));
+	if (playerui.Succeeded())
+		PlayerUIClass = playerui.Class;
+	
 	//Add Component
 	WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
+	//////////////////////////////Input/////////////////////////////////
+	{
+		ConstructorHelpers::FObjectFinder<UInputMappingContext> TempIMC(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Input/IMC_Player.IMC_Player'"));
+		if (TempIMC.Succeeded())
+			IMC_NomPlayer = TempIMC.Object;
+
+		// Input Actions (IA_*)
+		ConstructorHelpers::FObjectFinder<UInputAction> FndMove(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Move.IA_Move'"));
+		if (FndMove.Succeeded())
+			IA_Move = FndMove.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndJump(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Jump.IA_Jump'"));
+		if (FndJump.Succeeded())
+			IA_Jump = FndJump.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndLook(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Look.IA_Look'"));
+		if (FndLook.Succeeded())
+			IA_Look = FndLook.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndRun(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Run.IA_Run'"));
+		if (FndRun.Succeeded())
+			IA_Run = FndRun.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndCrouch(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Crouch.IA_Crouch'"));
+		if (FndCrouch.Succeeded())
+			IA_Crouch = FndCrouch.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndInteract(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Interact.IA_Interact'"));
+		if (FndInteract.Succeeded())
+			IA_Interact = FndInteract.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndFire(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Fire.IA_Fire'"));
+		if (FndFire.Succeeded())
+			IA_Fire = FndFire.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndAim(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Aim.IA_Aim'"));
+		if (FndAim.Succeeded())
+			IA_Aim = FndAim.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndReload(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Reload.IA_Reload'"));
+		if (FndReload.Succeeded())
+			IA_Reload = FndReload.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndMelee(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Melee.IA_Melee'"));
+		if (FndMelee.Succeeded())
+			IA_Melee = FndMelee.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndThrow(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Throw.IA_Throw'"));
+		if (FndThrow.Succeeded())
+			IA_Throw = FndThrow.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndSkill(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Skill.IA_Skill'"));
+		if (FndSkill.Succeeded())
+			IA_Skill = FndSkill.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndUltimate(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Ultimate.IA_Ultimate'"));
+		if (FndUltimate.Succeeded())
+			IA_Ultimate = FndUltimate.Object;
+		ConstructorHelpers::FObjectFinder<UInputAction> FndChangeWeapon(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_ChangeWeapon.IA_ChangeWeapon'"));
+		if (FndChangeWeapon.Succeeded())
+			IA_ChangeWeapon = FndChangeWeapon.Object;
+	}
 }
 
 void ANomPlayer::BeginPlay()
@@ -99,6 +169,15 @@ void ANomPlayer::BeginPlay()
 		}
 	}
 
+	PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
+	WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
+	PlayerUI->AddToViewport();
+
+	//TODO : Mesh 바뀌면 값 조정해줘야됨
+	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
+	BodyBox->Init(FVector(50, 15, 20), ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
+	HeadBox->OnDamagedDelegate.AddDynamic(this, &ANomPlayer::OnDamaged);
+	BodyBox->OnDamagedDelegate.AddDynamic(this, &ANomPlayer::OnDamaged);
 }
 
 bool ANomPlayer::CanJumpInternal_Implementation() const
@@ -397,6 +476,30 @@ void ANomPlayer::Melee()
 		MovingState = EMovingState::Idle;
 
 	ActionState = EActionState::LeftHand;
+
+	
+	EObjectTypeQuery ObjType = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2);
+	TArray<AActor*> ActorsToIgnore;
+	TArray<FHitResult> OutHits;
+	FVector Offset = FpsCameraComp->GetForwardVector() * 60.f
+			   + FpsCameraComp->GetRightVector() * -15.f
+			   + FpsCameraComp->GetUpVector() * 40.f;
+
+	FVector Start = GetActorLocation() + Offset;
+	FVector End   = GetActorLocation() + Offset + FpsCameraComp->GetForwardVector() * 40.f;
+	if (UKismetSystemLibrary::BoxTraceMultiForObjects(GetWorld(), Start, End, FVector(32,32,50),
+		FpsCameraComp->GetComponentRotation(), TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType}, false, ActorsToIgnore, EDrawDebugTrace::ForDuration,OutHits,
+		true, FColor::Red, FColor::Green, 10))
+	{
+		for (FHitResult& hits : OutHits)
+		{
+			if (IDamagable* act = Cast<IDamagable>(hits.GetActor()))
+			{
+				//act->OnDamaged(FistDamage);
+			}
+		}
+	}
+	
 	//TODO : 몽타쥬로 바꿀 것
 	PRINTINFO();
 	GetWorldTimerManager().SetTimer(LeftHandHandle, [this]()
@@ -644,6 +747,12 @@ void ANomPlayer::ChangeToTps()
 	FpsMeshComp->SetOwnerNoSee(true);
 	FpsCameraComp->SetActive(false);
 	TpsCameraComp->SetActive(true);
+}
+
+//여기에 데미지 함수 구현
+void ANomPlayer::OnDamaged(FFireInfo Info)
+{
+	
 }
 
 USpringArmComponent* ANomPlayer::GetFpsCamArm()

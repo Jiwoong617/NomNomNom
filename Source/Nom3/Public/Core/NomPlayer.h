@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/Damagable.h"
 #include "NomPlayer.generated.h"
 
+class UPlayerUI;
+class UPlayerDamageComponent;
 class UWeaponComponent;
 class UCameraComponent;
 class USpringArmComponent;
@@ -34,7 +37,7 @@ enum class EMovingState : uint8
 };
 
 UCLASS()
-class NOM3_API ANomPlayer : public ACharacter
+class NOM3_API ANomPlayer : public ACharacter , public IDamagable
 {
 	GENERATED_BODY()
 
@@ -140,6 +143,18 @@ protected:
 	FTimerHandle ChangeWeaponHandle;
 	FTimerHandle LeftHandHandle;
 	FTimerHandle SkillHandle;
+
+	//Damage, Hp
+	int32 MaxHp = 50;
+	int32 Hp = 50;
+	float FistDamage = 100.f;
+	UPROPERTY(EditAnywhere) UPlayerDamageComponent* HeadBox;
+	UPROPERTY(EditAnywhere) UPlayerDamageComponent* BodyBox;
+
+	//UI
+	TSubclassOf<UPlayerUI> PlayerUIClass;
+	UPlayerUI* PlayerUI;
+	
 public:
 
 protected:
@@ -203,7 +218,8 @@ protected:
 	UFUNCTION() void ChangeToFps();
 	UFUNCTION() void ChangeToTps();
 
-
+	UFUNCTION() virtual void OnDamaged(FFireInfo Info) override;
+	
 public:
 	USpringArmComponent* GetFpsCamArm();
 	UCameraComponent* GetFpsCam();
