@@ -8,7 +8,8 @@
 #include "Interfaces/Damagable.h"
 #include "Nom3/Nom3.h"
 #include "Weapon/WeaponData.h"
-
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase() : WeaponData(nullptr)
@@ -19,7 +20,10 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 	WeaponMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	RootComponent = WeaponMeshComp;
 	WeaponMeshComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-	
+
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> eff(TEXT("/Script/Niagara.NiagaraSystem'/Game/Effect/NS_FireEffect.NS_FireEffect'"));
+	if (eff.Succeeded())
+		fireEffect = eff.Object;
 }
 
 // Called when the game starts or when spawned
@@ -42,7 +46,8 @@ void AWeaponBase::Tick(float DeltaTime)
 void AWeaponBase::ApplyRecoil()
 {
 	const float RecoilPitch = FMath::RandRange(WeaponData->RecoilPitchMin, WeaponData->RecoilPitchMax);
-	const float RecoilYaw = FMath::RandRange(WeaponData->RecoilYawMin, WeaponData->RecoilYawMax) * FMath::RandBool();
+	const float RecoilYaw = FMath::RandRange(WeaponData->RecoilYawMin, WeaponData->RecoilYawMax) *
+		(FMath::RandBool() ? 1.f : -1.f);
 	
 	TargetRecoil.Pitch += RecoilPitch;
 	TargetRecoil.Yaw += RecoilYaw;
@@ -70,20 +75,28 @@ void AWeaponBase::AimFire()
 		CurrentAmmo--;
 		FVector Pos = WeaponOwner->GetFpsCam()->GetComponentLocation();
 		FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
+		
 		FHitResult Hit;
-		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + Dir * 10000,ECC_Visibility))
+		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
+		Params.AddIgnoredActor(WeaponOwner);
+		
+		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + Dir * 10000,ECC_Visibility,Params))
 		{
-			if (auto dmg = Cast<UDamageComponent>(Hit.GetActor()))
+			if (auto dmg = Cast<UDamageComponent>(Hit.GetComponent()))
 			{
 				PRINTLOG(TEXT("Damagable"));
 				dmg->OnDamaged(FFireInfo(WeaponData->Damage,
 					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
+			
+			DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
 		}
 
-		//DrawDebugLine(GetWorld(), Pos, Dir * 10000, FColor::Red, false, 1);
-
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan,
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), fireEffect,
+			WeaponMeshComp->GetSocketLocation(FireSocketName), WeaponMeshComp->GetSocketRotation(FireSocketName));
+		
+		DrawDebugLine(GetWorld(), Pos, Dir * 10000, FColor::Red, false, 1);
+		GEngine->AddOnScreenDebugMessage(2, 5.0f, FColor::Cyan,
 			FString::Printf(TEXT("%d/%d - %d"), CurrentAmmo, WeaponData->AmmoCount, MaxAmmo));
 
 		//Recoil
@@ -110,19 +123,25 @@ void AWeaponBase::NoAimFire()
 		FVector FinalDir = SpreadRot.Vector();
 
 		FHitResult Hit;
-		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + FinalDir * 10000,ECC_Visibility))
+		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
+		Params.AddIgnoredActor(WeaponOwner);
+		
+		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + FinalDir * 10000,ECC_Visibility, Params))
 		{
-			if (auto dmg = Cast<UDamageComponent>(Hit.GetActor()))
+			if (auto dmg = Cast<UDamageComponent>(Hit.GetComponent()))
 			{
 				PRINTLOG(TEXT("Damagable"));
 				dmg->OnDamaged(FFireInfo(WeaponData->Damage,
 					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
+			
+			DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
 		}
+
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), fireEffect,
+			WeaponMeshComp->GetSocketLocation(FireSocketName), WeaponMeshComp->GetSocketRotation(FireSocketName));
 		
-		//DrawDebugLine(GetWorld(), Pos, Pos + FinalDir * 10000, FColor::Red, false, 1);
-		//DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
-		
+		DrawDebugLine(GetWorld(), Pos, Pos + FinalDir * 10000, FColor::Red, false, 1);
 		GEngine->AddOnScreenDebugMessage(
 			-1, 5.0f, FColor::Cyan,
 			FString::Printf(TEXT("%d/%d - %d"), CurrentAmmo, WeaponData->AmmoCount, MaxAmmo)

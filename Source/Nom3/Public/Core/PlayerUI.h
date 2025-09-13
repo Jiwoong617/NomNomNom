@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerUI.generated.h"
 
+class UProgressBar;
 class UTextBlock;
 
 UCLASS()
@@ -21,7 +22,13 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* TEXT_MaxAmmo;
 
+	UPROPERTY(meta=(BindWidget))
+	UProgressBar* HpBar;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateAmmoUI(int32 currentammo, int32 maxammo);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateHealthUI(float health, float maxhealth);
 };

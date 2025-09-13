@@ -8,6 +8,7 @@
 
 class ANomPlayer;
 class UWeaponData;
+class UNiagaraSystem;
 
 UCLASS()
 class NOM3_API AWeaponBase : public AActor
@@ -46,6 +47,10 @@ protected:
 	FRotator TargetRecoil; //목표 반동
 	UPROPERTY(EditAnywhere)
 	FRotator LastAppliedRecoil; // 직전 프레임에 적용한 반동
+
+	//Test
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* fireEffect;
 	
 public:
 	UPROPERTY(EditAnywhere)

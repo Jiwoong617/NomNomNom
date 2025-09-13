@@ -172,6 +172,7 @@ void ANomPlayer::BeginPlay()
 	PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
 	WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
 	PlayerUI->AddToViewport();
+	PlayerUI->UpdateHealthUI(Hp, MaxHp);
 
 	//TODO : Mesh 바뀌면 값 조정해줘야됨
 	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
@@ -477,7 +478,7 @@ void ANomPlayer::Melee()
 
 	
 	EObjectTypeQuery ObjType = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2);
-	TArray<AActor*> ActorsToIgnore;
+	TArray<AActor*> ActorsToIgnore = {this};
 	TArray<FHitResult> OutHits;
 	FVector Offset = FpsCameraComp->GetForwardVector() * 60.f
 			   + FpsCameraComp->GetRightVector() * -15.f
@@ -491,7 +492,7 @@ void ANomPlayer::Melee()
 	{
 		for (FHitResult& hits : OutHits)
 		{
-			if (UDamageComponent* act = Cast<UDamageComponent>(hits.GetActor()))
+			if (UDamageComponent* act = Cast<UDamageComponent>(hits.GetComponent()))
 			{
 				act->OnDamaged(FFireInfo(FistDamage, GetActorLocation(), ETeamInfo::Player, false));
 			}
@@ -527,8 +528,10 @@ void ANomPlayer::Throw()
 
 	ActionState = EActionState::LeftHand;
 	//TODO : 몽타쥬로 바꿀 것
-	GetWorld()->SpawnActor<AGrenade>(AGrenade::StaticClass(), GetFpsCam()->GetComponentLocation(), FRotator(0))
-		->Init(GetFpsCam()->GetForwardVector(), 1000);	
+	GetWorld()->SpawnActor<AGrenade>(AGrenade::StaticClass()
+		, GetFpsCam()->GetComponentLocation() + GetFpsCam()->GetRightVector() * -30
+		, FRotator(0))
+		->Init(GetFpsCam()->GetForwardVector(), 1000 + GetVelocity().X);
 	PRINTINFO();
 	GetWorldTimerManager().SetTimer(LeftHandHandle, [this]()
 	{
@@ -750,7 +753,17 @@ void ANomPlayer::ChangeToTps()
 //여기에 데미지 함수 구현
 void ANomPlayer::OnDamaged(FFireInfo Info)
 {
+	if (Info.TeamInfo == ETeamInfo::Player)
+		Hp -= Info.Damage/100;
+	else
+		Hp -= Info.Damage;
 	
+	PlayerUI->UpdateHealthUI(Hp, MaxHp);
+
+	if (Hp <= 0)
+	{
+		
+	}
 }
 
 USpringArmComponent* ANomPlayer::GetFpsCamArm()

@@ -73,17 +73,17 @@ void AGrenade::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPri
 void AGrenade::OnExplode()
 {
 	EObjectTypeQuery ObjType = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2);
-	TArray<AActor*> OutActors;
+	TArray<UPrimitiveComponent*> OutActors;
 	TArray<AActor*> ActorsToIgnore;
 	
-	if (UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), ExplodeRadius,
+	if (UKismetSystemLibrary::SphereOverlapComponents(GetWorld(), GetActorLocation(), ExplodeRadius,
 		TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType}, nullptr, ActorsToIgnore, OutActors))
 	{
-		for (AActor* actor : OutActors)
+		for (UPrimitiveComponent* comp : OutActors)
 		{
-			if (UDamageComponent* act = Cast<UDamageComponent>(actor))
+			if (UDamageComponent* act = Cast<UDamageComponent>(comp))
 			{
-				float alpha = FVector::Dist(GetActorLocation(), actor->GetActorLocation()) / ExplodeRadius;
+				float alpha = FVector::Dist(GetActorLocation(), comp->GetComponentLocation()) / ExplodeRadius;
 				float damage = FMath::Lerp(MaxDamage, MinDamage, alpha);
 				act->OnDamaged(FFireInfo(damage, GetActorLocation(), ETeamInfo::Player, false));
 			}
