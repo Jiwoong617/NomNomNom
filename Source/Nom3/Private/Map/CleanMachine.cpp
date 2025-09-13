@@ -39,13 +39,12 @@ void ACleanMachine::OnInteract(AActor OtherActor)
 // Called when the game starts or when spawned
 void ACleanMachine::BeginPlay()
 {
-	//  이런식으로 사용 가능하다 PRINTLOG(TEXT("목표 좌표 : %d %f %f %f %s"), 5, 1., .2, .3, TEXT("aksjdf"));
-	UE_LOG(LogTemp, Error, TEXT("--- 최종 디버깅 시작 ---"));
-	
 
+	
+	//  이런식으로 사용 가능하다 PRINTLOG(TEXT("목표 좌표 : %d %f %f %f %s"), 5, 1., .2, .3, TEXT("aksjdf"));
 	if (!TargetSplineActor)
 	{
-		UE_LOG(LogTemp, Error, TEXT("BeginPlay 실패: [원인 1] 에디터에서 TargetSplineActor가 지정되지 않았습니다!"));
+		
 		SetActorTickEnabled(false);
 		return;
 	}
@@ -53,24 +52,11 @@ void ACleanMachine::BeginPlay()
 	TargetSpline = TargetSplineActor->FindComponentByClass<USplineComponent>();
 	if (!TargetSpline)
 	{
-		UE_LOG(LogTemp, Error, TEXT("BeginPlay 실패: [원인 2] 지정된 TargetSplineActor에 Spline 컴포넌트가 없습니다!"));
+		
 		SetActorTickEnabled(false);
 		return;
 	}
-
-	const float SplineLength = TargetSpline->GetSplineLength();
-	UE_LOG(LogTemp, Warning, TEXT("BeginPlay 성공: 스플라인을 찾았습니다! 총 길이는: %f"), SplineLength);
-
-	if (SplineLength <= 0.0f)
-	{
-		UE_LOG(LogTemp, Error, TEXT("BeginPlay 경고: [원인 3] 스플라인의 길이가 0입니다! 경로를 그려주세요."));
-	}
-
-	if (speed <= 0.0f)
-	{
-		UE_LOG(LogTemp, Error, TEXT("BeginPlay 경고: [원인 4] speed 값이 0 또는 음수입니다!"));
-	}
-
+	
 	SetActorLocation(TargetSpline->GetLocationAtDistanceAlongSpline(0.f, ESplineCoordinateSpace::World));
 }
 
@@ -80,29 +66,30 @@ void ACleanMachine::BeginPlay()
 void ACleanMachine::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (!PathSpline || PathSpline->GetSplineLength() <= 0.0f)
+
+
+	if (!TargetSpline || TargetSpline->GetSplineLength() <= 0.0f)
 	{
 		return;
 	}
 
-	// 스플라인을 따라 이동 거리 업데이트
 	DistanceAlongSpline += speed * DeltaTime;
 
-	// 스플라인 끝에 도달하면 처음으로 리셋
-	if (DistanceAlongSpline > PathSpline->GetSplineLength())
+	if (DistanceAlongSpline > TargetSpline->GetSplineLength())
 	{
 		DistanceAlongSpline = 0.0f;
 	}
 
-	// 새로운 위치와 회전값 계산
-	const FVector NewLocation = PathSpline->GetLocationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
-	const FRotator NewRotation = PathSpline->GetRotationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
+	const FVector NewLocation = TargetSpline->GetLocationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
 
-	// 액터 위치 및 회전 업데이트
+	// 먼저 이동만 확인
 	SetActorLocation(NewLocation);
-	SetActorRotation(NewRotation);
-	
+
+	// 회전은 나중에 확인
+	//const FRotator NewRotation = TargetSpline->GetRotationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
+	//SetActorRotation(NewRotation);
 }
+
 
 void ACleanMachine::TraceMove(float DeltaTime)
 {
@@ -136,8 +123,5 @@ void ACleanMachine::FollwSpline(float DeltaTime)
 	const FVector NewLocation = TargetSpline->GetLocationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
 	SetActorLocation(NewLocation);
 }
-
-
-
 
 // 스플라인 따라갈떄 해머 무게추 달기

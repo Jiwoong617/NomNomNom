@@ -33,7 +33,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 	
-private:
+protected:
 	EBodyType BodyType = EBodyType::None;
 	
 protected:
