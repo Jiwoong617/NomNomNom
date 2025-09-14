@@ -22,7 +22,9 @@ ACleanMachine::ACleanMachine()
 	PathSpline->SetupAttachment(RootComponent);
 
 	normalstate = ECleanMState::FollowingSpline;
-	
+
+	HitPoint->SetGenerateOverlapEvents(true);
+	HitPoint->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	
 }
 
@@ -51,6 +53,7 @@ void ACleanMachine::BeginPlay()
 
 	
 	//  이런식으로 사용 가능하다 PRINTLOG(TEXT("목표 좌표 : %d %f %f %f %s"), 5, 1., .2, .3, TEXT("aksjdf"));
+	
 	if (!TargetSplineActor)
 	{
 		
@@ -64,6 +67,12 @@ void ACleanMachine::BeginPlay()
 		
 		SetActorTickEnabled(false);
 		return;
+	}
+
+	// 이벤트 함수 바인딩
+	if (HitPoint)
+	{
+		HitPoint->OnComponentBeginOverlap.AddDynamic(this,&ACleanMachine::OnOverlapBegin);
 	}
 	
 	SetActorLocation(TargetSpline->GetLocationAtDistanceAlongSpline(0.f, ESplineCoordinateSpace::World));
@@ -131,6 +140,15 @@ void ACleanMachine::FollwSpline(float DeltaTime)
 
 	const FVector NewLocation = TargetSpline->GetLocationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
 	SetActorLocation(NewLocation);
+}
+
+void ACleanMachine::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if(OtherActor)
+	{
+		OnInteract(OtherActor);
+	}
 }
 
 // 스플라인 따라갈떄 해머 무게추 달기
