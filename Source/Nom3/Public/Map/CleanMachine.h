@@ -8,7 +8,7 @@
 #include "CleanMachine.generated.h"
 
 UCLASS()
-class NOM3_API ACleanMachine : public AActor, public IInteractable
+class NOM3_API ACleanMachine : public AActor
 {
 	GENERATED_BODY()
 	enum class ECleanMState : uint8
@@ -44,7 +44,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Setting")
 	AActor* SplineComp;
 
-	virtual void OnInteract(AActor OtherActor) override;
+	virtual void OnInteract(AActor *OtherActor);
+	
 	
 
 	
