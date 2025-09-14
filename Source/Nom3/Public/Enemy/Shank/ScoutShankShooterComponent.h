@@ -27,6 +27,10 @@ public:
 	//정찰 생크가 발사하는 총탄 클래스
 	UPROPERTY(VisibleAnywhere)
 	TSubclassOf<AScoutShankProjectile> ScoutShankBulletClass;
+
+	//정찰 생크 발사 사운드
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USoundBase> ScoutFireSound;
 	
 	//오버라이드
 	virtual void FireBulletOnce() const override;

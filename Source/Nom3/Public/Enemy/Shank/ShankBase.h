@@ -9,6 +9,7 @@
 #include "Interfaces/Damagable.h"
 #include "ShankBase.generated.h"
 
+class UNiagaraSystem;
 //전방 선언
 class UDamageComponent;
 class UArrowComponent;
@@ -48,6 +49,10 @@ public:
 	//충돌체 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> SphereComp;
+
+	//씬 컴포넌트
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USceneComponent> MeshSceneComp;
 
 	//스켈레탈 메시 컴포넌트
 	UPROPERTY(VisibleAnywhere)
@@ -103,6 +108,13 @@ protected:
 	//현재 상태 머신
 	UPROPERTY()
 	UShankStateMachineBase* CurrentStateMachine;
+
+	//다이나믹 머터리얼 인스턴스
+	UPROPERTY()
+	TObjectPtr<UMaterialInstanceDynamic> DamageDynamicInstance;
+
+	UPROPERTY()
+	TObjectPtr<UNiagaraSystem> FireNiagara;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void OnShotDown(const FVector ShotDir);

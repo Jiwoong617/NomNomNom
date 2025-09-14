@@ -69,6 +69,18 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Movement")
 	float Mass;
 
+	//루트에 스폰 어태치할 오디오 컴포넌트
+	UPROPERTY(EditAnywhere, Category="Movement")
+	TObjectPtr<UAudioComponent> JetPulseAudioComp;
+	
+	//제트 펄스 사운드
+	UPROPERTY(EditAnywhere, Category="Movement")
+	TObjectPtr<USoundBase> JetPulseSound;
+
+	//폭발 사운드
+	UPROPERTY(EditAnywhere, Category="Movement")
+	TObjectPtr<USoundBase> ExplosionSound;
+
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

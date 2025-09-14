@@ -2,17 +2,32 @@
 
 #include "Enemy/Shank/ScoutShankDamageComponent.h"
 #include "Enemy/Shank/ScoutShank.h"
+#include "Kismet/GameplayStatics.h"
 
 UScoutShankDamageComponent::UScoutShankDamageComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+
+	//충돌 프로필 변경
+	UPrimitiveComponent::SetCollisionProfileName(FName("Body"));
+
+	//총알 명중 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+		TEXT("/Game/Asset/ScoutShank/Sound/SC_ScoutShankBulletHitCue.SC_ScoutShankBulletHitCue"));
+		Finder.Succeeded())
+	{
+		HitSound = Finder.Object;
+	}
 }
 
 void UScoutShankDamageComponent::OnHitBody(FFireInfo& Info)
 {
 	Super::OnHitBody(Info);
+
+	//총알 명중 사운드 재생
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, GetOwner()->GetActorLocation());
 	
 	if (const auto OwnerShank = Cast<AShankBase>(GetOwner()))
 	{

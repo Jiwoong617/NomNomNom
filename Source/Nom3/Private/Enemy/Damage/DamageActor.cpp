@@ -12,7 +12,7 @@ ADamageActor::ADamageActor()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//위젯 컴포넌트 부착
-	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComp"));
+	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(FName("WidgetComp"));
 	WidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 	WidgetComp->SetupAttachment(GetRootComponent());
 }

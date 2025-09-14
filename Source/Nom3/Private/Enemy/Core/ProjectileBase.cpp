@@ -11,12 +11,12 @@ AProjectileBase::AProjectileBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//충돌체 부착
-	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	SphereComp = CreateDefaultSubobject<USphereComponent>(FName("SphereComp"));
 	SphereComp->SetCollisionProfileName(FName("Projectile"), true);
 	SetRootComponent(SphereComp);
 
 	//발사체 이동 컴포넌트 부착
-	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMoveComp"));
+	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMoveComp"));
 }
 
 void AProjectileBase::Active(const FVector& Location, const FRotator& Rotation)

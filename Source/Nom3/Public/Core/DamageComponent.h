@@ -54,6 +54,7 @@ public:
 	virtual void Init(ECollisionChannel Channel,
 	FName CollisionPresetName, EBodyType BodyType);
 
+	
 	void OnDamaged(FFireInfo Info);
 	
 	//소유자 사망 시 비활성화하기 위한 메서드

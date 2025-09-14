@@ -1,8 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy/Components/DroneMovementComponent.h"
+
+#include "Components/AudioComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Nom3/Nom3.h"
 
 UDroneMovementComponent::UDroneMovementComponent() :
 	bSimulate(false),
@@ -22,11 +24,43 @@ UDroneMovementComponent::UDroneMovementComponent() :
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+
+	//제트 펄스 오디오 컴포넌트
+	JetPulseAudioComp = CreateDefaultSubobject<UAudioComponent>("JetPulseAudioComp");
+	JetPulseAudioComp->bAutoActivate = true;
+	
+	//제트 펄스 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+		TEXT("/Game/Asset/ScoutShank/Sound/SW_JetPulse.SW_JetPulse"));
+		Finder.Succeeded())
+	{
+		JetPulseSound = Finder.Object;
+		JetPulseAudioComp->SetSound(JetPulseSound);
+	}
+
+	 //제트 펄스 어테뉴에이션 로드
+	 if (static ConstructorHelpers::FObjectFinder<USoundAttenuation> Finder(
+	 	TEXT("/Game/Asset/ScoutShank/Sound/SA_ScoutShankFireAttenuation.SA_ScoutShankFireAttenuation"));
+	 	Finder.Succeeded())
+	 {
+	 	JetPulseAudioComp->SetAttenuationSettings(Finder.Object);
+	 }
+
+	//폭발 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+		TEXT("/Game/Asset/ScoutShank/Sound/SC_ScoutShankExplosionCue.SC_ScoutShankExplosionCue"));
+		Finder.Succeeded())
+	{
+		ExplosionSound = Finder.Object;
+	}
 }
 
 void UDroneMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//부모에게 부착
+	JetPulseAudioComp->SetupAttachment(GetOwner()->GetRootComponent());
 }
 
 void UDroneMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -153,4 +187,10 @@ void UDroneMovementComponent::Fall()
 
 	//중력 가속 시작
 	GravityForce = 980;
+
+	//제트 펄스 오디오 컴포넌트 비활성화
+	JetPulseAudioComp->Deactivate();
+
+	//폭발 사운드 재생
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetOwner()->GetActorLocation());
 }
