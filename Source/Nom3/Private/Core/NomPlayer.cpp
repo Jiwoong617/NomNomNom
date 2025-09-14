@@ -19,6 +19,7 @@
 #include "Weapon/WeaponComponent.h"
 #include "Weapon/WeaponData.h"
 #include "Core/PlayerDamageComponent.h"
+#include "Core/PlayerFpsAnimation.h"
 #include "Core/PlayerUI.h"
 
 ANomPlayer::ANomPlayer()
@@ -26,44 +27,51 @@ ANomPlayer::ANomPlayer()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//TPS Mesh
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
+	//FPS Mesh
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Character/NomPlayer.NomPlayer'"));
 	if (TempMesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(TempMesh.Object);
 		GetMesh()->SetRelativeLocation(FVector(0, 0, -87));
 		GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
-
-		GetMesh()->SetOwnerNoSee(true);
-	}
-
-	//FSP Mesh
-	FpsMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPS Mesh"));
-	FpsMeshComp->SetupAttachment(GetRootComponent());
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempFpsMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn_Simple.SKM_Quinn_Simple'"));
-	if (TempFpsMesh.Succeeded())
-	{
-		FpsMeshComp->SetSkeletalMesh(TempFpsMesh.Object);
-		FpsMeshComp->SetRelativeLocation(FVector(0, 0, -87));
-		FpsMeshComp->SetRelativeRotation(FRotator(0, -90, 0));
-		FpsMeshComp->FirstPersonPrimitiveType = EFirstPersonPrimitiveType::FirstPerson;
+		GetMesh()->FirstPersonPrimitiveType = EFirstPersonPrimitiveType::FirstPerson;
 
 		//내 카메라에만 보이게
-		FpsMeshComp->SetOnlyOwnerSee(true);
+		GetMesh()->SetOnlyOwnerSee(true);
+		GetMesh()->SetupAttachment(RootComponent);
 	}
+	ConstructorHelpers::FClassFinder<UPlayerFpsAnimation> TempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Fps.ABP_Fps_C'"));
+	if (TempAnim.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(TempAnim.Class);
+		FpsAnimation = Cast<UPlayerFpsAnimation>(GetMesh()->GetAnimInstance());
+	}
+
+
+	//TPS Mesh
+	TpsMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("TPS Mesh"));
+	TpsMeshComp->SetupAttachment(GetRootComponent());
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempTpsMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
+	if (TempTpsMesh.Succeeded())
+	{
+		TpsMeshComp->SetSkeletalMesh(TempTpsMesh.Object);
+		TpsMeshComp->SetRelativeLocation(FVector(0, 0, -87));
+		TpsMeshComp->SetRelativeRotation(FRotator(0, -90, 0));
+	
+		TpsMeshComp->SetOwnerNoSee(true);
+	}
+
 	
 	//FPS Cam Settings
 	FpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("FPS Spring Arm");
 	FpsSpringArmComp->SetupAttachment(RootComponent);
 	FpsSpringArmComp->TargetArmLength = 0;
-	FpsSpringArmComp->SetRelativeLocation(FVector(20,0,80));
+	FpsSpringArmComp->SetRelativeLocation(FVector(40,-10,90));
 	FpsCameraComp = CreateDefaultSubobject<UCameraComponent>("FPS Cam");
 	FpsCameraComp->SetupAttachment(FpsSpringArmComp);
 	FpsCameraComp->bUsePawnControlRotation = true;
 	FpsCameraComp->bEnableFirstPersonFieldOfView = true;
-	FpsCameraComp->bEnableFirstPersonScale = true;
-	FpsCameraComp->FirstPersonFieldOfView = 70.0f;
-	FpsCameraComp->FirstPersonScale = 0.6f;
+	FpsCameraComp->FirstPersonFieldOfView = 90.0f;
 
 	//TPS Cam Settings
 	TpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("TPS Spring Arm");
@@ -79,7 +87,6 @@ ANomPlayer::ANomPlayer()
 	//FPS WeaponList
 	WeaponListSceneComp = CreateDefaultSubobject<USceneComponent>("WeaponList");
 	WeaponListSceneComp->SetupAttachment(RootComponent);
-	
 
 	//Basic Init
 	JumpMaxCount = 3;
@@ -91,10 +98,10 @@ ANomPlayer::ANomPlayer()
 
 	//Damage Comp
 	HeadBox = CreateDefaultSubobject<UPlayerDamageComponent>("HeadBox");
-	HeadBox->SetupAttachment(FpsMeshComp, TEXT("HeadSocket"));
+	HeadBox->SetupAttachment(GetMesh(), TEXT("HeadSocket"));
 	
 	BodyBox = CreateDefaultSubobject<UPlayerDamageComponent>("BodyBox");
-	BodyBox->SetupAttachment(FpsMeshComp, TEXT("BodySocket"));
+	BodyBox->SetupAttachment(GetMesh(), TEXT("BodySocket"));
 
 	//UI
 	ConstructorHelpers::FClassFinder<UPlayerUI> playerui(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/BluePrints/WBP/WBP_PlayerUI.WBP_PlayerUI_C'"));
@@ -169,6 +176,18 @@ void ANomPlayer::BeginPlay()
 		}
 	}
 
+	TArray<USceneComponent*> ChildComps;
+	WeaponListSceneComp->GetChildrenComponents(true, ChildComps);
+	for (USceneComponent* childs : ChildComps)
+	{	
+		if (UChildActorComponent* child = Cast<UChildActorComponent>(childs))
+		{
+			child->AttachToComponent(GetMesh(), 
+			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld,
+						  EAttachmentRule::KeepWorld, false),
+				TEXT("WeaponSocket"));
+		}
+	}
 	PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
 	WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
 	WeaponComp->OnChangeWeaponDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateEquipedWeaponUI);
@@ -350,6 +369,8 @@ void ANomPlayer::Fire(const FInputActionValue& Value)
 {
 	if (Value.Get<bool>())
 	{
+		bIsHoldFire = true;
+		
 		if (WeaponComp->GetCurrentWeapon()->CanFire() == false)
 		{
 			if (WeaponComp->GetCurrentWeapon()->CanReload())
@@ -367,7 +388,6 @@ void ANomPlayer::Fire(const FInputActionValue& Value)
 
 		WeaponComp->FireStart();
 		ActionState = EActionState::Firing;
-		bIsHoldFire = true;
 	}
 	else
 	{
@@ -381,6 +401,8 @@ void ANomPlayer::Aim(const FInputActionValue& Value)
 {
 	if (Value.Get<bool>())
 	{
+		bIsHoldAim = true;
+		
 		if (WeaponComp->GetCurrentWeapon()->GetData()->IsAimable == false)
 		{
 			bIsHoldAim = false;
@@ -396,7 +418,6 @@ void ANomPlayer::Aim(const FInputActionValue& Value)
 		
 		bIsAiming = true;
 		WeaponComp->AimStart();
-		bIsHoldAim = true;
 	}
 	else
 	{
@@ -736,8 +757,8 @@ void ANomPlayer::OnAimCanceled()
 
 void ANomPlayer::ChangeToFps()
 {
-	GetMesh()->SetOwnerNoSee(true);
-	FpsMeshComp->SetOwnerNoSee(false);
+	TpsMeshComp->SetOwnerNoSee(true);
+	GetMesh()->SetOwnerNoSee(false);
 	FpsCameraComp->SetActive(true);
 	TpsCameraComp->SetActive(false);
 }
@@ -746,8 +767,8 @@ void ANomPlayer::ChangeToTps()
 {
 	ActionState = EActionState::Skill;
 	
-	GetMesh()->SetOwnerNoSee(false);
-	FpsMeshComp->SetOwnerNoSee(true);
+	TpsMeshComp->SetOwnerNoSee(false);
+	GetMesh()->SetOwnerNoSee(true);
 	FpsCameraComp->SetActive(false);
 	TpsCameraComp->SetActive(true);
 }
@@ -776,4 +797,19 @@ USpringArmComponent* ANomPlayer::GetFpsCamArm()
 UCameraComponent* ANomPlayer::GetFpsCam()
 {
 	return FpsCameraComp;
+}
+
+const EActionState& ANomPlayer::GetActionState() const
+{
+	return ActionState;
+}
+
+const EMovingState& ANomPlayer::GetMovingState() const
+{
+	return MovingState;
+}
+
+const bool& ANomPlayer::GetIsAiming() const
+{
+	return bIsAiming;
 }

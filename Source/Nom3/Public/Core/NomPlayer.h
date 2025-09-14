@@ -7,6 +7,7 @@
 #include "Interfaces/Damagable.h"
 #include "NomPlayer.generated.h"
 
+class UPlayerFpsAnimation;
 class UPlayerUI;
 class UPlayerDamageComponent;
 class UWeaponComponent;
@@ -73,7 +74,7 @@ protected:
 	
 	//Fps Mesh
 	UPROPERTY(EditAnywhere)
-	USkeletalMeshComponent* FpsMeshComp;
+	USkeletalMeshComponent* TpsMeshComp;
 	
 	//Camera and Weapon
 	UPROPERTY(EditAnywhere)
@@ -154,6 +155,9 @@ protected:
 	//UI
 	TSubclassOf<UPlayerUI> PlayerUIClass;
 	UPlayerUI* PlayerUI;
+
+	//Animation
+	UPlayerFpsAnimation* FpsAnimation;
 	
 public:
 
@@ -218,8 +222,11 @@ protected:
 	UFUNCTION() void ChangeToFps();
 	UFUNCTION() void ChangeToTps();
 
-	public:
+public:
 	UFUNCTION() virtual void OnDamaged(FFireInfo Info) override;
 	USpringArmComponent* GetFpsCamArm();
 	UCameraComponent* GetFpsCam();
+	const EActionState& GetActionState() const;
+	const EMovingState& GetMovingState() const;
+	const bool& GetIsAiming() const;
 };
