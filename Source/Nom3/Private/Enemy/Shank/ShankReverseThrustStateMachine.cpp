@@ -44,7 +44,7 @@ void UShankReverseThrustStateMachine::ExecuteState()
 	const float OutAccel = -2 * InitVelocity / LimitTimeInState * (1 - ElapsedTimeInState / LimitTimeInState);
 
 	//후반에 강한 역추진 - 최후에는 가속도 최대, 별도의 처리가 필요함
-	const float InAccel = -2 * InitVelocity * ElapsedTimeInState / LimitTimeInState;
+	const float InAccel = -2 * InitVelocity * ElapsedTimeInState / (LimitTimeInState * LimitTimeInState);
 
 	//결과로 얻은 가속도를 기반으로 역추진 적용
 	OwnerShank->DroneMoveComp->ReverseVectorThrust(FMath::Abs(InAccel));

@@ -5,9 +5,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
+#include "KismetTraceUtils.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
-#include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -21,6 +21,8 @@
 #include "Core/PlayerDamageComponent.h"
 #include "Core/PlayerFpsAnimation.h"
 #include "Core/PlayerUI.h"
+#include "Enemy/Core/EnemyBase.h"
+#include "Kismet/GameplayStatics.h"
 
 ANomPlayer::ANomPlayer()
 {
@@ -198,6 +200,22 @@ void ANomPlayer::BeginPlay()
 	//TODO : Mesh 바뀌면 값 조정해줘야됨
 	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
 	BodyBox->Init(FVector(50, 15, 20), ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
+
+	FTimerHandle SightTimerHandle;
+	GetWorldTimerManager().SetTimer(SightTimerHandle, [this]()
+	{
+		const FVector Start = FpsCameraComp->GetComponentLocation();
+		const FVector End = Start + FpsCameraComp->GetForwardVector() * 10000;
+		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
+		Params.AddIgnoredActor(this);
+		if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_Visibility, Params))
+		{
+			if (const auto Enemy = Cast<AEnemyBase>(Hit.GetActor()))
+			{
+				Enemy->OnAimByPlayerSight();
+			}
+		}
+	}, 0.1, true);
 }
 
 bool ANomPlayer::CanJumpInternal_Implementation() const

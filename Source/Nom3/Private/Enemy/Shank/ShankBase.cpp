@@ -85,10 +85,13 @@ void AShankBase::Tick(float DeltaTime)
 		CurrentStateMachine->ExecuteState();
 	}
 
-	//목표 방향
-	const FVector TargetDir = (TargetPawn->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-	const FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(TargetDir, GetActorUpVector());
-	MeshSceneComp->SetWorldRotation(TargetRot);
+	if (SHANK_STATE != EShankState::Splash)
+	{
+		//목표 방향
+		const FVector TargetDir = (TargetPawn->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+		const FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(TargetDir, GetActorUpVector());
+		MeshSceneComp->SetWorldRotation(TargetRot);
+	}
 }
 
 void AShankBase::SetCurrentState(const EShankState Value)
@@ -176,7 +179,8 @@ void AShankBase::OnShotDown(const FVector ShotDir)
 	//데미지 파트 가시화
 	DamageDynamicInstance->SetScalarParameterValue(FName("opacity"), 1.0f);
 
-	UNiagaraFunctionLibrary::SpawnSystemAttached(FireNiagara, GetRootComponent(), FName(""), GetActorLocation(), GetActorRotation(), EAttachLocation::Type::KeepRelativeOffset, true);
+	//스폰
+	auto Temp = UNiagaraFunctionLibrary::SpawnSystemAttached(FireNiagara, GetRootComponent(), FName("SphereComp"), GetActorLocation(), GetActorRotation(), EAttachLocation::Type::KeepRelativeOffset, true);
 	
 	//10초 뒤에 소멸
 	FTimerHandle DestroyHandle;

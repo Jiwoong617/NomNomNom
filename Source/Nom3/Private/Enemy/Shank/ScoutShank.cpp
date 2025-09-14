@@ -133,8 +133,11 @@ void AScoutShank::OnAimByPlayerSight()
 	//목표 지점 변경
 	TargetLocation = GetActorLocation() + RandDir * 800;
 
+	//디버그 라인
+	DrawDebugLine(GetWorld(), GetActorLocation(), TargetLocation, FColor::Magenta, false, 3, 0, 0);
+
 	//타이밍
-	const float Timing = FMath::RandRange(2, 4);
+	const float Timing = FMath::RandRange(4, 6);
 
 	//상태 머신 전환
 	SHANK_STATE = EShankState::FollowPath;
