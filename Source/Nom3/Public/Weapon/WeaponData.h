@@ -60,4 +60,8 @@ public:
 	//비조준 시 탄 퍼짐
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float BulletSpread;
+
+	//무기 이미지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* WeaponImg;
 };

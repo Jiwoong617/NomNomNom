@@ -24,9 +24,6 @@ UWeaponComponent::UWeaponComponent()
 void UWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	Init();
 }
 
 
@@ -81,6 +78,10 @@ void UWeaponComponent::Init()
 		GetComponentTransform().InverseTransformPosition(AimSocketLoc);
 	
 	AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
+
+	OnChangeWeaponDelegate.Broadcast(0, CurrentWeapon->GetData()->WeaponImg, CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
+	OnChangeWeaponDelegate.Broadcast(1, WeaponList[1]->GetData()->WeaponImg, WeaponList[1]->CurrentAmmo, 0);
+	OnChangeWeaponDelegate.Broadcast(2, WeaponList[2]->GetData()->WeaponImg, WeaponList[2]->CurrentAmmo, 0);
 }
 
 void UWeaponComponent::FireStart()
@@ -158,10 +159,12 @@ void UWeaponComponent::ChangeWeapon(int32 idx)
 		return;
 	}
 	
+	OnChangeWeaponDelegate.Broadcast((idx == 0 ? CurrentWeaponIdx : idx), CurrentWeapon->GetData()->WeaponImg, CurrentWeapon->CurrentAmmo, 0);
 	CurrentWeapon->SetActorHiddenInGame(true);
 	CurrentWeaponIdx = idx;
 	CurrentWeapon = WeaponList[idx];
 	WeaponList[idx]->SetActorHiddenInGame(false);
+	OnChangeWeaponDelegate.Broadcast(0, CurrentWeapon->GetData()->WeaponImg, CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 }
 
 void UWeaponComponent::OnWeaponChanged(int32 idx)
@@ -174,7 +177,7 @@ void UWeaponComponent::OnWeaponChanged(int32 idx)
 	
 	AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
 
-	OnBulletChangeDelegate.Broadcast(CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
+	//OnBulletChangeDelegate.Broadcast(CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 }
 
 AWeaponBase* UWeaponComponent::GetCurrentWeapon()

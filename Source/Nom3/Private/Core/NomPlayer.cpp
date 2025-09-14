@@ -171,8 +171,10 @@ void ANomPlayer::BeginPlay()
 
 	PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
 	WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
+	WeaponComp->OnChangeWeaponDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateEquipedWeaponUI);
 	PlayerUI->AddToViewport();
 	PlayerUI->UpdateHealthUI(Hp, MaxHp);
+	WeaponComp->Init();
 
 	//TODO : Mesh 바뀌면 값 조정해줘야됨
 	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);

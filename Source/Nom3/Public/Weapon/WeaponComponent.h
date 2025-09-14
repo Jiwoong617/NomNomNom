@@ -13,6 +13,8 @@ enum class EWeaponType : uint8;
 class UWeaponData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnBulletChangeDelegate, int32, currentammo, int32, maxammo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnChangeWeaponDelegate, int32, idx,
+	UTexture2D*, img, int32, ammo, int32, maxammo);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class NOM3_API UWeaponComponent : public UActorComponent
@@ -74,16 +76,17 @@ private:
 
 public:
 	FOnBulletChangeDelegate OnBulletChangeDelegate;
+	FOnChangeWeaponDelegate OnChangeWeaponDelegate;
 
 private:
-	UFUNCTION() void Init();
+
 
 	UFUNCTION() void Fire();
 	
 	UFUNCTION() void OnAiming();
 	
 public:
-	
+	UFUNCTION() void Init();
 	UFUNCTION() void FireStart();
 	UFUNCTION() void FireEnd();
 	
