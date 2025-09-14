@@ -74,12 +74,12 @@
       if (Button == Button1)
       {
           bIsButton1Active = true;
-          UE_LOG(LogTemp, Warning, TEXT("Button 1 Activated"));
+          UE_LOG(LogTemp, Warning, TEXT("Button 1 활성화"));
       }
       else if (Button == Button2)
       {
           bIsButton2Active = true;
-          UE_LOG(LogTemp, Warning, TEXT("Button 2 Activated"));
+          UE_LOG(LogTemp, Warning, TEXT("Button 2 활성화"));
       }
       CheckDoorState();
   }
@@ -89,12 +89,12 @@
       if (Button == Button1)
       {
           bIsButton1Active = false;
-          UE_LOG(LogTemp, Warning, TEXT("Button 1 Deactivated"));
+          UE_LOG(LogTemp, Warning, TEXT("Button 1 비 활성화"));
       }
       else if (Button == Button2)
       {
           bIsButton2Active = false;
-          UE_LOG(LogTemp, Warning, TEXT("Button 2 Deactivated"));
+          UE_LOG(LogTemp, Warning, TEXT("Button 2 비 활성화"));
       }
       CheckDoorState();
   }
@@ -104,12 +104,10 @@
       if (bIsButton1Active && bIsButton2Active)
       {
           bShouldBeOpen = true;
-          UE_LOG(LogTemp, Warning, TEXT("Both buttons are active. Opening door."));
       }
       else
       {
           bShouldBeOpen = false;
-          UE_LOG(LogTemp, Warning, TEXT("A button is not active. Closing door."));
       }
   }
   
