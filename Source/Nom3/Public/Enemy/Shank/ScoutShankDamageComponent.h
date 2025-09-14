@@ -15,4 +15,8 @@ public:
 	UScoutShankDamageComponent();
 
 	virtual void OnHitBody(FFireInfo& Info) override;
+
+protected:
+	UPROPERTY(VisibleAnywhere, Category="Damage")
+	TObjectPtr<USoundBase> HitSound;
 };

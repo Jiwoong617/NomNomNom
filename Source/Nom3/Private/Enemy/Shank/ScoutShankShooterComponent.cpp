@@ -21,12 +21,20 @@ UScoutShankShooterComponent::UScoutShankShooterComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	//일반 총탄 블루프린트 클래스
+	//정찰 생크 총알 블루프린트 클래스
 	if (static ConstructorHelpers::FClassFinder<AScoutShankProjectile>
 		Finder(TEXT("/Game/Enemies/Shank/BP_ScoutShankBullet.BP_ScoutShankBullet_C"));
 		Finder.Succeeded())
 	{
 		ScoutShankBulletClass = Finder.Class;
+	}
+
+	//사운드 큐 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+		TEXT("/Game/Asset/ScoutShank/Sound/SC_ScoutShankFireCue.SC_ScoutShankFireCue"));
+		Finder.Succeeded())
+	{
+		ScoutFireSound = Finder.Object;
 	}
 }
 
@@ -46,6 +54,9 @@ void UScoutShankShooterComponent::FireBulletOnce() const
 	
 	//목표 방향 로테이터
 	const FRotator FireRotator = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), GetComponentLocation() + TargetDirection);
+
+	//발사 사운드 재생
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), ScoutFireSound, GetComponentLocation());
 
 	//발사체 풀링 월드 서브시스템 획득
 	if (const auto ProjectilePoolWorldSubSystem = GetWorld()->GetSubsystem<UProjectilePoolWorldSubSystem>())

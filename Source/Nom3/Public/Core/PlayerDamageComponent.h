@@ -32,7 +32,4 @@ private:
 protected:
 	virtual void OnHitBody(FFireInfo& info);
 	virtual void OnHitHead(FFireInfo& info);
-
-public:
-	virtual void OnDamaged(FFireInfo info) override;
 };

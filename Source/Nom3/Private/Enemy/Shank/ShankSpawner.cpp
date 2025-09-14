@@ -12,7 +12,7 @@ AShankSpawner::AShankSpawner() : SpawnMin(1), SpawnMax(1), LaunchConeAngle(15)
 	PrimaryActorTick.bCanEverTick = true;
 
 	//스폰된 생크들이 사출되는 방향을 가리키는 애로우 컴포넌트
-	LaunchDirection = CreateDefaultSubobject<UArrowComponent>(TEXT("SpawnDirection"));
+	LaunchDirection = CreateDefaultSubobject<UArrowComponent>(FName("SpawnDirection"));
 	LaunchDirection->ArrowSize = 5;
 	LaunchDirection->SetupAttachment(GetRootComponent());
 }

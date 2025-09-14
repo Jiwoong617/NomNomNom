@@ -12,14 +12,26 @@ AScoutShank::AScoutShank()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//스켈레탈 메시 로드
+	if (static ConstructorHelpers::FObjectFinder<USkeletalMesh> Finder(
+		TEXT("/Game/Asset/ScoutShank/SKM_ScoutShank.SKM_ScoutShank"));
+		Finder.Succeeded())
+	{
+		SkeletalMeshComp->SetSkeletalMesh(Finder.Object);
+		SkeletalMeshComp->SetRelativeLocation(FVector(0, 0, -110));
+		SkeletalMeshComp->SetRelativeRotation(FRotator(0, -90, 0));
+	}
+
 	//정찰 생크 전용의 사격 컴포넌트 부착
-	ShooterComp = CreateDefaultSubobject<UScoutShankShooterComponent>(TEXT("ShooterComp"));
-	ShooterComp->SetupAttachment(GetRootComponent());
-	ShooterComp->SetRelativeLocation(FVector(0, 0, -50));
+	ShooterComp = CreateDefaultSubobject<UScoutShankShooterComponent>(FName("ShooterComp"));
+	ShooterComp->SetupAttachment(SkeletalMeshComp);
+	ShooterComp->SetRelativeLocation(FVector(0, -110, 70));
 
 	//일반 데이지 컴포넌트
-	NormalDamageComp = CreateDefaultSubobject<UScoutShankDamageComponent>(TEXT("NormalDamageComp"));
-	NormalDamageComp->SetupAttachment(RootComponent);
+	NormalDamageComp = CreateDefaultSubobject<UScoutShankDamageComponent>(FName("NormalDamageComp"));
+	NormalDamageComp->SetRelativeLocation(FVector(0, 0, 100));
+	NormalDamageComp->SetBoxExtent(FVector(120, 80, 80));
+	NormalDamageComp->SetupAttachment(SkeletalMeshComp);
 }
 
 void AScoutShank::BeginPlay()
@@ -144,6 +156,9 @@ void AScoutShank::OnShotDown(const FVector ShotDir)
 {
 	Super::OnShotDown(ShotDir);
 
-	//비활성화
+	//사격 바활성화
+	ShooterComp->InactiveAutoFire();
+
+	//데미지 비활성화
 	NormalDamageComp->Inactive();
 }

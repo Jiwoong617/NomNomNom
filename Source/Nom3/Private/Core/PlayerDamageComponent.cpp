@@ -46,11 +46,3 @@ void UPlayerDamageComponent::OnHitHead(FFireInfo& info)
 {
 	OnDamagedDelegate.Broadcast(FFireInfo(info.Damage *  2, info.FireLocation, info.TeamInfo, info.bIsIgnoreTeam));
 }
-
-void UPlayerDamageComponent::OnDamaged(FFireInfo info)
-{
-	if (BodyType == EBodyType::Body)
-		OnHitBody(info);
-	else if (BodyType == EBodyType::Head)
-		OnHitHead(info);
-}

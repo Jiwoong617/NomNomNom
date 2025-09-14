@@ -103,8 +103,12 @@ void UDamageComponent::Init(ECollisionChannel channel, FName collisionPresetName
 	BodyType = bodyType;
 }
 
-void UDamageComponent::OnDamaged(FFireInfo info)
+void UDamageComponent::OnDamaged(FFireInfo Info)
 {
+	if (BodyType == EBodyType::Body)
+		OnHitBody(Info);
+	else if (BodyType == EBodyType::Head)
+		OnHitHead(Info);
 }
 
 void UDamageComponent::Inactive()
