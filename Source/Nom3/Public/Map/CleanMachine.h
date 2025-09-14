@@ -63,6 +63,12 @@ public:
 	void TraceMove(float DeltaTime);
 	void FollwSpline(float DeltaTime);
 	float DistanceAlongSpline;
+
+	// player 상호작용
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool
+bFromSweep, const FHitResult& SweepResult);
+	
 private:
 	UPROPERTY()
 	class USplineComponent* TargetSpline;
