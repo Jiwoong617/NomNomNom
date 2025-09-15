@@ -41,5 +41,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsAir;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float CameraRotX = 0.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsAiming;
 };

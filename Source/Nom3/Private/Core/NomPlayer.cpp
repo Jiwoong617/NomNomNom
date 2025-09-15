@@ -66,9 +66,9 @@ ANomPlayer::ANomPlayer()
 	
 	//FPS Cam Settings
 	FpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("FPS Spring Arm");
-	FpsSpringArmComp->SetupAttachment(RootComponent);
+	FpsSpringArmComp->SetupAttachment(GetMesh(), TEXT("HeadSocket"));
 	FpsSpringArmComp->TargetArmLength = 0;
-	FpsSpringArmComp->SetRelativeLocation(FVector(60,0,90));
+	//FpsSpringArmComp->SetRelativeLocation(FVector(60,0,90));
 	FpsCameraComp = CreateDefaultSubobject<UCameraComponent>("FPS Cam");
 	FpsCameraComp->SetupAttachment(FpsSpringArmComp);
 	FpsCameraComp->bUsePawnControlRotation = true;
@@ -184,10 +184,11 @@ void ANomPlayer::BeginPlay()
 	{	
 		if (UChildActorComponent* child = Cast<UChildActorComponent>(childs))
 		{
-			child->AttachToComponent(GetMesh(), 
-			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld,
-						  EAttachmentRule::KeepWorld, false),
-				TEXT("WeaponSocket"));
+            // 무기 부착 시 소켓 위치/회전에 정확히 스냅되도록 처리
+            child->AttachToComponent(
+                GetMesh(),
+                FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+                TEXT("WeaponSocket"));
 		}
 	}
 	PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
@@ -840,6 +841,7 @@ void ANomPlayer::OnDamaged(FFireInfo Info)
 		UnCrouch();
 
 		TpsMeshComp->SetSimulatePhysics(true);
+		TpsMeshComp->WakeAllRigidBodies();
 	}
 }
 

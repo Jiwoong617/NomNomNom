@@ -30,6 +30,7 @@ void UPlayerFpsAnimation::NativeUpdateAnimation(float DeltaSeconds)
 		Dir = FVector::DotProduct(Owner->GetVelocity(), Owner->GetActorRightVector())/Owner->GetCharacterMovement()->GetMaxSpeed();
 		bIsAir = Owner->GetCharacterMovement()->IsFalling();
 		bIsAiming = Owner->GetIsAiming();
+		CameraRotX = Owner->GetControlRotation().Pitch;
 
 		MovingState = Owner->GetMovingState();
 		ActionState = Owner->GetActionState();

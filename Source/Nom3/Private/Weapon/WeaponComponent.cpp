@@ -136,30 +136,32 @@ void UWeaponComponent::AimEnd()
 
 void UWeaponComponent::OnAiming()
 {
+    const float Delta = GetWorld()->GetDeltaSeconds();
+    const float Duration = CurrentWeapon ? CurrentWeapon->GetData()->AimDuration : 0.1f;
+
+    if (CurrentWeapon && Owner && CurrentWeapon->GetData()->IsAimable)
+    {
+        const FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
+        const FVector AimSocketLocLocal = Owner->GetFpsCamArm()->GetAttachParent()->
+            GetComponentTransform().InverseTransformPosition(AimSocketLoc);
+        //AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
+        AimCamLoc = AimSocketLocLocal;
+    }
+
     if (bIsAiming)
     {
-        // 무기 조준 소켓 위치를 매 프레임 갱신하여 정렬 오차를 방지
-        if (CurrentWeapon && Owner && CurrentWeapon->GetData()->IsAimable)
-        {
-            const FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
-            const FVector AimSocketLocLocal = Owner->GetFpsCamArm()->GetAttachParent()->
-                GetComponentTransform().InverseTransformPosition(AimSocketLoc);
-            AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
-        }
-        if (AimTime >= CurrentWeapon->GetData()->AimDuration) return;
-        AimTime += GetWorld()->GetDeltaSeconds();
-        
-        Owner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(CamOffset, AimCamLoc, AimTime / CurrentWeapon->GetData()->AimDuration));
-        Owner->GetFpsCam()->SetFieldOfView(FMath::Lerp(CameraFOV, CurrentWeapon->GetData()->ADS_FOV, AimTime / CurrentWeapon->GetData()->AimDuration));
-	}
-	else
-	{
-		if (AimTime <= 0) return;
-		AimTime -= GetWorld()->GetDeltaSeconds();
-		
-		Owner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(AimCamLoc, CamOffset, 1.f - AimTime / CurrentWeapon->GetData()->AimDuration));
-		Owner->GetFpsCam()->SetFieldOfView(FMath::Lerp(CurrentWeapon->GetData()->ADS_FOV, CameraFOV, 1.f - AimTime / CurrentWeapon->GetData()->AimDuration));
-	}
+        AimTime = FMath::Min(AimTime + Delta, Duration);
+        const float Alpha = FMath::Clamp(AimTime / Duration, 0.f, 1.f);
+        Owner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(CamOffset, AimCamLoc, Alpha));
+        Owner->GetFpsCam()->SetFieldOfView(FMath::Lerp(CameraFOV, CurrentWeapon->GetData()->ADS_FOV, Alpha));
+    }
+    else
+    {
+        AimTime = FMath::Max(AimTime - Delta, 0.f);
+        const float Alpha = FMath::Clamp(1.f - (AimTime / Duration), 0.f, 1.f);
+        Owner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(AimCamLoc, CamOffset, Alpha));
+        Owner->GetFpsCam()->SetFieldOfView(FMath::Lerp(CurrentWeapon->GetData()->ADS_FOV, CameraFOV, Alpha));
+    }
 }
 
 void UWeaponComponent::ChangeWeapon(int32 idx)
@@ -185,7 +187,8 @@ void UWeaponComponent::OnWeaponChanged(int32 idx)
 	FVector AimSocketLocLocal = Owner->GetFpsCamArm()->GetAttachParent()->
 		GetComponentTransform().InverseTransformPosition(AimSocketLoc);
 	
-	AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
+	//AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);		
+	AimCamLoc = AimSocketLocLocal;
 
 	//OnBulletChangeDelegate.Broadcast(CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 }
