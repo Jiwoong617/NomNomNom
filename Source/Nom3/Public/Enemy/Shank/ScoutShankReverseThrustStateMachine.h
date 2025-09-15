@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "ShankStateMachineBase.h"
-#include "ShankReverseThrustStateMachine.generated.h"
+#include "ScoutShankReverseThrustStateMachine.generated.h"
 
 //전방 선언
 class AShankBase;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class NOM3_API UShankReverseThrustStateMachine : public UShankStateMachineBase
+class NOM3_API UScoutShankReverseThrustStateMachine : public UShankStateMachineBase
 {
 	GENERATED_BODY()
 
 public:
-	UShankReverseThrustStateMachine();
+	UScoutShankReverseThrustStateMachine();
 
 	virtual void EnterState() override;
 

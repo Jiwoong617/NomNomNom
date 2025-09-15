@@ -1,18 +1,18 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ShankReverseThrustStateMachine.h"
+#include "Enemy/Shank/ScoutShankReverseThrustStateMachine.h"
 
 #include "Enemy/Components/DroneMovementComponent.h"
 #include "Enemy/Shank/ShankBase.h"
 
-UShankReverseThrustStateMachine::UShankReverseThrustStateMachine()
+UScoutShankReverseThrustStateMachine::UScoutShankReverseThrustStateMachine()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UShankReverseThrustStateMachine::EnterState()
+void UScoutShankReverseThrustStateMachine::EnterState()
 {
 	Super::EnterState();
 
@@ -28,7 +28,7 @@ void UShankReverseThrustStateMachine::EnterState()
 	LimitTimeInState = 0.5;
 }
 
-void UShankReverseThrustStateMachine::ExecuteState()
+void UScoutShankReverseThrustStateMachine::ExecuteState()
 {
 	Super::ExecuteState();
 
@@ -68,7 +68,7 @@ void UShankReverseThrustStateMachine::ExecuteState()
 	}
 }
 
-void UShankReverseThrustStateMachine::ExitState()
+void UScoutShankReverseThrustStateMachine::ExitState()
 {
 	Super::ExitState();
 

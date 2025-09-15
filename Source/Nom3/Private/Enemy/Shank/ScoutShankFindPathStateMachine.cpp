@@ -1,22 +1,22 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ShankFindPathStateMachine.h"
+#include "Enemy/Shank/ScoutShankFindPathStateMachine.h"
 #include "Enemy/Shank/ShankBase.h"
 
-UShankFindPathStateMachine::UShankFindPathStateMachine()
+UScoutShankFindPathStateMachine::UScoutShankFindPathStateMachine()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UShankFindPathStateMachine::BeginPlay()
+void UScoutShankFindPathStateMachine::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-void UShankFindPathStateMachine::EnterState()
+void UScoutShankFindPathStateMachine::EnterState()
 {
 	Super::EnterState();
 	
@@ -35,7 +35,7 @@ void UShankFindPathStateMachine::EnterState()
 	LimitTimeInState = 1;
 }
 
-void UShankFindPathStateMachine::ExecuteState()
+void UScoutShankFindPathStateMachine::ExecuteState()
 {
 	Super::ExecuteState();
 
@@ -52,7 +52,7 @@ void UShankFindPathStateMachine::ExecuteState()
 	}
 }
 
-void UShankFindPathStateMachine::ExitState()
+void UScoutShankFindPathStateMachine::ExitState()
 {
 	Super::ExitState();
 
@@ -62,7 +62,7 @@ void UShankFindPathStateMachine::ExitState()
 	}
 }
 
-void UShankFindPathStateMachine::DecideTargetLocation() const
+void UScoutShankFindPathStateMachine::DecideTargetLocation() const
 {
 	//목표의 방향 요소 벡터
 	const FVector UpDir = OwnerShank->TargetPawn->GetActorUpVector();
@@ -81,7 +81,7 @@ void UShankFindPathStateMachine::DecideTargetLocation() const
 	OwnerShank->TargetLocation = OwnerShank->TargetPawn->GetActorLocation() + RandDir * FMath::FRandRange(Distance - 50, Distance + 50);
 }
 
-void UShankFindPathStateMachine::CalculatePaths() const
+void UScoutShankFindPathStateMachine::CalculatePaths() const
 {
 	if (OwnerShank == false)
 	{

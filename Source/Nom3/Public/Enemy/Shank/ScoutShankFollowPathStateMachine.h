@@ -5,18 +5,18 @@
 #include "CoreMinimal.h"
 #include "ShankStateMachineBase.h"
 #include "Components/ActorComponent.h"
-#include "ShankFollowPathStateMachine.generated.h"
+#include "ScoutShankFollowPathStateMachine.generated.h"
 
 //델리게이트 선언
 DECLARE_DELEGATE_RetVal_OneParam(bool, FOnDecideEvadeDirection, float)
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class NOM3_API UShankFollowPathStateMachine : public UShankStateMachineBase
+class NOM3_API UScoutShankFollowPathStateMachine : public UShankStateMachineBase
 {
 	GENERATED_BODY()
 
 public:
-	UShankFollowPathStateMachine();
+	UScoutShankFollowPathStateMachine();
 
 	virtual void EnterState() override;
 

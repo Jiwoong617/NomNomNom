@@ -46,11 +46,11 @@ AProjectileBase* UProjectilePoolWorldSubSystem::PopProjectile(const TSubclassOf<
 	if (QueuePtr->Dequeue(Projectile) == false)
 	{
 		//새롭게 생성
-		Projectile = SpawnRequestedProjectile(Class, Location, Rotation);
+		Projectile = GetWorld()->SpawnActor<AProjectileBase>(Class, Location, Rotation);
 	}
-	
+
 	//활성화
-	Projectile->Active(Location, Rotation);
+	Projectile->Active(Location, Rotation);	
 	
 	//반환
 	return Projectile;
