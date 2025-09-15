@@ -11,7 +11,7 @@ APlayerDetectVolume::APlayerDetectVolume()
 	PrimaryActorTick.bCanEverTick = true;
 
 	PlayerDetectSphereComp = CreateDefaultSubobject<USphereComponent>(FName("PlayerDetectSphereComp"));
-	PlayerDetectSphereComp->SetCollisionProfileName(FName("OverlapOnlyPawn"));
+	PlayerDetectSphereComp->SetCollisionProfileName(FName("PawnDetect"));
 	PlayerDetectSphereComp->SetSphereRadius(500);
 	SetRootComponent(PlayerDetectSphereComp);
 }
@@ -36,6 +36,9 @@ void APlayerDetectVolume::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	//활성화 마크
 	bActivate = true;
+
+	//충돌 비활성화
+	PlayerDetectSphereComp->SetCollisionProfileName(FName("NoCollision"));
 
 	//진입한 폰이 플레이어였다면
 	if (auto Temp = Cast<ANomPlayer>(OtherActor))
