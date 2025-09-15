@@ -63,6 +63,7 @@ protected:
 	bool bIsAiming = false;
 	bool bIsHoldFire = false;
 	bool bIsHoldAim = false;
+	bool bIsDead = false;
 	
 	//Basic Status
 	float MaxSpeed = 600.f;

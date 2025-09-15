@@ -68,7 +68,7 @@ ANomPlayer::ANomPlayer()
 	FpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("FPS Spring Arm");
 	FpsSpringArmComp->SetupAttachment(RootComponent);
 	FpsSpringArmComp->TargetArmLength = 0;
-	FpsSpringArmComp->SetRelativeLocation(FVector(40,-10,90));
+	FpsSpringArmComp->SetRelativeLocation(FVector(60,0,90));
 	FpsCameraComp = CreateDefaultSubobject<UCameraComponent>("FPS Cam");
 	FpsCameraComp->SetupAttachment(FpsSpringArmComp);
 	FpsCameraComp->bUsePawnControlRotation = true;
@@ -197,7 +197,6 @@ void ANomPlayer::BeginPlay()
 	PlayerUI->UpdateHealthUI(Hp, MaxHp);
 	WeaponComp->Init();
 
-	//TODO : Mesh 바뀌면 값 조정해줘야됨
 	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
 	BodyBox->Init(FVector(50, 15, 20), ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
 
@@ -265,6 +264,8 @@ void ANomPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void ANomPlayer::MoveInput(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
+	
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	if (MovementVector == FVector2D::ZeroVector)
 	{
@@ -282,6 +283,8 @@ void ANomPlayer::LookInput(const FInputActionValue& Value)
 
 void ANomPlayer::JumpInput()
 {
+	if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill)
 		return;
 	
@@ -296,6 +299,8 @@ void ANomPlayer::JumpInput()
 
 void ANomPlayer::RunToggle()
 {
+	if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
 	if (ActionState == EActionState::Firing)
@@ -321,6 +326,8 @@ void ANomPlayer::RunToggle()
 
 void ANomPlayer::CrouchToggle()
 {
+	if (bIsDead) return;
+	
 	if (GetMovementComponent()->IsFalling() || ActionState == EActionState::Skill)
 	{
 		return;
@@ -385,6 +392,8 @@ void ANomPlayer::InteractHold(const FInputActionValue& Value)
 
 void ANomPlayer::Fire(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
+	
 	if (Value.Get<bool>())
 	{
 		bIsHoldFire = true;
@@ -417,6 +426,8 @@ void ANomPlayer::Fire(const FInputActionValue& Value)
 
 void ANomPlayer::Aim(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
+	
 	if (Value.Get<bool>())
 	{
 		bIsHoldAim = true;
@@ -447,6 +458,8 @@ void ANomPlayer::Aim(const FInputActionValue& Value)
 
 void ANomPlayer::ReloadStart()
 {
+	if (bIsDead) return;
+	
 	if (WeaponComp->GetCurrentWeapon()->CanReload() == false)
 		return;
 	
@@ -498,6 +511,8 @@ void ANomPlayer::ReloadEnd()
 
 void ANomPlayer::Melee()
 {
+	if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
 	if (ActionState == EActionState::Firing)
@@ -550,6 +565,8 @@ void ANomPlayer::Melee()
 
 void ANomPlayer::Throw()
 {
+	if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
 	if (ActionState == EActionState::Firing)
@@ -599,6 +616,8 @@ void ANomPlayer::LeftHandEnd()
 
 void ANomPlayer::Skill()
 {
+	if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
 	if (ActionState == EActionState::Firing)
@@ -651,6 +670,8 @@ void ANomPlayer::SkillEnd()
 
 void ANomPlayer::UltimateSkill()
 {
+	if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
 	if (ActionState == EActionState::Firing)
@@ -702,6 +723,8 @@ void ANomPlayer::UltimateSkillEnd()
 
 void ANomPlayer::ChangeWeapon(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
+	
 	int32 WeaponIndex = static_cast<int32>(Value.Get<float>());
 	if (WeaponComp->GetCurrentWeaponIdx() == WeaponIndex - 1)
 		return;
@@ -803,7 +826,20 @@ void ANomPlayer::OnDamaged(FFireInfo Info)
 
 	if (Hp <= 0)
 	{
+		bIsDead = true;
+		ChangeToTps();
 		
+		ActionState = EActionState::Idle;
+		MovingState = EMovingState::Idle;
+		bIsAiming = false;
+		bIsHoldFire = false;
+		bIsHoldAim = false;
+		OnFireCanceled();
+		OnReloadCanceled();
+		OnAimCanceled();
+		UnCrouch();
+
+		TpsMeshComp->SetSimulatePhysics(true);
 	}
 }
 

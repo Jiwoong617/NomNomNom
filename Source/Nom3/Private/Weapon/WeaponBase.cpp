@@ -174,7 +174,8 @@ const UWeaponData* AWeaponBase::GetData() const
 
 FTransform AWeaponBase::GetSocketTransform(FName& SocketName)
 {
-	return WeaponMeshComp->GetSocketTransform(SocketName);
+	// 명시적으로 월드 기준 변환을 사용해 혼동을 방지
+	return WeaponMeshComp->GetSocketTransform(SocketName, RTS_World);
 }
 
 bool AWeaponBase::CanFire()

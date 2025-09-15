@@ -42,7 +42,7 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UWeaponComponent::Init()
 {
-	Owner = Cast<ANomPlayer>(GetOwner());
+    Owner = Cast<ANomPlayer>(GetOwner());
 
 	TArray<UChildActorComponent*> ChildComps;
 	GetOwner()->GetComponents<UChildActorComponent>(ChildComps);
@@ -70,14 +70,16 @@ void UWeaponComponent::Init()
 
 		OnBulletChangeDelegate.Broadcast(CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 	}
-	
-	CamOffset = Owner->GetFpsCamArm()->GetRelativeLocation();
+    
+    CamOffset = Owner->GetFpsCamArm()->GetRelativeLocation();
+    // 현재 카메라 FOV를 저장해 원래 값으로 정확히 복귀
+    CameraFOV = Owner->GetFpsCam()->FieldOfView;
 	//에임 소켓 위치 월드 -> 로컬로 변환
 	FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
 	FVector AimSocketLocLocal = Owner->GetFpsCamArm()->GetAttachParent()->
 		GetComponentTransform().InverseTransformPosition(AimSocketLoc);
 	
-	AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
+    AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
 
 	OnChangeWeaponDelegate.Broadcast(0, CurrentWeapon->GetData()->WeaponImg, CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 	OnChangeWeaponDelegate.Broadcast(1, WeaponList[1]->GetData()->WeaponImg, WeaponList[1]->CurrentAmmo, 0);
@@ -134,13 +136,21 @@ void UWeaponComponent::AimEnd()
 
 void UWeaponComponent::OnAiming()
 {
-	if (bIsAiming)
-	{
-		if (AimTime >= CurrentWeapon->GetData()->AimDuration) return;
-		AimTime += GetWorld()->GetDeltaSeconds();
-		
-		Owner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(CamOffset, AimCamLoc, AimTime / CurrentWeapon->GetData()->AimDuration));
-		Owner->GetFpsCam()->SetFieldOfView(FMath::Lerp(CameraFOV, CurrentWeapon->GetData()->ADS_FOV, AimTime / CurrentWeapon->GetData()->AimDuration));
+    if (bIsAiming)
+    {
+        // 무기 조준 소켓 위치를 매 프레임 갱신하여 정렬 오차를 방지
+        if (CurrentWeapon && Owner && CurrentWeapon->GetData()->IsAimable)
+        {
+            const FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
+            const FVector AimSocketLocLocal = Owner->GetFpsCamArm()->GetAttachParent()->
+                GetComponentTransform().InverseTransformPosition(AimSocketLoc);
+            AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
+        }
+        if (AimTime >= CurrentWeapon->GetData()->AimDuration) return;
+        AimTime += GetWorld()->GetDeltaSeconds();
+        
+        Owner->GetFpsCamArm()->SetRelativeLocation(FMath::Lerp(CamOffset, AimCamLoc, AimTime / CurrentWeapon->GetData()->AimDuration));
+        Owner->GetFpsCam()->SetFieldOfView(FMath::Lerp(CameraFOV, CurrentWeapon->GetData()->ADS_FOV, AimTime / CurrentWeapon->GetData()->AimDuration));
 	}
 	else
 	{
