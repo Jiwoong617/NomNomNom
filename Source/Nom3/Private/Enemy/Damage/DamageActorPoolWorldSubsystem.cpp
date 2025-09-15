@@ -1,10 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Damage/DamageActorPoolGameInstanceSubsystem.h"
+#include "Enemy/Damage/DamageActorPoolWorldSubsystem.h"
 #include "Enemy/Damage/DamageActor.h"
-#include "Nom3/Nom3.h"
 
-UDamageActorPoolGameInstanceSubsystem::UDamageActorPoolGameInstanceSubsystem()
+UDamageActorPoolWorldSubsystem::UDamageActorPoolWorldSubsystem()
 {
 	//데미지 액터 클래스 로드
 	if (ConstructorHelpers::FClassFinder<ADamageActor> Finder(TEXT("/Game/Enemies/Damage/BP_NormalLeftDamageActor.BP_NormalLeftDamageActor_C"));
@@ -35,7 +34,7 @@ UDamageActorPoolGameInstanceSubsystem::UDamageActorPoolGameInstanceSubsystem()
 	}
 }
 
-void UDamageActorPoolGameInstanceSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+void UDamageActorPoolWorldSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
@@ -52,7 +51,7 @@ void UDamageActorPoolGameInstanceSubsystem::Initialize(FSubsystemCollectionBase&
 	}
 }
 
-ADamageActor* UDamageActorPoolGameInstanceSubsystem::SpawnNormalDamageActor() const
+ADamageActor* UDamageActorPoolWorldSubsystem::SpawnNormalDamageActor() const
 {
 	//데미지 액터 스폰
 	const auto Selected = FMath::RandRange(0, 1) ? NormalLeftDamageActorClass : NormalRightDamageActorClass;
@@ -60,7 +59,7 @@ ADamageActor* UDamageActorPoolGameInstanceSubsystem::SpawnNormalDamageActor() co
 	return Spawned;
 }
 
-ADamageActor* UDamageActorPoolGameInstanceSubsystem::SpawnCriticalDamageActor() const
+ADamageActor* UDamageActorPoolWorldSubsystem::SpawnCriticalDamageActor() const
 {
 	//데미지 액터 스폰
 	const auto Selected = FMath::RandRange(0, 1) ? CriticalLeftDamageActorClass : CriticalRightDamageActorClass;
@@ -68,7 +67,7 @@ ADamageActor* UDamageActorPoolGameInstanceSubsystem::SpawnCriticalDamageActor() 
 	return Spawned;
 }
 
-ADamageActor* UDamageActorPoolGameInstanceSubsystem::PopNormalDamageActorFromPool()
+ADamageActor* UDamageActorPoolWorldSubsystem::PopNormalDamageActorFromPool()
 {
 	//데미지 액터 풀링 성공
 	if (ADamageActor* Pop; NormalDamageActorPool.Dequeue(Pop))
@@ -81,7 +80,7 @@ ADamageActor* UDamageActorPoolGameInstanceSubsystem::PopNormalDamageActorFromPoo
 	return SpawnNormalDamageActor();
 }
 
-ADamageActor* UDamageActorPoolGameInstanceSubsystem::PopCriticalDamageActorFromPool()
+ADamageActor* UDamageActorPoolWorldSubsystem::PopCriticalDamageActorFromPool()
 {
 	//데미지 액터 풀링 성공
 	if (ADamageActor* Pop; CriticalDamageActorPool.Dequeue(Pop))
@@ -94,7 +93,7 @@ ADamageActor* UDamageActorPoolGameInstanceSubsystem::PopCriticalDamageActorFromP
 	return SpawnCriticalDamageActor();
 }
 
-void UDamageActorPoolGameInstanceSubsystem::PushDamageActorToPool(ADamageActor* DamageActor)
+void UDamageActorPoolWorldSubsystem::PushDamageActorToPool(ADamageActor* DamageActor)
 {
 	const auto Type = DamageActor->GetClass();
 	if (Type == NormalLeftDamageActorClass || Type == NormalRightDamageActorClass)
@@ -109,7 +108,7 @@ void UDamageActorPoolGameInstanceSubsystem::PushDamageActorToPool(ADamageActor* 
 	}
 }
 
-void UDamageActorPoolGameInstanceSubsystem::ShowNormalDamageActor(const FVector& Location, const int32 Damage)
+void UDamageActorPoolWorldSubsystem::ShowNormalDamageActor(const FVector& Location, const int32 Damage)
 {
 	//사용할 수 있는 데미지 액터 획득
 	const auto Pop = PopNormalDamageActorFromPool();
@@ -121,7 +120,7 @@ void UDamageActorPoolGameInstanceSubsystem::ShowNormalDamageActor(const FVector&
 	Pop->DisplayDamage(Damage);
 }
 
-void UDamageActorPoolGameInstanceSubsystem::ShowCriticalDamageActor(const FVector& Location, const int32 Damage)
+void UDamageActorPoolWorldSubsystem::ShowCriticalDamageActor(const FVector& Location, const int32 Damage)
 {
 	//사용할 수 있는 데미지 액터 획득
 	const auto Pop = PopCriticalDamageActorFromPool();

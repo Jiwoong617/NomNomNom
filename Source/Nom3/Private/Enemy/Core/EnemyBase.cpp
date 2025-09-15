@@ -2,7 +2,7 @@
 
 #include "Enemy/Core/EnemyBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "Enemy/Damage/DamageActorPoolGameInstanceSubsystem.h"
+#include "Enemy/Damage/DamageActorPoolWorldSubsystem.h"
 
 AEnemyBase::AEnemyBase() :
 	Health(100)
@@ -29,7 +29,7 @@ void AEnemyBase::BeginPlay()
 	TargetPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 
 	//데미지 액터 풀링 서브시스템 획득
-	if (auto Temp = GetWorld()->GetGameInstance()->GetSubsystem<UDamageActorPoolGameInstanceSubsystem>())
+	if (auto Temp = GetWorld()->GetSubsystem<UDamageActorPoolWorldSubsystem>())
 	{
 		DamageActorPool = Temp;
 	}

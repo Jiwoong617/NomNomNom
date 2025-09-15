@@ -5,21 +5,20 @@
 #include "CoreMinimal.h"
 #include "Containers/Queue.h"
 #include "GameFramework/Actor.h"
-#include "Subsystems/GameInstanceSubsystem.h"
-#include "DamageActorPoolGameInstanceSubsystem.generated.h"
+#include "Subsystems/WorldSubsystem.h"
+#include "DamageActorPoolWorldSubsystem.generated.h"
 
 class ADamageActor;
 
 UCLASS()
-class NOM3_API UDamageActorPoolGameInstanceSubsystem : public UGameInstanceSubsystem
+class NOM3_API UDamageActorPoolWorldSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
 
 public:
-	UDamageActorPoolGameInstanceSubsystem();
+	UDamageActorPoolWorldSubsystem();
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-
 protected:
 	TQueue<ADamageActor*> NormalDamageActorPool;
 

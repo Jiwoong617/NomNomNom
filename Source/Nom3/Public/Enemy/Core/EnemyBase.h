@@ -14,7 +14,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnArmorChangedEventSignature, float);
 DECLARE_MULTICAST_DELEGATE(FOnDeathEventSignature);
 
 //전방 선언
-class UDamageActorPoolGameInstanceSubsystem;
+class UDamageActorPoolWorldSubsystem;
 
 UCLASS(Abstract)
 class NOM3_API AEnemyBase : public AActor, public IOnAimByPlayerSight, public IDamagable
@@ -60,7 +60,7 @@ protected:
 
 	//데미지 액터 풀링 게임 인스턴스 서브시스템 참조
 	UPROPERTY()
-	TObjectPtr<UDamageActorPoolGameInstanceSubsystem> DamageActorPool;
+	TObjectPtr<UDamageActorPoolWorldSubsystem> DamageActorPool;
 
 public:
 
