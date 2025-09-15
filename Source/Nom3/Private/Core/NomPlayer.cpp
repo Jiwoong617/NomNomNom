@@ -644,7 +644,9 @@ void ANomPlayer::Skill()
 		MovingState = EMovingState::Idle;
 
 	ChangeToTps();
-
+	LaunchCharacter(GetActorForwardVector() * 800.f
+		+ GetActorUpVector() * 200, true, true);
+	
 	//TODO : 몽타쥬로 바꿀 것
 	PRINTINFO();
 	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
@@ -817,9 +819,32 @@ void ANomPlayer::ChangeToTps()
 	TpsCameraComp->SetActive(true);
 }
 
+void ANomPlayer::MakeTpsRagdoll()
+{
+	if (!TpsMeshComp->GetPhysicsAsset())
+	{
+		PRINTINFO();
+		return;
+	}
+
+	if (!TpsMeshComp->IsSimulatingPhysics())
+	{
+		PrevMeshCollisionProfileName = TpsMeshComp->GetCollisionProfileName();
+		// Detach mesh from capsule to avoid parent influence during ragdoll
+		TpsMeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
+		TpsMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		TpsMeshComp->SetSimulatePhysics(true);
+		TpsMeshComp->SetAllBodiesSimulatePhysics(true);
+		TpsMeshComp->WakeAllRigidBodies();
+	}
+}
+
 //여기에 데미지 함수 구현
 void ANomPlayer::OnDamaged(FFireInfo Info)
 {
+	if (ActionState == EActionState::Skill || Hp <= 0)
+		return;
+	
 	if (Info.TeamInfo == ETeamInfo::Player)
 		Hp -= Info.Damage / 100;
 	else
@@ -842,14 +867,16 @@ void ANomPlayer::OnDamaged(FFireInfo Info)
 		OnAimCanceled();
 		UnCrouch();
 
-		TpsMeshComp->SetSimulatePhysics(true);
-		TpsMeshComp->WakeAllRigidBodies();
+		MakeTpsRagdoll();
 	}
 }
 
 //여기에 크리티컬 데미지 함수 구현
 void ANomPlayer::OnCriticalDamaged(FFireInfo Info)
 {
+	if (ActionState == EActionState::Skill || Hp <= 0)
+		return;
+	
 	if (Info.TeamInfo == ETeamInfo::Player)
 		Hp -= Info.Damage * 2 / 100;
 	else
@@ -872,8 +899,7 @@ void ANomPlayer::OnCriticalDamaged(FFireInfo Info)
 		OnAimCanceled();
 		UnCrouch();
 
-		TpsMeshComp->SetSimulatePhysics(true);
-		TpsMeshComp->WakeAllRigidBodies();
+		MakeTpsRagdoll();
 	}
 }
 
