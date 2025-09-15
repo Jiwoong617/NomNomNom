@@ -43,10 +43,10 @@ void AProjectileBase::Active(const FVector& Location, const FRotator& Rotation)
 		ProjectileMoveComp->Velocity = FireInfo.ProjectileSpeed * GetActorForwardVector();
 	}
 
-	//10초 후에 풀에 반환
+	//5초 후에 풀에 반환
 	if (const UWorld* World = GetWorld())
 	{
-		World->GetTimerManager().SetTimer(PoolingTimerHandle, PoolingDelegate, 10, false);
+		World->GetTimerManager().SetTimer(PoolingTimerHandle, PoolingDelegate, 5, false);
 	}
 }
 
