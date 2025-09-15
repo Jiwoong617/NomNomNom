@@ -23,7 +23,7 @@ void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//델리게이트 바인드
+	//풀링 델리게이트 바인드
 	PoolingDelegate.BindUFunction(this, FName("Inactivate"));
 }
 
@@ -44,7 +44,10 @@ void AProjectileBase::Active(const FVector& Location, const FRotator& Rotation)
 	}
 
 	//10초 후에 풀에 반환
-	GetWorld()->GetTimerManager().SetTimer(PoolingTimerHandle, PoolingDelegate, 10, false);
+	if (const UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(PoolingTimerHandle, PoolingDelegate, 10, false);
+	}
 }
 
 void AProjectileBase::Inactivate()

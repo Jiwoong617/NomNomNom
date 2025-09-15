@@ -1,17 +1,17 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ShankFollowPathStateMachine.h"
+#include "Enemy/Shank/ScoutShankFollowPathStateMachine.h"
 #include "Enemy/Components/DroneMovementComponent.h"
 #include "Enemy/Shank/ShankBase.h"
 
-UShankFollowPathStateMachine::UShankFollowPathStateMachine()
+UScoutShankFollowPathStateMachine::UScoutShankFollowPathStateMachine()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UShankFollowPathStateMachine::EnterState()
+void UScoutShankFollowPathStateMachine::EnterState()
 {
 	Super::EnterState();
 	
@@ -30,7 +30,7 @@ void UShankFollowPathStateMachine::EnterState()
 	OwnerShank->DroneMoveComp->ThrottleThrustByLevel(20);
 }
 
-void UShankFollowPathStateMachine::ExecuteState()
+void UScoutShankFollowPathStateMachine::ExecuteState()
 {
 	Super::ExecuteState();
 	
@@ -59,7 +59,7 @@ void UShankFollowPathStateMachine::ExecuteState()
 	}
 }
 
-void UShankFollowPathStateMachine::ExitState()
+void UScoutShankFollowPathStateMachine::ExitState()
 {
 	Super::ExitState();
 	

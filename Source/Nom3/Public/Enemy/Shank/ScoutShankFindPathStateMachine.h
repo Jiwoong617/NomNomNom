@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "ShankStateMachineBase.h"
-#include "ShankFindPathStateMachine.generated.h"
+#include "ScoutShankFindPathStateMachine.generated.h"
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class NOM3_API UShankFindPathStateMachine : public UShankStateMachineBase
+class NOM3_API UScoutShankFindPathStateMachine : public UShankStateMachineBase
 {
 	GENERATED_BODY()
 
 public:
-	UShankFindPathStateMachine();
+	UScoutShankFindPathStateMachine();
 
 	virtual void EnterState() override;
 

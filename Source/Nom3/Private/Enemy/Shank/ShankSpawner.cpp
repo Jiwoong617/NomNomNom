@@ -2,11 +2,14 @@
 
 #include "Enemy/Shank/ShankSpawner.h"
 #include "Components/ArrowComponent.h"
+#include "Components/SphereComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
+#include "Enemy/Core/PlayerDetectVolume.h"
 #include "Enemy/Shank/ShankBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
-AShankSpawner::AShankSpawner() : SpawnMin(1), SpawnMax(1), LaunchConeAngle(15)
+AShankSpawner::AShankSpawner() : NumOfStock(8), SpawnMin(4), SpawnMax(4), LaunchConeAngle(15)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -17,13 +20,17 @@ AShankSpawner::AShankSpawner() : SpawnMin(1), SpawnMax(1), LaunchConeAngle(15)
 	LaunchDirection->SetupAttachment(GetRootComponent());
 }
 
-void AShankSpawner::BeginPlay()
+void AShankSpawner::Tick(float DeltaTime)
 {
-	Super::BeginPlay();
+	Super::Tick(DeltaTime);
+}
 
+void AShankSpawner::OnDetectPlayerPawn()
+{
+	//최초 생크 사출
 	LaunchShanks(FMath::RandRange(SpawnMin, SpawnMax));
 
-	//2초마다 주기적으로 생크 스폰
+	//2초마다 주기적으로 생크 사출
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
 	{
@@ -31,9 +38,42 @@ void AShankSpawner::BeginPlay()
 	}, SpawnRate, true);
 }
 
-void AShankSpawner::Tick(float DeltaTime)
+void AShankSpawner::OnConstruction(const FTransform& Transform)
 {
-	Super::Tick(DeltaTime);
+	Super::OnConstruction(Transform);
+
+	if (BindPlayerDetectVolume == false)
+	{
+		BindPlayerDetectVolume = GetWorld()->SpawnActor<APlayerDetectVolume>();
+		BindPlayerDetectVolume->SetActorLocation(GetActorLocation());
+		BindPlayerDetectVolume->BindSpawner = this;
+	}
+}
+
+void AShankSpawner::SpawnShank()
+{
+	//전부 소진
+	if (NumOfStock <= 0)
+	{
+		return;
+	}
+	
+	//원뿔 범위로 변환
+	const FVector ConeDirection = LaunchDirection->GetForwardVector();
+	const FVector RandomDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(ConeDirection, LaunchConeAngle);
+	const FVector SpawnLocation = LaunchDirection->GetComponentLocation();
+	const FRotator SpawnRotation = RandomDirection.Rotation();
+	const FTransform SpawnTransform(SpawnRotation, SpawnLocation);
+		
+	//정찰 생크 스폰
+	if (const AShankBase* SpawnShank = GetWorld()->SpawnActor<AShankBase>(ScoutShankClass, SpawnTransform); SpawnShank && SpawnShank->DroneMoveComp)
+	{
+		//사출
+		SpawnShank->DroneMoveComp->Launch(RandomDirection);
+	}
+
+	//재고 감소
+	NumOfStock -= 1;
 }
 
 void AShankSpawner::LaunchShanks(const int32 Count)
@@ -56,32 +96,17 @@ void AShankSpawner::LaunchShanks(const int32 Count)
 		GetWorldTimerManager().ClearTimer(SpawnTimerHandle);
 	}, Count * 0.25, false);
 
-	//생크 소환 람다식
-	auto SpawnLambda = [this]()
-	{
-		//원뿔 범위로 변환
-		const FVector ConeDirection = LaunchDirection->GetForwardVector();
-		const FVector RandomDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(ConeDirection, LaunchConeAngle);
-		const FVector SpawnLocation = LaunchDirection->GetComponentLocation();
-		const FRotator SpawnRotation = RandomDirection.Rotation();
-		const FTransform SpawnTransform(SpawnRotation, SpawnLocation);
-		
-		//정찰 생크 스폰
-		if (const AShankBase* SpawnShank = GetWorld()->SpawnActor<AShankBase>(ScoutShankClass, SpawnTransform);
-			SpawnShank && SpawnShank->DroneMoveComp)
-		{
-			//사출
-			SpawnShank->DroneMoveComp->Launch(RandomDirection);
-		}
-	};
-
+	//델리게이트 바인딩
+	FTimerDelegate Delegate;
+	Delegate.BindUFunction(this, FName("SpawnShank"));
+	
 	//생크 1회 스폰
-	SpawnLambda();
+	Delegate.Execute();
 	
 	//요청한 만큼 생크를 반복 스폰
 	for (int32 i = 0; i < Count; i++)
 	{
 		FTimerHandle Temp;
-		GetWorldTimerManager().SetTimer(Temp, SpawnLambda, i * 0.25, false);	
+		GetWorldTimerManager().SetTimer(Temp, Delegate, i * 0.5, false);	
 	}
 }
