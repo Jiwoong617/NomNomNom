@@ -15,19 +15,10 @@ class NOM3_API UPlayerDamageComponent : public UDamageComponent
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this component's properties
 	UPlayerDamageComponent();
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	virtual void OnHitBody(FFireInfo& Info) override;
 
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
-
-protected:
-	virtual void OnHitBody(FFireInfo& info);
-	virtual void OnHitHead(FFireInfo& info);
+	virtual void OnHitHead(FFireInfo& Info) override;
 };

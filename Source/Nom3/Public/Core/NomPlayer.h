@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/CriticalDamagable.h"
 #include "Interfaces/Damagable.h"
 #include "NomPlayer.generated.h"
 
@@ -38,7 +39,7 @@ enum class EMovingState : uint8
 };
 
 UCLASS()
-class NOM3_API ANomPlayer : public ACharacter , public IDamagable
+class NOM3_API ANomPlayer : public ACharacter, public IDamagable, public ICriticalDamagable
 {
 	GENERATED_BODY()
 
@@ -224,6 +225,7 @@ protected:
 
 public:
 	UFUNCTION() virtual void OnDamaged(FFireInfo Info) override;
+	UFUNCTION() virtual void OnCriticalDamaged(FFireInfo Info) override;
 	USpringArmComponent* GetFpsCamArm();
 	UCameraComponent* GetFpsCam();
 	const EActionState& GetActionState() const;

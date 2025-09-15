@@ -96,6 +96,8 @@ public:
 	//데미지 인터페이스 구현
 	virtual void OnDamaged(FFireInfo Info) override;
 
+	//크리티컬 데미지 인터페이스 구현
+
 protected:
 	virtual void BeginPlay() override;
 

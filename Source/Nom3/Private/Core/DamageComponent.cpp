@@ -7,7 +7,6 @@
 #include "Enemy/Core/ProjectileBase.h"
 #include "Interfaces/Damagable.h"
 
-// Sets default values for this component's properties
 UDamageComponent::UDamageComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -18,41 +17,20 @@ UDamageComponent::UDamageComponent()
 	SetGenerateOverlapEvents(true);
 }
 
-// Called when the game starts
 void UDamageComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	//이 충돌 컴포넌트만의 충돌 처리 메서드 바인딩
 	OnComponentBeginOverlap.AddDynamic(this, &UDamageComponent::OnBeginOverlap);
-
-	//Enemy의 인터페이스 메서드 바인딩
-	if (const auto Enemy = Cast<AEnemyBase>(GetOwner()))
-	{
-		OnDamagedDelegate.AddDynamic(Enemy, &AEnemyBase::OnDamaged);
-	}
-
-	//Player의 인터페이스 메서드 바인딩
-	if (const auto Player = Cast<ANomPlayer>(GetOwner()))
-	{
-		OnDamagedDelegate.AddDynamic(Player, &ANomPlayer::OnDamaged);
-	}
 }
 
-// Called every frame
-void UDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
-void UDamageComponent::OnHitBody(FFireInfo& info)
+void UDamageComponent::OnHitBody(FFireInfo& Info)
 {
 	
 }
 
-void UDamageComponent::OnHitHead(FFireInfo& info)
+void UDamageComponent::OnHitHead(FFireInfo& Info)
 {
 	
 }
