@@ -191,7 +191,7 @@ const UWeaponData* AWeaponBase::GetData() const
 
 FTransform AWeaponBase::GetSocketTransform(FName& SocketName)
 {
-	return WeaponMeshComp->GetSocketTransform(SocketName);
+	return WeaponMeshComp->GetSocketTransform(SocketName, RTS_World);
 }
 
 bool AWeaponBase::CanFire()

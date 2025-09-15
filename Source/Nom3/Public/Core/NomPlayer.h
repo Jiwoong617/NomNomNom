@@ -64,6 +64,7 @@ protected:
 	bool bIsAiming = false;
 	bool bIsHoldFire = false;
 	bool bIsHoldAim = false;
+	bool bIsDead = false;
 	
 	//Basic Status
 	float MaxSpeed = 600.f;
@@ -89,7 +90,6 @@ protected:
 	FVector TpsCamOffset = FVector(0.f, 0.f, 50.f);
 	UPROPERTY(EditAnywhere)
 	float TpsSpringArmLength = 300.f;
-	
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* TpsSpringArmComp;
 	UPROPERTY(EditAnywhere)
@@ -230,5 +230,4 @@ public:
 	UCameraComponent* GetFpsCam();
 	const EActionState& GetActionState() const;
 	const EMovingState& GetMovingState() const;
-	const bool& GetIsAiming() const;
 };
