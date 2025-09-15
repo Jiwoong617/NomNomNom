@@ -230,5 +230,4 @@ public:
 	UCameraComponent* GetFpsCam();
 	const EActionState& GetActionState() const;
 	const EMovingState& GetMovingState() const;
-	const bool& GetIsAiming() const;
 };

@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "Core/NomPlayer.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Nom3/Nom3.h"
 #include "Weapon/WeaponBase.h"
 #include "Weapon/WeaponData.h"
@@ -75,11 +76,19 @@ void UWeaponComponent::Init()
     // 현재 카메라 FOV를 저장해 원래 값으로 정확히 복귀
     CameraFOV = Owner->GetFpsCam()->FieldOfView;
 	//에임 소켓 위치 월드 -> 로컬로 변환
-	FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
-	FVector AimSocketLocLocal = Owner->GetFpsCamArm()->GetAttachParent()->
-		GetComponentTransform().InverseTransformPosition(AimSocketLoc);
-	
-    AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
+	const FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
+	const USceneComponent* ParentComp = Owner->GetFpsCamArm()->GetAttachParent();
+	const FName ParentSocket = Owner->GetFpsCamArm()->GetAttachSocketName();
+	FTransform ParentFrame = ParentComp ? ParentComp->GetComponentTransform() : FTransform::Identity;
+	if (const auto SkelParent = Cast<USkeletalMeshComponent>(ParentComp))
+	{
+		if (ParentSocket != NAME_None)
+		{
+			ParentFrame = SkelParent->GetSocketTransform(ParentSocket, RTS_World);
+		}
+	}
+	const FVector AimSocketLocLocal = ParentFrame.InverseTransformPosition(AimSocketLoc);
+	AimCamLoc = AimSocketLocLocal;
 
 	OnChangeWeaponDelegate.Broadcast(0, CurrentWeapon->GetData()->WeaponImg, CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 	OnChangeWeaponDelegate.Broadcast(1, WeaponList[1]->GetData()->WeaponImg, WeaponList[1]->CurrentAmmo, 0);
@@ -142,9 +151,17 @@ void UWeaponComponent::OnAiming()
     if (CurrentWeapon && Owner && CurrentWeapon->GetData()->IsAimable)
     {
         const FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
-        const FVector AimSocketLocLocal = Owner->GetFpsCamArm()->GetAttachParent()->
-            GetComponentTransform().InverseTransformPosition(AimSocketLoc);
-        //AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);
+        const USceneComponent* ParentComp = Owner->GetFpsCamArm()->GetAttachParent();
+        const FName ParentSocket = Owner->GetFpsCamArm()->GetAttachSocketName();
+        FTransform ParentFrame = ParentComp ? ParentComp->GetComponentTransform() : FTransform::Identity;
+        if (const auto SkelParent = Cast<USkeletalMeshComponent>(ParentComp))
+        {
+            if (ParentSocket != NAME_None)
+            {
+                ParentFrame = SkelParent->GetSocketTransform(ParentSocket, RTS_World);
+            }
+        }
+        const FVector AimSocketLocLocal = ParentFrame.InverseTransformPosition(AimSocketLoc);
         AimCamLoc = AimSocketLocLocal;
     }
 
@@ -183,10 +200,18 @@ void UWeaponComponent::OnWeaponChanged(int32 idx)
 {
 	if (CurrentWeapon->GetData()->IsAimable == false)
 		return;
-	FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
-	FVector AimSocketLocLocal = Owner->GetFpsCamArm()->GetAttachParent()->
-		GetComponentTransform().InverseTransformPosition(AimSocketLoc);
-	
+	const FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
+	const USceneComponent* ParentComp = Owner->GetFpsCamArm()->GetAttachParent();
+	const FName ParentSocket = Owner->GetFpsCamArm()->GetAttachSocketName();
+	FTransform ParentFrame = ParentComp ? ParentComp->GetComponentTransform() : FTransform::Identity;
+	if (const auto SkelParent = Cast<USkeletalMeshComponent>(ParentComp))
+	{
+		if (ParentSocket != NAME_None)
+		{
+			ParentFrame = SkelParent->GetSocketTransform(ParentSocket, RTS_World);
+		}
+	}
+	const FVector AimSocketLocLocal = ParentFrame.InverseTransformPosition(AimSocketLoc);
 	//AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);		
 	AimCamLoc = AimSocketLocLocal;
 

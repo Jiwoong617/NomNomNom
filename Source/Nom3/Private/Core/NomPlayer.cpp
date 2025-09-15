@@ -80,6 +80,7 @@ ANomPlayer::ANomPlayer()
 	TpsSpringArmComp->SetupAttachment(RootComponent);
 	TpsSpringArmComp->bUsePawnControlRotation = true;
 	TpsSpringArmComp->SetRelativeLocation(FVector(0, 0, 50));
+	TpsSpringArmComp->SetRelativeRotation(FRotator(-45, 0, 0));
 	TpsCameraComp = CreateDefaultSubobject<UCameraComponent>("TPS Cam");
 	TpsCameraComp->SetupAttachment(TpsSpringArmComp);
 	TpsCameraComp->bUsePawnControlRotation = false;
@@ -894,9 +895,4 @@ const EActionState& ANomPlayer::GetActionState() const
 const EMovingState& ANomPlayer::GetMovingState() const
 {
 	return MovingState;
-}
-
-const bool& ANomPlayer::GetIsAiming() const
-{
-	return bIsAiming;
 }
