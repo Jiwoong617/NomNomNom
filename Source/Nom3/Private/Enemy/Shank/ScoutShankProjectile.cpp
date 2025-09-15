@@ -31,7 +31,4 @@ void AScoutShankProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Pawn Hit!"));
 	}
-
-	//파괴
-	this->Destroy();
 }

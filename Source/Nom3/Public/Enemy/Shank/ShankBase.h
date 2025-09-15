@@ -14,12 +14,12 @@ class UNiagaraSystem;
 class UDamageComponent;
 class UArrowComponent;
 class AScoutShankProjectile;
-class UShankReverseThrustStateMachine;
-class UShankFindPathStateMachine;
+class UScoutShankReverseThrustStateMachine;
+class UScoutShankFindPathStateMachine;
 class UShankStateMachineBase;
 class UDroneMovementComponent;
 class USphereComponent;
-class UShankFollowPathStateMachine;
+class UScoutShankFollowPathStateMachine;
 
 UENUM()
 enum class EShankType : uint8
@@ -64,15 +64,15 @@ public:
 
 	//경로 탐색 상태 머신
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UShankFindPathStateMachine> FindPathStateMachine;
+	TObjectPtr<UScoutShankFindPathStateMachine> FindPathStateMachine;
 
 	//경로 추적 상태 머신
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UShankFollowPathStateMachine> CircleStateMachine;
+	TObjectPtr<UScoutShankFollowPathStateMachine> CircleStateMachine;
 
 	//역추진 상태 머신
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UShankReverseThrustStateMachine> ReverseThrustStateMachine;
+	TObjectPtr<UScoutShankReverseThrustStateMachine> ReverseThrustStateMachine;
 
 	//현재 목표 위치
 	UPROPERTY(VisibleAnywhere)

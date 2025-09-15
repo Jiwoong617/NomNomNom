@@ -18,12 +18,12 @@ class NOM3_API AProjectileBase : public AActor
 
 public:
 	AProjectileBase();
+
+	virtual void BeginPlay() override;
 	
 	//발사 정보 구조체
 	UPROPERTY(VisibleAnywhere)
 	FFireInfo FireInfo;
-
-	virtual void BeginPlay() override;
 
 	//활성화
 	UFUNCTION()

@@ -4,7 +4,7 @@
 #include "Enemy/Components/DroneMovementComponent.h"
 #include "Enemy/Shank/ScoutShankDamageComponent.h"
 #include "Enemy/Shank/ScoutShankShooterComponent.h"
-#include "Enemy/Shank/ShankFollowPathStateMachine.h"
+#include "Enemy/Shank/ScoutShankFollowPathStateMachine.h"
 #include "Kismet/KismetMathLibrary.h"
 
 AScoutShank::AScoutShank()
@@ -29,8 +29,8 @@ AScoutShank::AScoutShank()
 
 	//일반 데이지 컴포넌트
 	NormalDamageComp = CreateDefaultSubobject<UScoutShankDamageComponent>(FName("NormalDamageComp"));
-	NormalDamageComp->SetRelativeLocation(FVector(0, 0, 100));
-	NormalDamageComp->SetBoxExtent(FVector(120, 80, 80));
+	NormalDamageComp->SetRelativeLocation(FVector(0, 0, 110));
+	NormalDamageComp->SetBoxExtent(FVector(120, 90, 90));
 	NormalDamageComp->SetupAttachment(SkeletalMeshComp);
 }
 
@@ -163,5 +163,5 @@ void AScoutShank::OnShotDown(const FVector ShotDir)
 	ShooterComp->InactiveAutoFire();
 
 	//데미지 비활성화
-	NormalDamageComp->Inactive();
+	//NormalDamageComp->Inactive();
 }
