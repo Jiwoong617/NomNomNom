@@ -1,48 +1,28 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Core/PlayerDamageComponent.h"
 
 #include "Core/NomPlayer.h"
 
-
-// Sets default values for this component's properties
 UPlayerDamageComponent::UPlayerDamageComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
-
-// Called when the game starts
-void UPlayerDamageComponent::BeginPlay()
+void UPlayerDamageComponent::OnHitBody(FFireInfo& Info)
 {
-	Super::BeginPlay();
-
-	// ...
-	
+	if (const auto OwnerPlayer = Cast<ANomPlayer>(GetOwner()))
+	{
+		OwnerPlayer->OnDamaged(Info);
+	}
 }
 
-
-// Called every frame
-void UPlayerDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                           FActorComponentTickFunction* ThisTickFunction)
+void UPlayerDamageComponent::OnHitHead(FFireInfo& Info)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
-
-void UPlayerDamageComponent::OnHitBody(FFireInfo& info)
-{
-	OnDamagedDelegate.Broadcast(info);
-}
-
-void UPlayerDamageComponent::OnHitHead(FFireInfo& info)
-{
-	OnDamagedDelegate.Broadcast(FFireInfo(info.Damage *  2, info.FireLocation, info.TeamInfo, info.bIsIgnoreTeam));
+	if (const auto OwnerPlayer = Cast<ANomPlayer>(GetOwner()))
+	{
+		OwnerPlayer->OnCriticalDamaged(Info);
+	}
 }

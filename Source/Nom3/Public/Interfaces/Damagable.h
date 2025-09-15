@@ -67,7 +67,7 @@ class UDamagable : public UInterface
 };
 
 /**
- * 
+ * 데미지를 입을 수 있는 액터를 위한 인터페이스
  */
 class NOM3_API IDamagable
 {
@@ -75,7 +75,5 @@ class NOM3_API IDamagable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-
-	//총탄 구조체 : 데미지, 발사 지점, 사격자의 팀 정보, 동일팀 무시여부
 	virtual void OnDamaged(FFireInfo Info) = 0;
 };

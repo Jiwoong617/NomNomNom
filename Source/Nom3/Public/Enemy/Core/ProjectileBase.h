@@ -23,6 +23,8 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	FFireInfo FireInfo;
 
+	virtual void BeginPlay() override;
+
 	//활성화
 	UFUNCTION()
 	void Active(const FVector& Location, const FRotator& Rotation);
@@ -35,6 +37,9 @@ protected:
 
 	//풀링 타이머 핸들
 	FTimerHandle PoolingTimerHandle;
+
+	//풀링 델리게이트
+	FTimerDelegate PoolingDelegate;
 
 	//충돌체 컴포넌트
 	UPROPERTY(VisibleAnywhere)

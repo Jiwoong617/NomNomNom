@@ -19,6 +19,14 @@ AProjectileBase::AProjectileBase()
 	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMoveComp"));
 }
 
+void AProjectileBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//델리게이트 바인드
+	PoolingDelegate.BindUFunction(this, FName("Inactivate"));
+}
+
 void AProjectileBase::Active(const FVector& Location, const FRotator& Rotation)
 {
 	//활성화
@@ -36,9 +44,7 @@ void AProjectileBase::Active(const FVector& Location, const FRotator& Rotation)
 	}
 
 	//10초 후에 풀에 반환
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindUFunction(this, FName("Inactivate"));
-	GetWorldTimerManager().SetTimer(PoolingTimerHandle, TimerDelegate, 10, false);
+	GetWorld()->GetTimerManager().SetTimer(PoolingTimerHandle, PoolingDelegate, 10, false);
 }
 
 void AProjectileBase::Inactivate()

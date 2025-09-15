@@ -819,7 +819,23 @@ void ANomPlayer::ChangeToTps()
 void ANomPlayer::OnDamaged(FFireInfo Info)
 {
 	if (Info.TeamInfo == ETeamInfo::Player)
-		Hp -= Info.Damage/100;
+		Hp -= Info.Damage / 100;
+	else
+		Hp -= Info.Damage;
+	
+	PlayerUI->UpdateHealthUI(Hp, MaxHp);
+
+	if (Hp <= 0)
+	{
+		
+	}
+}
+
+//여기에 크리티컬 데미지 함수 구현
+void ANomPlayer::OnCriticalDamaged(FFireInfo Info)
+{
+	if (Info.TeamInfo == ETeamInfo::Player)
+		Hp -= Info.Damage * 2 / 100;
 	else
 		Hp -= Info.Damage;
 	

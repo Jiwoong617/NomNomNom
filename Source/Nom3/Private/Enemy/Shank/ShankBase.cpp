@@ -6,7 +6,7 @@
 #include "Enemy/Shank/ShankFollowPathStateMachine.h"
 #include "Components/SphereComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
-#include "Enemy/Damage/DamageActorPoolGameInstanceSubsystem.h"
+#include "Enemy/Damage/DamageActorPoolWorldSubsystem.h"
 #include "Enemy/Shank/ShankFindPathStateMachine.h"
 #include "Enemy/Shank/ShankReverseThrustStateMachine.h"
 #include "Kismet/KismetMathLibrary.h"

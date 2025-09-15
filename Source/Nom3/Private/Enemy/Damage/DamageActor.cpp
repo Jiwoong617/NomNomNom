@@ -2,7 +2,7 @@
 
 #include "Enemy/Damage/DamageActor.h"
 #include "Components/WidgetComponent.h"
-#include "Enemy/Damage/DamageActorPoolGameInstanceSubsystem.h"
+#include "Enemy/Damage/DamageActorPoolWorldSubsystem.h"
 #include "Enemy/Damage/DamageWidget.h"
 #include "Nom3/Nom3.h"
 
@@ -40,11 +40,8 @@ void ADamageActor::DisplayDamage(const int32 Damage) const
 
 void ADamageActor::Deactivate()
 {
-	if (const auto GameInstance = GetGameInstance())
+	if (const auto PoolingSubsystem = GetWorld()->GetSubsystem<UDamageActorPoolWorldSubsystem>())
 	{
-		if (const auto PoolingSubsystem = GameInstance->GetSubsystem<UDamageActorPoolGameInstanceSubsystem>())
-		{
-			PoolingSubsystem->PushDamageActorToPool(this);
-		}
+		PoolingSubsystem->PushDamageActorToPool(this);
 	}
 }
