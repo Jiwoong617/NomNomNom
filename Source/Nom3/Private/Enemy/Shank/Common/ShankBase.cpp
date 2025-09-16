@@ -1,14 +1,14 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ShankBase.h"
-
+#include "Enemy/Shank/Common/ShankBase.h"
 #include "NiagaraFunctionLibrary.h"
-#include "Enemy/Shank/ScoutShankFollowPathStateMachine.h"
 #include "Components/SphereComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
 #include "Enemy/Damage/DamageActorPoolWorldSubsystem.h"
-#include "Enemy/Shank/ScoutShankFindPathStateMachine.h"
-#include "Enemy/Shank/ScoutShankReverseThrustStateMachine.h"
+#include "Enemy/Shank/Common/ShankDamageComponent.h"
+#include "Enemy/Shank/Common/ShankFollowPathStateMachine.h"
+#include "Enemy/Shank/Common/ShankReverseThrustStateMachine.h"
+#include "Enemy/Shank/ScoutShank/ScoutShankFindPathStateMachine.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Nom3/Nom3.h"
 
@@ -32,17 +32,20 @@ AShankBase::AShankBase() :
 	SkeletalMeshComp->SetCollisionProfileName(FName("NoCollision"));
 	SkeletalMeshComp->SetupAttachment(MeshSceneComp);
 
+	//일반 데미지 컴포넌트
+	DamageComp = CreateDefaultSubobject<UShankDamageComponent>(FName("DamageComp"));
+	DamageComp->SetRelativeLocation(FVector(0, 0, 110));
+	DamageComp->SetBoxExtent(FVector(120, 90, 90));
+	DamageComp->SetupAttachment(SkeletalMeshComp);
+
 	//드론 무브먼트 컴포넌트
 	DroneMoveComp = CreateDefaultSubobject<UDroneMovementComponent>(FName("DroneMoveComp"));
-
-	//경로 탐색 상태 머신
-	FindPathStateMachine = CreateDefaultSubobject<UScoutShankFindPathStateMachine>(FName("FindPathStateMachine"));
 	
 	//경로 추적 상태 머신
-	CircleStateMachine = CreateDefaultSubobject<UScoutShankFollowPathStateMachine>(FName("CircleStateMachine"));
+	FollowPathStateMachine = CreateDefaultSubobject<UShankFollowPathStateMachine>(FName("CircleStateMachine"));
 
 	//역추진 상태 머신
-	ReverseThrustStateMachine = CreateDefaultSubobject<UScoutShankReverseThrustStateMachine>(FName("ReverseThrustStateMachine"));
+	ReverseThrustStateMachine = CreateDefaultSubobject<UShankReverseThrustStateMachine>(FName("ReverseThrustStateMachine"));
 
 	//나이아가라 이펙트 로드
 	if (static ConstructorHelpers::FObjectFinder<UNiagaraSystem> Finder(
@@ -70,7 +73,7 @@ void AShankBase::BeginPlay()
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, [this]()
 	{
-		SHANK_STATE = EShankState::FindPath;
+		ChangeCurrentStateMachine(FindPathStateMachine);
 	}, 1, false);
 }
 
@@ -83,10 +86,7 @@ void AShankBase::Tick(float DeltaTime)
 	{
 		//현재 생크 상태 머신 실행
 		CurrentStateMachine->ExecuteState();
-	}
 
-	if (SHANK_STATE != EShankState::Splash)
-	{
 		//목표 방향
 		const FVector TargetDir = (TargetPawn->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 		const FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(TargetDir, GetActorUpVector());
@@ -94,51 +94,71 @@ void AShankBase::Tick(float DeltaTime)
 	}
 }
 
-void AShankBase::SetCurrentState(const EShankState Value)
+// void AShankBase::SetCurrentState(const EShankState Value)
+// {
+// 	//다른 상태 머신으로의 전환 요청
+// 	if (CurrentState != Value)
+// 	{
+// 		//임시
+// 		const auto Temp = CurrentStateMachine;
+//
+// 		//상태 전환
+// 		CurrentState = Value;
+//
+// 		//상태 머신 선택
+// 		switch (CurrentState)
+// 		{
+// 		case EShankState::FindPath:
+// 			{
+// 				CurrentStateMachine = FindPathStateMachine;
+// 				break;
+// 			}
+// 		case EShankState::FollowPath:
+// 			{
+// 				CurrentStateMachine = FollowPathStateMachine;
+// 				break;
+// 			}
+// 		case EShankState::ReverseThrust:
+// 			{
+// 				CurrentStateMachine = ReverseThrustStateMachine;
+// 				break;
+// 			}
+// 		case EShankState::Splash:
+// 			{
+// 				CurrentStateMachine = nullptr;
+// 				break;
+// 			}
+// 		default:
+// 			{
+// 				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Not Implemented!"));
+// 			};
+// 		}
+// 		
+// 		//실행 중이던 상태에서 Exit
+// 		if (Temp)
+// 		{
+// 			Temp->ExitState();	
+// 		}
+// 	}
+// }
+
+UShankStateMachineBase* AShankBase::GetCurrentStateMachine() const
 {
-	//다른 상태 머신으로의 전환 요청
-	if (CurrentState != Value)
+	return CurrentStateMachine;
+}
+
+void AShankBase::ChangeCurrentStateMachine(UShankStateMachineBase* StateMachineToChange)
+{
+	//임시 저장
+	const auto Before = CurrentStateMachine;
+
+	//스테이트 머신 변경
+	CurrentStateMachine = StateMachineToChange;
+
+	//탈출
+	if (Before)
 	{
-		//임시
-		const auto Temp = CurrentStateMachine;
-
-		//상태 전환
-		CurrentState = Value;
-
-		//상태 머신 선택
-		switch (CurrentState)
-		{
-		case EShankState::FindPath:
-			{
-				CurrentStateMachine = FindPathStateMachine;
-				break;
-			}
-		case EShankState::FollowPath:
-			{
-				CurrentStateMachine = CircleStateMachine;
-				break;
-			}
-		case EShankState::ReverseThrust:
-			{
-				CurrentStateMachine = ReverseThrustStateMachine;
-				break;
-			}
-		case EShankState::Splash:
-			{
-				CurrentStateMachine = nullptr;
-				break;
-			}
-		default:
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Not Implemented!"));
-			};
-		}
-		
-		//실행 중이던 상태에서 Exit
-		if (Temp)
-		{
-			Temp->ExitState();	
-		}
+		Before->ExitState();	
 	}
 }
 
@@ -155,8 +175,26 @@ void AShankBase::OnDamaged(const FFireInfo Info)
 		return;
 	}
 
-	//방어력을 통해 데미지 연산
+	//일반적인 데미지
 	const int32 Damage = FMath::FloorToInt(Info.Damage);
+
+	//체력 처리
+	HP -= Damage;
+	
+	//자산의 위치에 데미지 액터 풀링
+	DamageActorPool->ShowNormalDamageActor(GetActorLocation(), Damage);
+}
+
+void AShankBase::OnCriticalDamaged(const FFireInfo Info)
+{
+	//격추 상태에서는 더 이상 피격될 수 없다
+	if (CurrentState == EShankState::Splash)
+	{
+		return;
+	}
+
+	//크리티컬 데미지
+	const int32 Damage = FMath::FloorToInt(Info.Damage * 2);
 
 	//체력 처리
 	HP -= Damage;
@@ -168,7 +206,7 @@ void AShankBase::OnDamaged(const FFireInfo Info)
 void AShankBase::OnShotDown(const FVector ShotDir)
 {
 	//상태 전환
-	SHANK_STATE = EShankState::Splash;
+	ChangeCurrentStateMachine(nullptr);
 	
 	//추진력 상실, 중력 적용
 	DroneMoveComp->Fall();

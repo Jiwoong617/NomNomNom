@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Enemy/Interfaces/OnAimByPlayerSight.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/CriticalDamagable.h"
 #include "Interfaces/Damagable.h"
 #include "EnemyBase.generated.h"
 
@@ -17,7 +18,7 @@ DECLARE_MULTICAST_DELEGATE(FOnDeathEventSignature);
 class UDamageActorPoolWorldSubsystem;
 
 UCLASS(Abstract)
-class NOM3_API AEnemyBase : public AActor, public IOnAimByPlayerSight, public IDamagable
+class NOM3_API AEnemyBase : public AActor, public IOnAimByPlayerSight, public IDamagable, public ICriticalDamagable
 {
 	GENERATED_BODY()
 
@@ -47,9 +48,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void OnAimByPlayerSight() override;
 
-	//데미지 인터페이스
+	//일반적인 데미지 인터페이스
 	UFUNCTION(BlueprintCallable)
 	virtual void OnDamaged(FFireInfo Info) override;
+
+	//크리티컬 데미지 인터페이스
+	UFUNCTION(BlueprintCallable)
+	virtual void OnCriticalDamaged(FFireInfo Info) override;
 
 protected:
 	virtual void BeginPlay() override;

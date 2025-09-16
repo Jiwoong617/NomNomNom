@@ -4,17 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "Core/DamageComponent.h"
-#include "ScoutShankDamageComponent.generated.h"
+#include "ShankDamageComponent.generated.h"
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class NOM3_API UScoutShankDamageComponent : public UDamageComponent
+class NOM3_API UShankDamageComponent : public UDamageComponent
 {
 	GENERATED_BODY()
 
 public:
-	UScoutShankDamageComponent();
+	UShankDamageComponent();
 
 	virtual void OnHitBody(FFireInfo& Info) override;
+
+	virtual void OnHitHead(FFireInfo& Info) override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category="Damage")

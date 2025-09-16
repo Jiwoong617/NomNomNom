@@ -1,11 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ScoutShankShooterComponent.h"
-
+#include "Enemy/Shank/ScoutShank/ScoutShankShooterComponent.h"
 #include "Core/ProjectilePoolWorldSubSystem.h"
-#include "Enemy/Shank/ScoutShankProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Enemy/Core/ProjectileBase.h"
 
 void UScoutShankShooterComponent::BeginPlay()
 {
@@ -22,7 +21,7 @@ UScoutShankShooterComponent::UScoutShankShooterComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	//정찰 생크 총알 블루프린트 클래스
-	if (static ConstructorHelpers::FClassFinder<AScoutShankProjectile>
+	if (static ConstructorHelpers::FClassFinder<AProjectileBase>
 		Finder(TEXT("/Game/Enemies/Shank/BP_ScoutShankBullet.BP_ScoutShankBullet_C"));
 		Finder.Succeeded())
 	{

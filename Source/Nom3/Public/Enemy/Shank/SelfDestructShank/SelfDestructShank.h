@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ShankBase.h"
+#include "Enemy/Shank/Common/ShankBase.h"
 #include "SelfDestructShank.generated.h"
 
 UCLASS()

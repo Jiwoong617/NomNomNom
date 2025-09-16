@@ -21,6 +21,11 @@ void AEnemyBase::OnDamaged(FFireInfo Info)
 	
 }
 
+void AEnemyBase::OnCriticalDamaged(FFireInfo Info)
+{
+	
+}
+
 void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();

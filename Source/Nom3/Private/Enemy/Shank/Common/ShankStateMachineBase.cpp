@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ShankStateMachineBase.h"
-#include "Enemy/Shank/ShankBase.h"
+#include "Enemy/Shank/Common/ShankStateMachineBase.h"
+#include "Enemy/Shank/Common/ShankBase.h"
 
 UShankStateMachineBase::UShankStateMachineBase()
 {

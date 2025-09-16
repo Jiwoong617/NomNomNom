@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ShankBase.h"
+#include "Enemy/Shank/Common/ShankBase.h"
 #include "ScoutShank.generated.h"
 
 //전방 선언
 class UScoutShankShooterComponent;
-class UScoutShankDamageComponent;
+class UShankDamageComponent;
 
 UCLASS()
 class NOM3_API AScoutShank : public AShankBase
@@ -27,10 +27,6 @@ protected:
 	//사격 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UScoutShankShooterComponent> ShooterComp;
-
-	//일반 데미지 컴포넌트
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UScoutShankDamageComponent> NormalDamageComp;
 	
 public:
 	virtual void Tick(float DeltaTime) override;

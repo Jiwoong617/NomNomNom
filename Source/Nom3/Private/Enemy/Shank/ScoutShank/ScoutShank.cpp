@@ -1,10 +1,12 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ScoutShank.h"
+#include "Enemy/Shank/ScoutShank/ScoutShank.h"
+#include "Core/DamageComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
-#include "Enemy/Shank/ScoutShankDamageComponent.h"
-#include "Enemy/Shank/ScoutShankShooterComponent.h"
-#include "Enemy/Shank/ScoutShankFollowPathStateMachine.h"
+#include "Enemy/Shank/Common/ShankDamageComponent.h"
+#include "Enemy/Shank/Common/ShankFollowPathStateMachine.h"
+#include "Enemy/Shank/ScoutShank/ScoutShankFindPathStateMachine.h"
+#include "Enemy/Shank/ScoutShank/ScoutShankShooterComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 AScoutShank::AScoutShank()
@@ -22,16 +24,13 @@ AScoutShank::AScoutShank()
 		SkeletalMeshComp->SetRelativeRotation(FRotator(0, -90, 0));
 	}
 
+	//정찰 생크 전용의 경로 탐색 스테이트 머신 부착
+	FindPathStateMachine = CreateDefaultSubobject<UScoutShankFindPathStateMachine>(FName("FindPathStateMachine"));
+
 	//정찰 생크 전용의 사격 컴포넌트 부착
 	ShooterComp = CreateDefaultSubobject<UScoutShankShooterComponent>(FName("ShooterComp"));
 	ShooterComp->SetupAttachment(SkeletalMeshComp);
 	ShooterComp->SetRelativeLocation(FVector(0, -110, 70));
-
-	//일반 데이지 컴포넌트
-	NormalDamageComp = CreateDefaultSubobject<UScoutShankDamageComponent>(FName("NormalDamageComp"));
-	NormalDamageComp->SetRelativeLocation(FVector(0, 0, 110));
-	NormalDamageComp->SetBoxExtent(FVector(120, 90, 90));
-	NormalDamageComp->SetupAttachment(SkeletalMeshComp);
 }
 
 void AScoutShank::BeginPlay()
@@ -42,13 +41,13 @@ void AScoutShank::BeginPlay()
 	ShooterComp->ActiveAutoFire();
 
 	//데미지 컴포넌트 초기화
-	NormalDamageComp->Init(ECC_EngineTraceChannel1, FName("Body"), EBodyType::Body);
+	DamageComp->Init(ECC_EngineTraceChannel1, FName("Body"), EBodyType::Body);
 }
 
 void AScoutShank::OnAimByPlayerSight()
 {
 	//회피가 불가능한 상태가 아니라면
-	if (CurrentState == EShankState::Splash || CurrentState == EShankState::Sleep)
+	if (CurrentStateMachine == nullptr)
 	{
 		return;
 	}
@@ -140,7 +139,7 @@ void AScoutShank::OnAimByPlayerSight()
 	const float Timing = FMath::RandRange(4, 6);
 
 	//상태 머신 전환
-	SHANK_STATE = EShankState::FollowPath;
+	ChangeCurrentStateMachine(FollowPathStateMachine);	
 	
 	//무한 회피를 방지하는 타이머 설정
 	GetWorldTimerManager().SetTimer(EvadeTimerHandle, [this]()
@@ -161,7 +160,4 @@ void AScoutShank::OnShotDown(const FVector ShotDir)
 
 	//사격 바활성화
 	ShooterComp->InactiveAutoFire();
-
-	//데미지 비활성화
-	//NormalDamageComp->Inactive();
 }

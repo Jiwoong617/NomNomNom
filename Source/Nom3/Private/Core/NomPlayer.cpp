@@ -208,6 +208,7 @@ void ANomPlayer::BeginPlay()
 		{
 			if (const auto Enemy = Cast<AEnemyBase>(Hit.GetActor()))
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("OnSight!"));
 				Enemy->OnAimByPlayerSight();
 			}
 		}
