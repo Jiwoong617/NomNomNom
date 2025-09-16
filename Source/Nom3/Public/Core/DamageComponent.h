@@ -30,18 +30,16 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	//상속받은 자식 클래스에서 재할당 필요함
 	EBodyType BodyType = EBodyType::None;
-	
-	virtual void OnHitBody(FFireInfo& Info);
-	
-	virtual void OnHitHead(FFireInfo& Info);
 
-	FOnDamagedDelegate OnDamagedDelegate;
+	//몸에 맞았을 때 처리하는 메서드로 캐릭터, 에너미에 따라서 오버라이드
+	virtual void OnHitBody(const FFireInfo& Info);
+
+	//머리에 맞았을 때 처리하는 메서드로 캐릭터, 에너미에 따라서 오버라이드
+	virtual void OnHitHead(const FFireInfo& Info);
 
 public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	//충돌 델리게이트 함수
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -54,8 +52,8 @@ public:
 	virtual void Init(ECollisionChannel Channel,
 	FName CollisionPresetName, EBodyType BodyType);
 
-	
-	void OnDamaged(FFireInfo Info);
+	//데미지를 주기 위해서 외부에서 호출하는 메서드
+	void OnDamaged(const FFireInfo& Info);
 	
 	//소유자 사망 시 비활성화하기 위한 메서드
 	UFUNCTION()

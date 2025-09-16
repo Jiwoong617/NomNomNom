@@ -77,5 +77,5 @@ class NOM3_API IDamagable
 public:
 
 	//총탄 구조체 : 데미지, 발사 지점, 사격자의 팀 정보, 동일팀 무시여부
-	virtual void OnDamaged(FFireInfo Info) = 0;
+	virtual void OnDamaged(const FFireInfo& Info) = 0;
 };

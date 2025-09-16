@@ -9,8 +9,8 @@
 #include "Interfaces/Damagable.h"
 #include "ShankBase.generated.h"
 
-class UNiagaraSystem;
 //전방 선언
+class UNiagaraSystem;
 class UDamageComponent;
 class UArrowComponent;
 class AScoutShankProjectile;
@@ -64,15 +64,15 @@ public:
 
 	//경로 탐색 상태 머신
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UShankFindPathStateMachine> FindPathStateMachine;
+	TObjectPtr<UShankStateMachineBase> FindPathStateMachine;
 
 	//경로 추적 상태 머신
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UShankFollowPathStateMachine> CircleStateMachine;
+	TObjectPtr<UShankStateMachineBase> FollowPathStateMachine;
 
 	//역추진 상태 머신
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UShankReverseThrustStateMachine> ReverseThrustStateMachine;
+	TObjectPtr<UShankStateMachineBase> ReverseThrustStateMachine;
 
 	//현재 목표 위치
 	UPROPERTY(VisibleAnywhere)
@@ -86,15 +86,31 @@ public:
 	FTimerHandle EvadeTimerHandle;
 
 	//생크 스테이트 프로퍼티
-	__declspec(property(get=GetCurrentState, put=SetCurrentState)) EShankState SHANK_STATE;
-	FORCEINLINE EShankState GetCurrentState() const { return CurrentState; }
-	void SetCurrentState(const EShankState Value);
+	// __declspec(property(get=GetCurrentState, put=SetCurrentState)) EShankState SHANK_STATE;
+	// FORCEINLINE EShankState GetCurrentState() const { return CurrentState; }
+	// void SetCurrentState(const EShankState Value);
+
+	//생크 스테이트 머신
+	UFUNCTION()
+	FORCEINLINE UShankStateMachineBase* GetCurrentStateMachine() const { return CurrentStateMachine; }
+	UFUNCTION()
+	FORCEINLINE void ChangeCurrentStateMachine(UShankStateMachineBase* StateMachineToChange)
+	{
+		if (StateMachineToChange)
+		{
+			UShankStateMachineBase* Before = StateMachineToChange;
+
+			CurrentStateMachine = StateMachineToChange;
+
+			if (Before)
+			{
+				Before->ExitState();
+			}
+		}
+	}
 
 	//플레이어 시선 노출 인터페이스 구현
 	virtual void OnAimByPlayerSight() override;
-
-	//데미지 인터페이스 구현
-	virtual void OnDamaged(FFireInfo Info) override;
 
 protected:
 	virtual void BeginPlay() override;

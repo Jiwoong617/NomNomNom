@@ -1,7 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ScoutShankDamageComponent.h"
-#include "Enemy/Shank/ScoutShank.h"
+#include "Enemy/Shank/ScoutShank/ScoutShankDamageComponent.h"
+
+#include "Enemy/Shank/Common/ShankBase.h"
 #include "Kismet/GameplayStatics.h"
 
 UScoutShankDamageComponent::UScoutShankDamageComponent()
@@ -22,7 +23,7 @@ UScoutShankDamageComponent::UScoutShankDamageComponent()
 	}
 }
 
-void UScoutShankDamageComponent::OnHitBody(FFireInfo& Info)
+void UScoutShankDamageComponent::OnHitBody(const FFireInfo& Info)
 {
 	Super::OnHitBody(Info);
 

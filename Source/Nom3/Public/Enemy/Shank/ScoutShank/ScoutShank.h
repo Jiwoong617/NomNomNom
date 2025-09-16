@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ShankBase.h"
+#include "Enemy/Shank/Common/ShankBase.h"
 #include "ScoutShank.generated.h"
 
 //전방 선언
@@ -34,6 +34,9 @@ protected:
 	
 public:
 	virtual void Tick(float DeltaTime) override;
+
+	//일반적인 데미지 인터페이스 구현
+	virtual void OnDamaged(const FFireInfo& Info) override;
 
 	virtual void OnShotDown(const FVector ShotDir) override;
 };

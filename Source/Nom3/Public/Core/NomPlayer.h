@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/CriticalDamagable.h"
 #include "Interfaces/Damagable.h"
 #include "NomPlayer.generated.h"
 
@@ -37,7 +38,7 @@ enum class EMovingState : uint8
 };
 
 UCLASS()
-class NOM3_API ANomPlayer : public ACharacter , public IDamagable
+class NOM3_API ANomPlayer : public ACharacter , public IDamagable, public ICriticalDamagable
 {
 	GENERATED_BODY()
 
@@ -154,8 +155,6 @@ protected:
 	//UI
 	TSubclassOf<UPlayerUI> PlayerUIClass;
 	UPlayerUI* PlayerUI;
-	
-public:
 
 protected:
 	//Movement InputEvent
@@ -218,8 +217,13 @@ protected:
 	UFUNCTION() void ChangeToFps();
 	UFUNCTION() void ChangeToTps();
 
-	public:
-	UFUNCTION() virtual void OnDamaged(FFireInfo Info) override;
+public:
+	//일반적인 데미지를 처리하기 위해 외부에서 호출하는 인터페이스
+	UFUNCTION() virtual void OnDamaged(const FFireInfo& Info) override;
+
+	//크리티컬 데미지를 처리하기 위해 외부에서 호출하는 인터페이스
+	UFUNCTION() virtual void OnCriticalDamaged(const FFireInfo& Info) override;
+	
 	USpringArmComponent* GetFpsCamArm();
 	UCameraComponent* GetFpsCam();
 };

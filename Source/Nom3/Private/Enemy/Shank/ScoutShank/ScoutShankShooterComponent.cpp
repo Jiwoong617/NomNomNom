@@ -1,28 +1,19 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ScoutShankShooterComponent.h"
-
+#include "Enemy/Shank/ScoutShank/ScoutShankShooterComponent.h"
 #include "Core/ProjectilePoolWorldSubSystem.h"
-#include "Enemy/Shank/ScoutShankProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-
-void UScoutShankShooterComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	//플레이어 캐릭터 획득
-	PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-}
+#include "Enemy/Core/ProjectileBase.h"
 
 UScoutShankShooterComponent::UScoutShankShooterComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	//정찰 생크 총알 블루프린트 클래스
-	if (static ConstructorHelpers::FClassFinder<AScoutShankProjectile>
+	if (static ConstructorHelpers::FClassFinder<AProjectileBase>
 		Finder(TEXT("/Game/Enemies/Shank/BP_ScoutShankBullet.BP_ScoutShankBullet_C"));
 		Finder.Succeeded())
 	{
@@ -38,10 +29,18 @@ UScoutShankShooterComponent::UScoutShankShooterComponent()
 	}
 }
 
+void UScoutShankShooterComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//플레이어 캐릭터 획득
+	Target = UGameplayStatics::GetPlayerPawn(this, 0);
+}
+
 void UScoutShankShooterComponent::FireBulletOnce() const
 {
 	//목표 위치 획득
-	const FVector TargetLocation = PlayerPawn->GetActorLocation();
+	const FVector TargetLocation = Target->GetActorLocation();
 
 	//목표 방향 연산
 	FVector TargetDirection = (TargetLocation - GetComponentLocation()).GetSafeNormal();

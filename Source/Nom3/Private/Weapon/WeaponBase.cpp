@@ -86,7 +86,7 @@ void AWeaponBase::AimFire()
 			{
 				PRINTLOG(TEXT("Damagable"));
 				dmg->OnDamaged(FFireInfo(WeaponData->Damage,
-					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
+				                         WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
 			
 			DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
@@ -132,7 +132,7 @@ void AWeaponBase::NoAimFire()
 			{
 				PRINTLOG(TEXT("Damagable"));
 				dmg->OnDamaged(FFireInfo(WeaponData->Damage,
-					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
+				                         WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
 			
 			DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);

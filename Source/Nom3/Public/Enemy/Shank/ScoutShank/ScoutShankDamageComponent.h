@@ -14,7 +14,7 @@ class NOM3_API UScoutShankDamageComponent : public UDamageComponent
 public:
 	UScoutShankDamageComponent();
 
-	virtual void OnHitBody(FFireInfo& Info) override;
+	virtual void OnHitBody(const FFireInfo& Info) override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category="Damage")
