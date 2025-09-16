@@ -6,7 +6,7 @@
 #include "DamageComponent.h"
 #include "PlayerDamageComponent.generated.h"
 
-//전방 선언
+
 class ANomPlayer;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -15,10 +15,21 @@ class NOM3_API UPlayerDamageComponent : public UDamageComponent
 	GENERATED_BODY()
 
 public:
+	// Sets default values for this component's properties
 	UPlayerDamageComponent();
 
 protected:
-	virtual void OnHitBody(const FFireInfo& Info) override;
+	// Called when the game starts
+	virtual void BeginPlay() override;
+
+public:
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
+
+private:
 	
-	virtual void OnHitHead(const FFireInfo& Info) override;
+protected:
+	virtual void OnHitBody(FFireInfo& info);
+	virtual void OnHitHead(FFireInfo& info);
 };

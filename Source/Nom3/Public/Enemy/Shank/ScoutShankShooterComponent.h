@@ -6,27 +6,27 @@
 #include "Enemy/Components/FireProjectileComponentBase.h"
 #include "ScoutShankShooterComponent.generated.h"
 
-//전방 선언
 class ANomPlayer;
-class AProjectileBase;
+class AScoutShankProjectile;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class NOM3_API UScoutShankShooterComponent : public UFireProjectileComponentBase
 {
 	GENERATED_BODY()
 
+protected:
+	virtual void BeginPlay() override;
+
 public:
 	UScoutShankShooterComponent();
 
-	virtual void BeginPlay() override;
-
 	//목표로 하는 플레이어 캐릭터
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<APawn> Target;
+	TObjectPtr<APawn> PlayerPawn;
 
 	//정찰 생크가 발사하는 총탄 클래스
 	UPROPERTY(VisibleAnywhere)
-	TSubclassOf<AProjectileBase> ScoutShankBulletClass;
+	TSubclassOf<AScoutShankProjectile> ScoutShankBulletClass;
 
 	//정찰 생크 발사 사운드
 	UPROPERTY(VisibleAnywhere)

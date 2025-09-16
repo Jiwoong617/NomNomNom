@@ -49,7 +49,7 @@ public:
 
 	//데미지 인터페이스
 	UFUNCTION(BlueprintCallable)
-	virtual void OnDamaged(const FFireInfo& Info) override;
+	virtual void OnDamaged(FFireInfo Info) override;
 
 protected:
 	virtual void BeginPlay() override;

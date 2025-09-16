@@ -1,11 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ScoutShank/ScoutShank.h"
+#include "Enemy/Shank/ScoutShank.h"
 #include "Enemy/Components/DroneMovementComponent.h"
-#include "Enemy/Damage/DamageActorPoolGameInstanceSubsystem.h"
-#include "Enemy/Shank/Common/ShankFollowPathStateMachine.h"
-#include "Enemy/Shank/ScoutShank/ScoutShankDamageComponent.h"
-#include "Enemy/Shank/ScoutShank/ScoutShankShooterComponent.h"
+#include "Enemy/Shank/ScoutShankDamageComponent.h"
+#include "Enemy/Shank/ScoutShankShooterComponent.h"
+#include "Enemy/Shank/ShankFollowPathStateMachine.h"
 #include "Kismet/KismetMathLibrary.h"
 
 AScoutShank::AScoutShank()
@@ -138,7 +137,7 @@ void AScoutShank::OnAimByPlayerSight()
 	const float Timing = FMath::RandRange(2, 4);
 
 	//상태 머신 전환
-	ChangeCurrentStateMachine(FollowPathStateMachine);
+	SHANK_STATE = EShankState::FollowPath;
 	
 	//무한 회피를 방지하는 타이머 설정
 	GetWorldTimerManager().SetTimer(EvadeTimerHandle, [this]()
@@ -151,26 +150,6 @@ void AScoutShank::OnAimByPlayerSight()
 void AScoutShank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void AScoutShank::OnDamaged(const FFireInfo& Info)
-{
-	Super::OnDamaged(Info);
-
-	//격추 상태에서는 더 이상 피격될 수 없다
-	if (CurrentState == EShankState::Splash)
-	{
-		return;
-	}
-
-	//방어력을 통해 데미지 연산
-	const int32 Damage = FMath::FloorToInt(Info.Damage);
-
-	//체력 처리
-	HP -= Damage;
-	
-	//자산의 위치에 데미지 액터 풀링
-	DamageActorPool->ShowNormalDamageActor(GetActorLocation(), Damage);
 }
 
 void AScoutShank::OnShotDown(const FVector ShotDir)

@@ -1,8 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/Common/ShankFollowPathStateMachine.h"
+#include "Enemy/Shank/ShankFollowPathStateMachine.h"
 #include "Enemy/Components/DroneMovementComponent.h"
-#include "Enemy/Shank/Common/ShankBase.h"
+#include "Enemy/Shank/ShankBase.h"
 
 UShankFollowPathStateMachine::UShankFollowPathStateMachine()
 {
@@ -51,11 +51,11 @@ void UShankFollowPathStateMachine::ExecuteState()
 	//추력 편향
 	OwnerShank->DroneMoveComp->VectorThrust(TargetDir);
 
-	//목표까지의 거리가 2m 미만이라면
+	//목표까지의 거리가 1.5m 미만이라면
 	if (TargetDiff.Length() < 200)
 	{
-		//역추진 상태로 전환
-		OwnerShank->ChangeCurrentStateMachine(OwnerShank->ReverseThrustStateMachine);
+		//역추진
+		OwnerShank->SHANK_STATE = EShankState::ReverseThrust;
 	}
 }
 

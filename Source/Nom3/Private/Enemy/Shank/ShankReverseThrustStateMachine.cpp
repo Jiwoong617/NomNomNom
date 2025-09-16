@@ -1,8 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/Common/ShankReverseThrustStateMachine.h"
+#include "Enemy/Shank/ShankReverseThrustStateMachine.h"
+
 #include "Enemy/Components/DroneMovementComponent.h"
-#include "Enemy/Shank/Common/ShankBase.h"
+#include "Enemy/Shank/ShankBase.h"
 
 UShankReverseThrustStateMachine::UShankReverseThrustStateMachine()
 {
@@ -57,12 +58,12 @@ void UShankReverseThrustStateMachine::ExecuteState()
 			OwnerShank->DroneMoveComp->ThrottleOff();
 		
 			//상태 머신 전환
-			OwnerShank->ChangeCurrentStateMachine(OwnerShank->FindPathStateMachine);
+			OwnerShank->SHANK_STATE = EShankState::FindPath;	
 		}
 		else
 		{
 			//상태 머신 전환
-			OwnerShank->ChangeCurrentStateMachine(OwnerShank->FollowPathStateMachine);
+			OwnerShank->SHANK_STATE = EShankState::FollowPath;
 		}
 	}
 }

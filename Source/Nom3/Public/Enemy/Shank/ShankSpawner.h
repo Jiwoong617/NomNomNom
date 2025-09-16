@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "ShankSpawner.generated.h"
 
-//전방 선언
 class UArrowComponent;
 class AShankBase;
 

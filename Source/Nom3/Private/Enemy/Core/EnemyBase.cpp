@@ -16,7 +16,7 @@ void AEnemyBase::OnAimByPlayerSight()
 	
 }
 
-void AEnemyBase::OnDamaged(const FFireInfo& Info)
+void AEnemyBase::OnDamaged(FFireInfo Info)
 {
 	
 }

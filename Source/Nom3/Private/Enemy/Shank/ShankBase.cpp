@@ -1,13 +1,14 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/Common/ShankBase.h"
+#include "Enemy/Shank/ShankBase.h"
+
 #include "NiagaraFunctionLibrary.h"
+#include "Enemy/Shank/ShankFollowPathStateMachine.h"
 #include "Components/SphereComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
 #include "Enemy/Damage/DamageActorPoolGameInstanceSubsystem.h"
-#include "Enemy/Shank/Common/ShankFollowPathStateMachine.h"
-#include "Enemy/Shank/Common/ShankReverseThrustStateMachine.h"
-#include "Enemy/Shank/ScoutShank/ShankFindPathStateMachine.h"
+#include "Enemy/Shank/ShankFindPathStateMachine.h"
+#include "Enemy/Shank/ShankReverseThrustStateMachine.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Nom3/Nom3.h"
 
@@ -38,7 +39,7 @@ AShankBase::AShankBase() :
 	FindPathStateMachine = CreateDefaultSubobject<UShankFindPathStateMachine>(FName("FindPathStateMachine"));
 	
 	//경로 추적 상태 머신
-	FollowPathStateMachine = CreateDefaultSubobject<UShankFollowPathStateMachine>(FName("CircleStateMachine"));
+	CircleStateMachine = CreateDefaultSubobject<UShankFollowPathStateMachine>(FName("CircleStateMachine"));
 
 	//역추진 상태 머신
 	ReverseThrustStateMachine = CreateDefaultSubobject<UShankReverseThrustStateMachine>(FName("ReverseThrustStateMachine"));
@@ -69,7 +70,7 @@ void AShankBase::BeginPlay()
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, [this]()
 	{
-		ChangeCurrentStateMachine(FindPathStateMachine);
+		SHANK_STATE = EShankState::FindPath;
 	}, 1, false);
 }
 
@@ -90,63 +91,81 @@ void AShankBase::Tick(float DeltaTime)
 	MeshSceneComp->SetWorldRotation(TargetRot);
 }
 
-// void AShankBase::SetCurrentState(const EShankState Value)
-// {
-// 	//다른 상태 머신으로의 전환 요청
-// 	if (CurrentState != Value)
-// 	{
-// 		//임시
-// 		const auto Temp = CurrentStateMachine;
-//
-// 		//상태 전환
-// 		CurrentState = Value;
-//
-// 		//상태 머신 선택
-// 		switch (CurrentState)
-// 		{
-// 		case EShankState::FindPath:
-// 			{
-// 				CurrentStateMachine = FindPathStateMachine;
-// 				break;
-// 			}
-// 		case EShankState::FollowPath:
-// 			{
-// 				CurrentStateMachine = FollowPathStateMachine;
-// 				break;
-// 			}
-// 		case EShankState::ReverseThrust:
-// 			{
-// 				CurrentStateMachine = ReverseThrustStateMachine;
-// 				break;
-// 			}
-// 		case EShankState::Splash:
-// 			{
-// 				CurrentStateMachine = nullptr;
-// 				break;
-// 			}
-// 		default:
-// 			{
-// 				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Not Implemented!"));
-// 			};
-// 		}
-// 		
-// 		//실행 중이던 상태에서 Exit
-// 		if (Temp)
-// 		{
-// 			Temp->ExitState();	
-// 		}
-// 	}
-// }
+void AShankBase::SetCurrentState(const EShankState Value)
+{
+	//다른 상태 머신으로의 전환 요청
+	if (CurrentState != Value)
+	{
+		//임시
+		const auto Temp = CurrentStateMachine;
+
+		//상태 전환
+		CurrentState = Value;
+
+		//상태 머신 선택
+		switch (CurrentState)
+		{
+		case EShankState::FindPath:
+			{
+				CurrentStateMachine = FindPathStateMachine;
+				break;
+			}
+		case EShankState::FollowPath:
+			{
+				CurrentStateMachine = CircleStateMachine;
+				break;
+			}
+		case EShankState::ReverseThrust:
+			{
+				CurrentStateMachine = ReverseThrustStateMachine;
+				break;
+			}
+		case EShankState::Splash:
+			{
+				CurrentStateMachine = nullptr;
+				break;
+			}
+		default:
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Not Implemented!"));
+			};
+		}
+		
+		//실행 중이던 상태에서 Exit
+		if (Temp)
+		{
+			Temp->ExitState();	
+		}
+	}
+}
 
 void AShankBase::OnAimByPlayerSight()
 {
 	PRINTLOG(TEXT("FatalError! You Should Fully Override this Interface On Subclass!"));
 }
 
+void AShankBase::OnDamaged(const FFireInfo Info)
+{
+	//격추 상태에서는 더 이상 피격될 수 없다
+	if (CurrentState == EShankState::Splash)
+	{
+		return;
+	}
+
+	//방어력을 통해 데미지 연산
+	const int32 Damage = FMath::FloorToInt(Info.Damage);
+
+	//체력 처리
+	HP -= Damage;
+	
+	//자산의 위치에 데미지 액터 풀링
+	DamageActorPool->ShowNormalDamageActor(GetActorLocation(), Damage);
+}
+
 void AShankBase::OnShotDown(const FVector ShotDir)
 {
-	//아무것도 하지 않는 상태로 전환
-	ChangeCurrentStateMachine(nullptr);
+	//상태 전환
+	SHANK_STATE = EShankState::Splash;
 	
 	//추진력 상실, 중력 적용
 	DroneMoveComp->Fall();

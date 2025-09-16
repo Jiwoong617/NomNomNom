@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ScoutShank/ShankFindPathStateMachine.h"
-#include "Enemy/Shank/Common/ShankBase.h"
+#include "Enemy/Shank/ShankFindPathStateMachine.h"
+#include "Enemy/Shank/ShankBase.h"
 
 UShankFindPathStateMachine::UShankFindPathStateMachine()
 {
@@ -48,7 +48,7 @@ void UShankFindPathStateMachine::ExecuteState()
 	if (ElapsedTimeInState > LimitTimeInState)
 	{
 		//상태 머신 전환
-		OwnerShank->ChangeCurrentStateMachine(OwnerShank->FollowPathStateMachine);
+		OwnerShank->SHANK_STATE = EShankState::FollowPath;
 	}
 }
 
