@@ -51,6 +51,9 @@ void UWeaponComponent::Init()
 	{
 		if (AWeaponBase* wb = Cast<AWeaponBase>(child->GetChildActor()))
 		{
+			child->AttachToComponent( Owner->GetMesh(),
+				FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld,
+				  EAttachmentRule::SnapToTarget, false),TEXT("WeaponSocket"));
 			wb->SetOwner(Owner);
 			wb->SetActorHiddenInGame(true);
 			WeaponList.Add(wb);

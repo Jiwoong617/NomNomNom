@@ -21,6 +21,7 @@
 #include "Core/PlayerDamageComponent.h"
 #include "Core/PlayerFpsAnimation.h"
 #include "Core/PlayerUI.h"
+#include "Core/SkillComponent.h"
 #include "Enemy/Core/EnemyBase.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -111,8 +112,10 @@ ANomPlayer::ANomPlayer()
 	if (playerui.Succeeded())
 		PlayerUIClass = playerui.Class;
 	
-	//Add Component
-	WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
+    //Add Component
+    WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
+    SkillComp = CreateDefaultSubobject<USkillComponent>("SkillComp");
+	
 	//////////////////////////////Input/////////////////////////////////
 	{
 		ConstructorHelpers::FObjectFinder<UInputMappingContext> TempIMC(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Input/IMC_Player.IMC_Player'"));
@@ -178,24 +181,15 @@ void ANomPlayer::BeginPlay()
 			subsys->AddMappingContext(IMC_NomPlayer, 0);
 		}
 	}
-
-	TArray<USceneComponent*> ChildComps;
-	WeaponListSceneComp->GetChildrenComponents(true, ChildComps);
-	for (USceneComponent* childs : ChildComps)
-	{	
-		if (UChildActorComponent* child = Cast<UChildActorComponent>(childs))
-		{
-            // 무기 부착 시 소켓 위치/회전에 정확히 스냅되도록 처리
-            child->AttachToComponent(
-                GetMesh(),
-                FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld,
-							  EAttachmentRule::KeepWorld, false),
-                TEXT("WeaponSocket"));
-		}
-	}
-	PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
-	WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
-	WeaponComp->OnChangeWeaponDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateEquipedWeaponUI);
+	
+    PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
+    WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
+    WeaponComp->OnChangeWeaponDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateEquipedWeaponUI);
+    if (SkillComp && PlayerUI)
+    {
+        SkillComp->DodgeSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill1Cooldown);
+        SkillComp->UltimateSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill2Cooldown);
+    }
 	PlayerUI->AddToViewport();
 	PlayerUI->UpdateHealthUI(Hp, MaxHp);
 	WeaponComp->Init();
@@ -619,7 +613,7 @@ void ANomPlayer::LeftHandEnd()
 
 void ANomPlayer::Skill()
 {
-	if (bIsDead) return;
+    if (bIsDead) return;
 	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
@@ -643,9 +637,10 @@ void ANomPlayer::Skill()
 	if (MovingState == EMovingState::Running)
 		MovingState = EMovingState::Idle;
 
-	ChangeToTps();
-	LaunchCharacter(GetActorForwardVector() * 800.f
-		+ GetActorUpVector() * 200, true, true);
+    if (!SkillComp->UseDodgeSkill())
+        return;
+
+    ChangeToTps();
 	
 	//TODO : 몽타쥬로 바꿀 것
 	PRINTINFO();
@@ -675,7 +670,7 @@ void ANomPlayer::SkillEnd()
 
 void ANomPlayer::UltimateSkill()
 {
-	if (bIsDead) return;
+    if (bIsDead) return;
 	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
@@ -699,7 +694,11 @@ void ANomPlayer::UltimateSkill()
 	if (MovingState == EMovingState::Running)
 		MovingState = EMovingState::Idle;
 
-	ChangeToTps();
+    if (!SkillComp->UseUltimateSkill())
+        return;
+
+    ChangeToTps();
+	
 	PRINTINFO();
 	//TODO : 몽타쥬로 바꿀 것
 	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
