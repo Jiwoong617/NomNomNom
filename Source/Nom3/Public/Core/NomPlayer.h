@@ -226,9 +226,10 @@ protected:
 	UFUNCTION() void ChangeToFps();
 	UFUNCTION() void ChangeToTps();
 
-	//RagDoll
-	UFUNCTION() void MakeTpsRagdoll();
+	//Die and Respawn
 	FName PrevMeshCollisionProfileName;
+	UFUNCTION() void MakeTpsRagdoll();
+	UFUNCTION() void ReSpawn();
 
 public:
 	UFUNCTION() virtual void OnDamaged(FFireInfo Info) override;
