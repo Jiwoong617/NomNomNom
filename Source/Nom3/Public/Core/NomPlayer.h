@@ -225,6 +225,7 @@ protected:
 	//Camera
 	UFUNCTION() void ChangeToFps();
 	UFUNCTION() void ChangeToTps();
+	UFUNCTION() void SightCheck();
 
 	//Die and Respawn
 	FName PrevMeshCollisionProfileName;
@@ -238,4 +239,8 @@ public:
 	UCameraComponent* GetFpsCam();
 	const EActionState& GetActionState() const;
 	const EMovingState& GetMovingState() const;
+
+	//Anim
+	UFUNCTION()
+	void PlayGunshotAnim(UAnimMontage* Montage);
 };

@@ -80,6 +80,10 @@ void AWeaponBase::AimFire()
 {
 	if (CurrentAmmo > 0)
 	{
+		//애니메이션 재생
+		if (GunShotMontage)
+			WeaponOwner->PlayGunshotAnim(GunShotMontage);
+		
 		//사격 사운드 재생
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
 
@@ -123,6 +127,10 @@ void AWeaponBase::NoAimFire()
 {
 	if (CurrentAmmo > 0)
 	{
+		//애니메이션 재생
+		if (GunShotMontage &&WeaponOwner)
+			WeaponOwner->PlayGunshotAnim(GunShotMontage);
+		
 		//사격 사운드 재생
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
 

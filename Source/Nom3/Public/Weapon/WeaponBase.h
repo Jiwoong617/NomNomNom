@@ -48,6 +48,10 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FRotator LastAppliedRecoil; // 직전 프레임에 적용한 반동
 
+	//Anim
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* GunShotMontage;
+	
 	//Test
 	UPROPERTY(EditAnywhere)
 	UNiagaraSystem* fireEffect;

@@ -45,10 +45,7 @@ ANomPlayer::ANomPlayer()
 	}
 	ConstructorHelpers::FClassFinder<UPlayerFpsAnimation> TempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Fps.ABP_Fps_C'"));
 	if (TempAnim.Succeeded())
-	{
 		GetMesh()->SetAnimInstanceClass(TempAnim.Class);
-		FpsAnimation = Cast<UPlayerFpsAnimation>(GetMesh()->GetAnimInstance());
-	}
 
 
 	//TPS Mesh
@@ -188,6 +185,10 @@ void ANomPlayer::BeginPlay()
             pc->PlayerCameraManager->ViewPitchMax = 80.f;
         }
     }
+
+	//Anim
+	FpsAnimation = Cast<UPlayerFpsAnimation>(GetMesh()->GetAnimInstance());
+	
 	
     PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
     WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
@@ -197,30 +198,14 @@ void ANomPlayer::BeginPlay()
         SkillComp->DodgeSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill1Cooldown);
         SkillComp->UltimateSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill2Cooldown);
     }
-	PlayerUI->AddToViewport();
-	PlayerUI->UpdateHealthUI(Hp, MaxHp);
-	WeaponComp->Init();
+    PlayerUI->AddToViewport();
+    PlayerUI->UpdateHealthUI(Hp, MaxHp);
+    WeaponComp->Init();
 
 	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
 	BodyBox->Init(FVector(50, 15, 20), ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
 
-	FTimerHandle SightTimerHandle;
-	GetWorldTimerManager().SetTimer(SightTimerHandle, [this]()
-	{
-		const FVector Start = FpsCameraComp->GetComponentLocation();
-		const FVector End = Start + FpsCameraComp->GetForwardVector() * 10000;
-		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
-		Params.AddIgnoredActor(this);
-		if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_Visibility, Params))
-		{
-			if (const auto Enemy = Cast<AEnemyBase>(Hit.GetActor()))
-			{
-				Enemy->OnAimByPlayerSight();
-			}
-		}
-	}, 0.1, true);
-
-	//카메라 상하 시야각 제한
+	SightCheck();
 }
 
 bool ANomPlayer::CanJumpInternal_Implementation() const
@@ -834,6 +819,25 @@ void ANomPlayer::ChangeToTps()
 	TpsCameraComp->SetActive(true);
 }
 
+void ANomPlayer::SightCheck()
+{
+	FTimerHandle SightTimerHandle;
+	GetWorldTimerManager().SetTimer(SightTimerHandle, [this]()
+	{
+		const FVector Start = FpsCameraComp->GetComponentLocation();
+		const FVector End = Start + FpsCameraComp->GetForwardVector() * 10000;
+		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
+		Params.AddIgnoredActor(this);
+		if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_Visibility, Params))
+		{
+			if (const auto Enemy = Cast<AEnemyBase>(Hit.GetActor()))
+			{
+				Enemy->OnAimByPlayerSight();
+			}
+		}
+	}, 0.1, true);
+}
+
 void ANomPlayer::MakeTpsRagdoll()
 {
 	if (!TpsMeshComp->GetPhysicsAsset())
@@ -971,4 +975,9 @@ const EActionState& ANomPlayer::GetActionState() const
 const EMovingState& ANomPlayer::GetMovingState() const
 {
 	return MovingState;
+}
+
+void ANomPlayer::PlayGunshotAnim(UAnimMontage* Montage)
+{
+	FpsAnimation->PlayGunshotAnim(Montage);
 }
