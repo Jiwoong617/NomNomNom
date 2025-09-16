@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/CriticalDamagable.h"
 #include "Interfaces/Damagable.h"
 #include "NomPlayer.generated.h"
 
+class UPlayerFpsAnimation;
 class UPlayerUI;
 class UPlayerDamageComponent;
 class UWeaponComponent;
+class USkillComponent;
 class UCameraComponent;
 class USpringArmComponent;
 struct FInputActionValue;
@@ -37,7 +40,7 @@ enum class EMovingState : uint8
 };
 
 UCLASS()
-class NOM3_API ANomPlayer : public ACharacter , public IDamagable
+class NOM3_API ANomPlayer : public ACharacter, public IDamagable, public ICriticalDamagable
 {
 	GENERATED_BODY()
 
@@ -62,6 +65,7 @@ protected:
 	bool bIsAiming = false;
 	bool bIsHoldFire = false;
 	bool bIsHoldAim = false;
+	bool bIsDead = false;
 	
 	//Basic Status
 	float MaxSpeed = 600.f;
@@ -73,7 +77,7 @@ protected:
 	
 	//Fps Mesh
 	UPROPERTY(EditAnywhere)
-	USkeletalMeshComponent* FpsMeshComp;
+	USkeletalMeshComponent* TpsMeshComp;
 	
 	//Camera and Weapon
 	UPROPERTY(EditAnywhere)
@@ -87,15 +91,16 @@ protected:
 	FVector TpsCamOffset = FVector(0.f, 0.f, 50.f);
 	UPROPERTY(EditAnywhere)
 	float TpsSpringArmLength = 300.f;
-	
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* TpsSpringArmComp;
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* TpsCameraComp;
 	
-	//Components
-	UPROPERTY(EditAnywhere)
-	UWeaponComponent* WeaponComp;
+    //Components
+    UPROPERTY(EditAnywhere)
+    UWeaponComponent* WeaponComp;
+    UPROPERTY(EditAnywhere)
+    USkillComponent* SkillComp;
 	
 	//Inputs
 	UPROPERTY(EditAnywhere)
@@ -154,6 +159,9 @@ protected:
 	//UI
 	TSubclassOf<UPlayerUI> PlayerUIClass;
 	UPlayerUI* PlayerUI;
+
+	//Animation
+	UPlayerFpsAnimation* FpsAnimation;
 	
 public:
 
@@ -218,8 +226,15 @@ protected:
 	UFUNCTION() void ChangeToFps();
 	UFUNCTION() void ChangeToTps();
 
-	public:
+	//RagDoll
+	UFUNCTION() void MakeTpsRagdoll();
+	FName PrevMeshCollisionProfileName;
+
+public:
 	UFUNCTION() virtual void OnDamaged(FFireInfo Info) override;
+	UFUNCTION() virtual void OnCriticalDamaged(FFireInfo Info) override;
 	USpringArmComponent* GetFpsCamArm();
 	UCameraComponent* GetFpsCam();
+	const EActionState& GetActionState() const;
+	const EMovingState& GetMovingState() const;
 };

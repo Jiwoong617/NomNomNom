@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy/Core/ProjectileBase.h"
 #include "Components/SphereComponent.h"
@@ -19,6 +19,14 @@ AProjectileBase::AProjectileBase()
 	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMoveComp"));
 }
 
+void AProjectileBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//풀링 델리게이트 바인드
+	PoolingDelegate.BindUFunction(this, FName("Inactivate"));
+}
+
 void AProjectileBase::Active(const FVector& Location, const FRotator& Rotation)
 {
 	//활성화
@@ -30,14 +38,16 @@ void AProjectileBase::Active(const FVector& Location, const FRotator& Rotation)
 	FireInfo.FireLocation = Location;
 
 	//이동 방향 전환
-	ProjectileMoveComp->Velocity = FireInfo.ProjectileSpeed * GetActorForwardVector();
-
-	//10초 후에 풀에 반환
-	GetWorldTimerManager().SetTimer(PoolingTimerHandle, [this]()
+	if (ProjectileMoveComp)
 	{
-		//반환 호출
-		Inactivate();
-	}, 10, false);
+		ProjectileMoveComp->Velocity = FireInfo.ProjectileSpeed * GetActorForwardVector();
+	}
+
+	//5초 후에 풀에 반환
+	if (const UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(PoolingTimerHandle, PoolingDelegate, 5, false);
+	}
 }
 
 void AProjectileBase::Inactivate()
@@ -53,8 +63,11 @@ void AProjectileBase::Inactivate()
 	SetActorEnableCollision(false);
 
 	//풀에 반환한다
-	if (const auto Subsystem = GetWorld()->GetSubsystem<UProjectilePoolWorldSubSystem>())
+	if (const UWorld* World = GetWorld())
 	{
-		Subsystem->PushProjectile(this);
+		if (const auto Subsystem = World->GetSubsystem<UProjectilePoolWorldSubSystem>())
+		{
+			Subsystem->PushProjectile(this);
+		}
 	}
 }

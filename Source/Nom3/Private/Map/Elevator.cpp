@@ -3,7 +3,6 @@
   #include "Components/BoxComponent.h"
   #include "Core/NomPlayer.h"
 
-  // 생성자
   AElevator::AElevator()
   {
         PrimaryActorTick.bCanEverTick = true;
@@ -22,52 +21,53 @@
   }
 
 
-  void AElevator::Tick(float DeltaTime)
+void AElevator::Tick(float DeltaTime)
   {
-        // Super::Tick(DeltaTime);
+      // 목표 지점 설정
+      const FVector Destination = bIsTriggered ? GlobalTargetLocation : StartLocation;
 
-        // 목표 지점 설정
-        const FVector Destination = bIsTriggered ? GlobalTargetLocation : StartLocation;
+      // 현재 위치와 목표 거리 계산
+      const float Distance = FVector::Dist(GetActorLocation(), Destination);
 
-        // 목표 속도 설정
-        const float TargetSpeed = FVector::Dist(GetActorLocation(), Destination) > 10.0f ? 200.0f : 0.0f; // 예시: 최고 속도를 200으로 설정
+      // 목표 속도 설정
+      float TargetSpeed = MaxSpeed;
 
-        // 보간
-        float CurrentSpeed = FMath::FInterpTo(ObjectSpeed, TargetSpeed, DeltaTime, 2.0f);
-        ObjectSpeed = CurrentSpeed; 
+      // 목표 지점 근처면 감속
+      if (Distance < 200.0f) 
+      {
+          TargetSpeed = MinSpeed;
+      }
 
-        // 속도가 거의 0이면 이동을 멈춥
-        if (FMath::IsNearlyZero(ObjectSpeed))
-        {
-                // 위치를 한 번 더 고정
-                if (!GetActorLocation().Equals(Destination, 0.5f))
-                {
-                        SetActorLocation(Destination);
-                }
-                return;
-        }
+      // 보간쓰
+      CurrentSpeed = FMath::FInterpTo(CurrentSpeed, TargetSpeed, DeltaTime, Acceleration);
 
-        // 이동할 거리 계산
-        const FVector Direction = (Destination - GetActorLocation()).GetSafeNormal();
-        const FVector Movement = Direction * ObjectSpeed * DeltaTime;
+      // 목표 도착 체크
+      if (Distance < 2.0f) 
+      {
+          SetActorLocation(Destination);
+          CurrentSpeed = 0.0f;
+          return;
+      }
 
-        //액터 이동
-        SetActorLocation(GetActorLocation() + Movement);
+      // 이동
+      const FVector Direction = (Destination - GetActorLocation()).GetSafeNormal();
+      const FVector Movement = Direction * CurrentSpeed * DeltaTime;
+      SetActorLocation(GetActorLocation() + Movement);
   }
 
 
-  void AElevator::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-      int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AElevator::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+    int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
   {
       ANomPlayer* PlayerCharacter = Cast<ANomPlayer>(OtherActor);
       if (PlayerCharacter != nullptr)
       {
-          
+          // 시작 지점이면 올라감
           if (GetActorLocation().Equals(StartLocation, 1.0f))
           {
               bIsTriggered = true;
           }
-         
+          // 목표 지점이면 내려감
           else if (GetActorLocation().Equals(GlobalTargetLocation, 1.0f))
           {
               bIsTriggered = false;

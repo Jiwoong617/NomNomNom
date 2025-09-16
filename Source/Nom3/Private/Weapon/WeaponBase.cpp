@@ -10,6 +10,7 @@
 #include "Weapon/WeaponData.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase() : WeaponData(nullptr)
@@ -24,6 +25,13 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 	ConstructorHelpers::FObjectFinder<UNiagaraSystem> eff(TEXT("/Script/Niagara.NiagaraSystem'/Game/Effect/NS_FireEffect.NS_FireEffect'"));
 	if (eff.Succeeded())
 		fireEffect = eff.Object;
+
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+		TEXT("/Game/Asset/Weapon/Sound/SC_MachineGunFire.SC_MachineGunFire"));
+		Finder.Succeeded())
+	{
+		FireSound = Finder.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -72,9 +80,14 @@ void AWeaponBase::AimFire()
 {
 	if (CurrentAmmo > 0)
 	{
+		//사격 사운드 재생
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
+
+		//탄약 소모
 		CurrentAmmo--;
-		FVector Pos = WeaponOwner->GetFpsCam()->GetComponentLocation();
-		FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
+
+		const FVector Pos = WeaponOwner->GetFpsCam()->GetComponentLocation();
+		const FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
 		
 		FHitResult Hit;
 		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
@@ -82,6 +95,8 @@ void AWeaponBase::AimFire()
 		
 		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + Dir * 10000,ECC_Visibility,Params))
 		{
+			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, Hit.GetComponent()->GetName());
+			
 			if (auto dmg = Cast<UDamageComponent>(Hit.GetComponent()))
 			{
 				PRINTLOG(TEXT("Damagable"));
@@ -108,19 +123,23 @@ void AWeaponBase::NoAimFire()
 {
 	if (CurrentAmmo > 0)
 	{
+		//사격 사운드 재생
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
+
+		//탄약 소모
 		CurrentAmmo--;
 
 		//탄퍼짐
-		float SpreadHalf = WeaponData->BulletSpread * 0.5f;
-		float RandPitch = FMath::RandRange(-SpreadHalf, SpreadHalf);
-		float RandYaw   = FMath::RandRange(-SpreadHalf, SpreadHalf);
+		const float SpreadHalf = WeaponData->BulletSpread * 0.5f;
+		const float RandPitch = FMath::RandRange(-SpreadHalf, SpreadHalf);
+		const float RandYaw = FMath::RandRange(-SpreadHalf, SpreadHalf);
 
-		FVector Pos = WeaponOwner->GetFpsCam()->GetComponentLocation();
-		FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
+		const FVector Pos = WeaponOwner->GetFpsCam()->GetComponentLocation();
+		const FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
 		FRotator SpreadRot = Dir.Rotation();
 		SpreadRot.Pitch += RandPitch;
 		SpreadRot.Yaw += RandYaw;
-		FVector FinalDir = SpreadRot.Vector();
+		const FVector FinalDir = SpreadRot.Vector();
 
 		FHitResult Hit;
 		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
@@ -172,7 +191,7 @@ const UWeaponData* AWeaponBase::GetData() const
 
 FTransform AWeaponBase::GetSocketTransform(FName& SocketName)
 {
-	return WeaponMeshComp->GetSocketTransform(SocketName);
+	return WeaponMeshComp->GetSocketTransform(SocketName, RTS_World);
 }
 
 bool AWeaponBase::CanFire()

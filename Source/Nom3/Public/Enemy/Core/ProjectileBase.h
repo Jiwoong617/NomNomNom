@@ -18,6 +18,8 @@ class NOM3_API AProjectileBase : public AActor
 
 public:
 	AProjectileBase();
+
+	virtual void BeginPlay() override;
 	
 	//발사 정보 구조체
 	UPROPERTY(VisibleAnywhere)
@@ -35,6 +37,9 @@ protected:
 
 	//풀링 타이머 핸들
 	FTimerHandle PoolingTimerHandle;
+
+	//풀링 델리게이트
+	FTimerDelegate PoolingDelegate;
 
 	//충돌체 컴포넌트
 	UPROPERTY(VisibleAnywhere)

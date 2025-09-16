@@ -5,9 +5,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
+#include "KismetTraceUtils.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
-#include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -19,57 +19,69 @@
 #include "Weapon/WeaponComponent.h"
 #include "Weapon/WeaponData.h"
 #include "Core/PlayerDamageComponent.h"
+#include "Core/PlayerFpsAnimation.h"
 #include "Core/PlayerUI.h"
+#include "Core/SkillComponent.h"
+#include "Enemy/Core/EnemyBase.h"
+#include "Kismet/GameplayStatics.h"
 
 ANomPlayer::ANomPlayer()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//TPS Mesh
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
+	//FPS Mesh
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Character/NomPlayer.NomPlayer'"));
 	if (TempMesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(TempMesh.Object);
 		GetMesh()->SetRelativeLocation(FVector(0, 0, -87));
 		GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
-
-		GetMesh()->SetOwnerNoSee(true);
-	}
-
-	//FSP Mesh
-	FpsMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPS Mesh"));
-	FpsMeshComp->SetupAttachment(GetRootComponent());
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempFpsMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn_Simple.SKM_Quinn_Simple'"));
-	if (TempFpsMesh.Succeeded())
-	{
-		FpsMeshComp->SetSkeletalMesh(TempFpsMesh.Object);
-		FpsMeshComp->SetRelativeLocation(FVector(0, 0, -87));
-		FpsMeshComp->SetRelativeRotation(FRotator(0, -90, 0));
-		FpsMeshComp->FirstPersonPrimitiveType = EFirstPersonPrimitiveType::FirstPerson;
+		GetMesh()->FirstPersonPrimitiveType = EFirstPersonPrimitiveType::FirstPerson;
 
 		//내 카메라에만 보이게
-		FpsMeshComp->SetOnlyOwnerSee(true);
+		GetMesh()->SetOnlyOwnerSee(true);
+		GetMesh()->SetupAttachment(RootComponent);
 	}
+	ConstructorHelpers::FClassFinder<UPlayerFpsAnimation> TempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Fps.ABP_Fps_C'"));
+	if (TempAnim.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(TempAnim.Class);
+		FpsAnimation = Cast<UPlayerFpsAnimation>(GetMesh()->GetAnimInstance());
+	}
+
+
+	//TPS Mesh
+	TpsMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("TPS Mesh"));
+	TpsMeshComp->SetupAttachment(GetRootComponent());
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempTpsMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
+	if (TempTpsMesh.Succeeded())
+	{
+		TpsMeshComp->SetSkeletalMesh(TempTpsMesh.Object);
+		TpsMeshComp->SetRelativeLocation(FVector(0, 0, -87));
+		TpsMeshComp->SetRelativeRotation(FRotator(0, -90, 0));
+	
+		TpsMeshComp->SetOwnerNoSee(true);
+	}
+
 	
 	//FPS Cam Settings
 	FpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("FPS Spring Arm");
-	FpsSpringArmComp->SetupAttachment(RootComponent);
+	FpsSpringArmComp->SetupAttachment(GetMesh(), TEXT("HeadSocket"));
 	FpsSpringArmComp->TargetArmLength = 0;
-	FpsSpringArmComp->SetRelativeLocation(FVector(20,0,80));
+	FpsSpringArmComp->SetRelativeLocation(FVector(50,0,-50));
 	FpsCameraComp = CreateDefaultSubobject<UCameraComponent>("FPS Cam");
 	FpsCameraComp->SetupAttachment(FpsSpringArmComp);
 	FpsCameraComp->bUsePawnControlRotation = true;
 	FpsCameraComp->bEnableFirstPersonFieldOfView = true;
-	FpsCameraComp->bEnableFirstPersonScale = true;
-	FpsCameraComp->FirstPersonFieldOfView = 70.0f;
-	FpsCameraComp->FirstPersonScale = 0.6f;
+	FpsCameraComp->FirstPersonFieldOfView = 90.0f;
 
 	//TPS Cam Settings
 	TpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("TPS Spring Arm");
 	TpsSpringArmComp->SetupAttachment(RootComponent);
 	TpsSpringArmComp->bUsePawnControlRotation = true;
 	TpsSpringArmComp->SetRelativeLocation(FVector(0, 0, 50));
+	TpsSpringArmComp->SetRelativeRotation(FRotator(-45, 0, 0));
 	TpsCameraComp = CreateDefaultSubobject<UCameraComponent>("TPS Cam");
 	TpsCameraComp->SetupAttachment(TpsSpringArmComp);
 	TpsCameraComp->bUsePawnControlRotation = false;
@@ -79,7 +91,6 @@ ANomPlayer::ANomPlayer()
 	//FPS WeaponList
 	WeaponListSceneComp = CreateDefaultSubobject<USceneComponent>("WeaponList");
 	WeaponListSceneComp->SetupAttachment(RootComponent);
-	
 
 	//Basic Init
 	JumpMaxCount = 3;
@@ -91,18 +102,20 @@ ANomPlayer::ANomPlayer()
 
 	//Damage Comp
 	HeadBox = CreateDefaultSubobject<UPlayerDamageComponent>("HeadBox");
-	HeadBox->SetupAttachment(FpsMeshComp, TEXT("HeadSocket"));
+	HeadBox->SetupAttachment(GetMesh(), TEXT("HeadSocket"));
 	
 	BodyBox = CreateDefaultSubobject<UPlayerDamageComponent>("BodyBox");
-	BodyBox->SetupAttachment(FpsMeshComp, TEXT("BodySocket"));
+	BodyBox->SetupAttachment(GetMesh(), TEXT("BodySocket"));
 
 	//UI
 	ConstructorHelpers::FClassFinder<UPlayerUI> playerui(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/BluePrints/WBP/WBP_PlayerUI.WBP_PlayerUI_C'"));
 	if (playerui.Succeeded())
 		PlayerUIClass = playerui.Class;
 	
-	//Add Component
-	WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
+    //Add Component
+    WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
+    SkillComp = CreateDefaultSubobject<USkillComponent>("SkillComp");
+	
 	//////////////////////////////Input/////////////////////////////////
 	{
 		ConstructorHelpers::FObjectFinder<UInputMappingContext> TempIMC(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Input/IMC_Player.IMC_Player'"));
@@ -168,15 +181,37 @@ void ANomPlayer::BeginPlay()
 			subsys->AddMappingContext(IMC_NomPlayer, 0);
 		}
 	}
-
-	PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
-	WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
+	
+    PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
+    WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
+    WeaponComp->OnChangeWeaponDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateEquipedWeaponUI);
+    if (SkillComp && PlayerUI)
+    {
+        SkillComp->DodgeSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill1Cooldown);
+        SkillComp->UltimateSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill2Cooldown);
+    }
 	PlayerUI->AddToViewport();
 	PlayerUI->UpdateHealthUI(Hp, MaxHp);
+	WeaponComp->Init();
 
-	//TODO : Mesh 바뀌면 값 조정해줘야됨
 	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
 	BodyBox->Init(FVector(50, 15, 20), ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
+
+	FTimerHandle SightTimerHandle;
+	GetWorldTimerManager().SetTimer(SightTimerHandle, [this]()
+	{
+		const FVector Start = FpsCameraComp->GetComponentLocation();
+		const FVector End = Start + FpsCameraComp->GetForwardVector() * 10000;
+		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
+		Params.AddIgnoredActor(this);
+		if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_Visibility, Params))
+		{
+			if (const auto Enemy = Cast<AEnemyBase>(Hit.GetActor()))
+			{
+				Enemy->OnAimByPlayerSight();
+			}
+		}
+	}, 0.1, true);
 }
 
 bool ANomPlayer::CanJumpInternal_Implementation() const
@@ -226,6 +261,8 @@ void ANomPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void ANomPlayer::MoveInput(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
+	
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	if (MovementVector == FVector2D::ZeroVector)
 	{
@@ -243,6 +280,8 @@ void ANomPlayer::LookInput(const FInputActionValue& Value)
 
 void ANomPlayer::JumpInput()
 {
+	if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill)
 		return;
 	
@@ -257,6 +296,8 @@ void ANomPlayer::JumpInput()
 
 void ANomPlayer::RunToggle()
 {
+	if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
 	if (ActionState == EActionState::Firing)
@@ -282,6 +323,8 @@ void ANomPlayer::RunToggle()
 
 void ANomPlayer::CrouchToggle()
 {
+	if (bIsDead) return;
+	
 	if (GetMovementComponent()->IsFalling() || ActionState == EActionState::Skill)
 	{
 		return;
@@ -346,8 +389,12 @@ void ANomPlayer::InteractHold(const FInputActionValue& Value)
 
 void ANomPlayer::Fire(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
+	
 	if (Value.Get<bool>())
 	{
+		bIsHoldFire = true;
+		
 		if (WeaponComp->GetCurrentWeapon()->CanFire() == false)
 		{
 			if (WeaponComp->GetCurrentWeapon()->CanReload())
@@ -365,7 +412,6 @@ void ANomPlayer::Fire(const FInputActionValue& Value)
 
 		WeaponComp->FireStart();
 		ActionState = EActionState::Firing;
-		bIsHoldFire = true;
 	}
 	else
 	{
@@ -377,8 +423,12 @@ void ANomPlayer::Fire(const FInputActionValue& Value)
 
 void ANomPlayer::Aim(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
+	
 	if (Value.Get<bool>())
 	{
+		bIsHoldAim = true;
+		
 		if (WeaponComp->GetCurrentWeapon()->GetData()->IsAimable == false)
 		{
 			bIsHoldAim = false;
@@ -394,7 +444,6 @@ void ANomPlayer::Aim(const FInputActionValue& Value)
 		
 		bIsAiming = true;
 		WeaponComp->AimStart();
-		bIsHoldAim = true;
 	}
 	else
 	{
@@ -406,6 +455,8 @@ void ANomPlayer::Aim(const FInputActionValue& Value)
 
 void ANomPlayer::ReloadStart()
 {
+	if (bIsDead) return;
+	
 	if (WeaponComp->GetCurrentWeapon()->CanReload() == false)
 		return;
 	
@@ -457,6 +508,8 @@ void ANomPlayer::ReloadEnd()
 
 void ANomPlayer::Melee()
 {
+	if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
 	if (ActionState == EActionState::Firing)
@@ -509,6 +562,8 @@ void ANomPlayer::Melee()
 
 void ANomPlayer::Throw()
 {
+	if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
 	if (ActionState == EActionState::Firing)
@@ -558,6 +613,8 @@ void ANomPlayer::LeftHandEnd()
 
 void ANomPlayer::Skill()
 {
+    if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
 	if (ActionState == EActionState::Firing)
@@ -580,8 +637,11 @@ void ANomPlayer::Skill()
 	if (MovingState == EMovingState::Running)
 		MovingState = EMovingState::Idle;
 
-	ChangeToTps();
+    if (!SkillComp->UseDodgeSkill())
+        return;
 
+    ChangeToTps();
+	
 	//TODO : 몽타쥬로 바꿀 것
 	PRINTINFO();
 	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
@@ -610,6 +670,8 @@ void ANomPlayer::SkillEnd()
 
 void ANomPlayer::UltimateSkill()
 {
+    if (bIsDead) return;
+	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
 	if (ActionState == EActionState::Firing)
@@ -632,7 +694,11 @@ void ANomPlayer::UltimateSkill()
 	if (MovingState == EMovingState::Running)
 		MovingState = EMovingState::Idle;
 
-	ChangeToTps();
+    if (!SkillComp->UseUltimateSkill())
+        return;
+
+    ChangeToTps();
+	
 	PRINTINFO();
 	//TODO : 몽타쥬로 바꿀 것
 	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
@@ -661,6 +727,8 @@ void ANomPlayer::UltimateSkillEnd()
 
 void ANomPlayer::ChangeWeapon(const FInputActionValue& Value)
 {
+	if (bIsDead) return;
+	
 	int32 WeaponIndex = static_cast<int32>(Value.Get<float>());
 	if (WeaponComp->GetCurrentWeaponIdx() == WeaponIndex - 1)
 		return;
@@ -734,8 +802,8 @@ void ANomPlayer::OnAimCanceled()
 
 void ANomPlayer::ChangeToFps()
 {
-	GetMesh()->SetOwnerNoSee(true);
-	FpsMeshComp->SetOwnerNoSee(false);
+	TpsMeshComp->SetOwnerNoSee(true);
+	GetMesh()->SetOwnerNoSee(false);
 	FpsCameraComp->SetActive(true);
 	TpsCameraComp->SetActive(false);
 }
@@ -744,17 +812,40 @@ void ANomPlayer::ChangeToTps()
 {
 	ActionState = EActionState::Skill;
 	
-	GetMesh()->SetOwnerNoSee(false);
-	FpsMeshComp->SetOwnerNoSee(true);
+	TpsMeshComp->SetOwnerNoSee(false);
+	GetMesh()->SetOwnerNoSee(true);
 	FpsCameraComp->SetActive(false);
 	TpsCameraComp->SetActive(true);
+}
+
+void ANomPlayer::MakeTpsRagdoll()
+{
+	if (!TpsMeshComp->GetPhysicsAsset())
+	{
+		PRINTINFO();
+		return;
+	}
+
+	if (!TpsMeshComp->IsSimulatingPhysics())
+	{
+		PrevMeshCollisionProfileName = TpsMeshComp->GetCollisionProfileName();
+		// Detach mesh from capsule to avoid parent influence during ragdoll
+		TpsMeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
+		TpsMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		TpsMeshComp->SetSimulatePhysics(true);
+		TpsMeshComp->SetAllBodiesSimulatePhysics(true);
+		TpsMeshComp->WakeAllRigidBodies();
+	}
 }
 
 //여기에 데미지 함수 구현
 void ANomPlayer::OnDamaged(FFireInfo Info)
 {
+	if (ActionState == EActionState::Skill || Hp <= 0)
+		return;
+	
 	if (Info.TeamInfo == ETeamInfo::Player)
-		Hp -= Info.Damage/100;
+		Hp -= Info.Damage / 100;
 	else
 		Hp -= Info.Damage;
 	
@@ -762,7 +853,52 @@ void ANomPlayer::OnDamaged(FFireInfo Info)
 
 	if (Hp <= 0)
 	{
+		bIsDead = true;
+		ChangeToTps();
 		
+		ActionState = EActionState::Idle;
+		MovingState = EMovingState::Idle;
+		bIsAiming = false;
+		bIsHoldFire = false;
+		bIsHoldAim = false;
+		OnFireCanceled();
+		OnReloadCanceled();
+		OnAimCanceled();
+		UnCrouch();
+
+		MakeTpsRagdoll();
+	}
+}
+
+//여기에 크리티컬 데미지 함수 구현
+void ANomPlayer::OnCriticalDamaged(FFireInfo Info)
+{
+	if (ActionState == EActionState::Skill || Hp <= 0)
+		return;
+	
+	if (Info.TeamInfo == ETeamInfo::Player)
+		Hp -= Info.Damage * 2 / 100;
+	else
+		Hp -= Info.Damage;
+	
+	PlayerUI->UpdateHealthUI(Hp, MaxHp);
+
+	if (Hp <= 0)
+	{
+		bIsDead = true;
+		ChangeToTps();
+		
+		ActionState = EActionState::Idle;
+		MovingState = EMovingState::Idle;
+		bIsAiming = false;
+		bIsHoldFire = false;
+		bIsHoldAim = false;
+		OnFireCanceled();
+		OnReloadCanceled();
+		OnAimCanceled();
+		UnCrouch();
+
+		MakeTpsRagdoll();
 	}
 }
 
@@ -774,4 +910,14 @@ USpringArmComponent* ANomPlayer::GetFpsCamArm()
 UCameraComponent* ANomPlayer::GetFpsCam()
 {
 	return FpsCameraComp;
+}
+
+const EActionState& ANomPlayer::GetActionState() const
+{
+	return ActionState;
+}
+
+const EMovingState& ANomPlayer::GetMovingState() const
+{
+	return MovingState;
 }

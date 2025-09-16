@@ -10,9 +10,6 @@ UScoutShankDamageComponent::UScoutShankDamageComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	//충돌 프로필 변경
-	UPrimitiveComponent::SetCollisionProfileName(FName("Body"));
-
 	//총알 명중 사운드 로드
 	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
 		TEXT("/Game/Asset/ScoutShank/Sound/SC_ScoutShankBulletHitCue.SC_ScoutShankBulletHitCue"));

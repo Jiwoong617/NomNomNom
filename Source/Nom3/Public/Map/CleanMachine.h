@@ -8,7 +8,7 @@
 #include "CleanMachine.generated.h"
 
 UCLASS()
-class NOM3_API ACleanMachine : public AActor, public IInteractable
+class NOM3_API ACleanMachine : public AActor
 {
 	GENERATED_BODY()
 	enum class ECleanMState : uint8
@@ -44,7 +44,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Setting")
 	AActor* SplineComp;
 
-	virtual void OnInteract(AActor OtherActor) override;
+	virtual void OnInteract(AActor *OtherActor);
+	
 	
 
 	
@@ -62,6 +63,12 @@ public:
 	void TraceMove(float DeltaTime);
 	void FollwSpline(float DeltaTime);
 	float DistanceAlongSpline;
+
+	// player 상호작용
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool
+bFromSweep, const FHitResult& SweepResult);
+	
 private:
 	UPROPERTY()
 	class USplineComponent* TargetSpline;

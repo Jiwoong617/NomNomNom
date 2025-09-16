@@ -3,6 +3,7 @@
 
 #include "Core/PlayerUI.h"
 
+#include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Weapon/WeaponComponent.h"
@@ -10,6 +11,14 @@
 void UPlayerUI::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	WeaponImgs.Add(IMG_Weapon1);
+	WeaponImgs.Add(IMG_Weapon2);
+	WeaponImgs.Add(IMG_Weapon3);
+
+	AmmoTexts.Add(TEXT_CurrentAmmo);
+	AmmoTexts.Add(TEXT_Weapon2Ammo);
+	AmmoTexts.Add(TEXT_Weapon3Ammo);
 }
 
 void UPlayerUI::UpdateAmmoUI(int32 currentammo, int32 maxammo)
@@ -21,4 +30,36 @@ void UPlayerUI::UpdateAmmoUI(int32 currentammo, int32 maxammo)
 void UPlayerUI::UpdateHealthUI(float health, float maxhealth)
 {
 	HpBar->SetPercent(health / maxhealth);
+}
+
+void UPlayerUI::UpdateEquipedWeaponUI(int32 idx, UTexture2D* img, int32 ammo, int32 maxammo)
+{
+	if (maxammo)
+		UpdateAmmoUI(ammo, maxammo);
+
+	//TODO : 버그 있음 고쳐야됨
+	WeaponImgs[idx]->SetBrushFromTexture(img, false);
+    AmmoTexts[idx]->SetText(FText::AsNumber(ammo));
+}
+
+void UPlayerUI::UpdateSkill1Cooldown(float cool, float coolTime)
+{
+    if (Bar_Skill1)
+    {
+        if (cool < coolTime)
+            Bar_Skill1->SetPercent(FMath::Clamp(cool / coolTime, 0.f, 1.f));
+        else
+            Bar_Skill1->SetPercent(1.f);
+    }
+}
+
+void UPlayerUI::UpdateSkill2Cooldown(float cool, float coolTime)
+{
+	if (Bar_Skill2)
+	{
+		if (cool < coolTime)
+			Bar_Skill2->SetPercent(FMath::Clamp(cool / coolTime, 0.f, 1.f));
+		else
+			Bar_Skill2->SetPercent(1.f);
+	}
 }

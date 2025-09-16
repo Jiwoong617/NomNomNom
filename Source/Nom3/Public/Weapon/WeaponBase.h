@@ -61,6 +61,9 @@ public:
 protected:
 	UFUNCTION() void ApplyRecoil();
 	UFUNCTION() void ApplyingRecoil();
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USoundBase> FireSound;
 	
 public:
 	UFUNCTION() virtual void AimFire();

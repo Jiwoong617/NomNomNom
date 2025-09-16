@@ -36,12 +36,9 @@ protected:
 	
 	virtual void OnHitHead(FFireInfo& Info);
 
-	FOnDamagedDelegate OnDamagedDelegate;
+	//FOnDamagedDelegate OnDamagedDelegate;
 
 public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	//충돌 델리게이트 함수
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

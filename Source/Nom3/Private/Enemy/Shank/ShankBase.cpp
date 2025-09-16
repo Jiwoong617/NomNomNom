@@ -3,12 +3,12 @@
 #include "Enemy/Shank/ShankBase.h"
 
 #include "NiagaraFunctionLibrary.h"
-#include "Enemy/Shank/ShankFollowPathStateMachine.h"
+#include "Enemy/Shank/ScoutShankFollowPathStateMachine.h"
 #include "Components/SphereComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
-#include "Enemy/Damage/DamageActorPoolGameInstanceSubsystem.h"
-#include "Enemy/Shank/ShankFindPathStateMachine.h"
-#include "Enemy/Shank/ShankReverseThrustStateMachine.h"
+#include "Enemy/Damage/DamageActorPoolWorldSubsystem.h"
+#include "Enemy/Shank/ScoutShankFindPathStateMachine.h"
+#include "Enemy/Shank/ScoutShankReverseThrustStateMachine.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Nom3/Nom3.h"
 
@@ -36,13 +36,13 @@ AShankBase::AShankBase() :
 	DroneMoveComp = CreateDefaultSubobject<UDroneMovementComponent>(FName("DroneMoveComp"));
 
 	//경로 탐색 상태 머신
-	FindPathStateMachine = CreateDefaultSubobject<UShankFindPathStateMachine>(FName("FindPathStateMachine"));
+	FindPathStateMachine = CreateDefaultSubobject<UScoutShankFindPathStateMachine>(FName("FindPathStateMachine"));
 	
 	//경로 추적 상태 머신
-	CircleStateMachine = CreateDefaultSubobject<UShankFollowPathStateMachine>(FName("CircleStateMachine"));
+	CircleStateMachine = CreateDefaultSubobject<UScoutShankFollowPathStateMachine>(FName("CircleStateMachine"));
 
 	//역추진 상태 머신
-	ReverseThrustStateMachine = CreateDefaultSubobject<UShankReverseThrustStateMachine>(FName("ReverseThrustStateMachine"));
+	ReverseThrustStateMachine = CreateDefaultSubobject<UScoutShankReverseThrustStateMachine>(FName("ReverseThrustStateMachine"));
 
 	//나이아가라 이펙트 로드
 	if (static ConstructorHelpers::FObjectFinder<UNiagaraSystem> Finder(
@@ -85,10 +85,13 @@ void AShankBase::Tick(float DeltaTime)
 		CurrentStateMachine->ExecuteState();
 	}
 
-	//목표 방향
-	const FVector TargetDir = (TargetPawn->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-	const FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(TargetDir, GetActorUpVector());
-	MeshSceneComp->SetWorldRotation(TargetRot);
+	if (SHANK_STATE != EShankState::Splash)
+	{
+		//목표 방향
+		const FVector TargetDir = (TargetPawn->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+		const FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(TargetDir, GetActorUpVector());
+		MeshSceneComp->SetWorldRotation(TargetRot);
+	}
 }
 
 void AShankBase::SetCurrentState(const EShankState Value)
@@ -176,7 +179,8 @@ void AShankBase::OnShotDown(const FVector ShotDir)
 	//데미지 파트 가시화
 	DamageDynamicInstance->SetScalarParameterValue(FName("opacity"), 1.0f);
 
-	UNiagaraFunctionLibrary::SpawnSystemAttached(FireNiagara, GetRootComponent(), FName(""), GetActorLocation(), GetActorRotation(), EAttachLocation::Type::KeepRelativeOffset, true);
+	//스폰
+	UNiagaraFunctionLibrary::SpawnSystemAttached(FireNiagara, GetRootComponent(), FName(""), GetActorLocation(), GetActorRotation(), EAttachLocation::Type::SnapToTarget, true);
 	
 	//10초 뒤에 소멸
 	FTimerHandle DestroyHandle;
