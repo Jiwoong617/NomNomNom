@@ -68,9 +68,9 @@ protected:
 	bool bIsDead = false;
 	
 	//Basic Status
-	float MaxSpeed = 600.f;
-	float JumpForce = 600.f;
-	float GravityMultiplier = 0.85f;
+	float MaxSpeed = 1000.f;
+	float JumpForce = 1200.f;
+	float GravityMultiplier = 1.2f;
 
 	//Movement params
 	float InteractDuration = 0.f;

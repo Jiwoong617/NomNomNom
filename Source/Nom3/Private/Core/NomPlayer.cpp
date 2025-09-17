@@ -206,6 +206,8 @@ void ANomPlayer::BeginPlay()
 	BodyBox->Init(FVector(50, 15, 20), ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
 
 	SightCheck();
+
+	SetActorScale3D(FVector(2));
 }
 
 bool ANomPlayer::CanJumpInternal_Implementation() const
