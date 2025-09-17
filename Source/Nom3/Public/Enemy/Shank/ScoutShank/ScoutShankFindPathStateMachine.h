@@ -21,8 +21,6 @@ public:
 	virtual void ExitState() override;
 
 protected:
-	virtual void BeginPlay() override;
-
 	UFUNCTION()
 	void DecideTargetLocation() const;
 

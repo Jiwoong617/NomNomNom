@@ -11,12 +11,6 @@ UScoutShankFindPathStateMachine::UScoutShankFindPathStateMachine()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UScoutShankFindPathStateMachine::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
 void UScoutShankFindPathStateMachine::EnterState()
 {
 	Super::EnterState();
@@ -78,22 +72,17 @@ void UScoutShankFindPathStateMachine::DecideTargetLocation() const
 	constexpr float Distance = 1500;
 
 	//적당한 거리에 적당한 눈높이에 있는 360도 범위 내 좌표를 가지게 된다
-	OwnerShank->TargetLocation = OwnerShank->TargetPawn->GetActorLocation() + RandDir * FMath::FRandRange(Distance - 50, Distance + 50);
+	OwnerShank->Destination = OwnerShank->TargetPawn->GetActorLocation() + RandDir * FMath::FRandRange(Distance - 50, Distance + 50);
 }
 
 void UScoutShankFindPathStateMachine::CalculatePaths() const
 {
-	if (OwnerShank == false)
-	{
-		return;
-	}
-
 	//경로 배열을 비운다
 	OwnerShank->PathQueue.Empty();
 
 	//시작 위치와 목표 위치
 	const FVector StartLocation = OwnerShank->GetActorLocation();
-	const FVector TargetLocation = OwnerShank->TargetLocation;
+	const FVector TargetLocation = OwnerShank->Destination;
 
 	//세그먼트 개수
 	constexpr int32 NumSegments = 3;
@@ -105,7 +94,7 @@ void UScoutShankFindPathStateMachine::CalculatePaths() const
 	for (int32 i = 1; i < NumSegments; ++i)
 	{
 		//지그재그 규모
-		const float RandomOffset = FMath::RandRange(200, 400);
+		const float RandomOffset = FMath::RandRange(100, 200);
 
 		//세그먼트 중간점
 		const float Alpha = static_cast<float>(i) / NumSegments;

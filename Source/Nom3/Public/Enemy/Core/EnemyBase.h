@@ -24,6 +24,20 @@ class NOM3_API AEnemyBase : public AActor, public IOnAimByPlayerSight, public ID
 
 public:
 	AEnemyBase();
+	
+	virtual void BeginPlay() override;
+
+	//피조준 인터페이스
+	UFUNCTION(BlueprintCallable)
+	virtual void OnAimByPlayerSight() override;
+
+	//일반적인 데미지 인터페이스
+	UFUNCTION(BlueprintCallable)
+	virtual void OnDamaged(FFireInfo Info) override;
+
+	//크리티컬 데미지 인터페이스
+	UFUNCTION(BlueprintCallable)
+	virtual void OnCriticalDamaged(FFireInfo Info) override;
 
 	//체력 관련 프로퍼티와 델리게이트
 	__declspec(property(get=GetHP, put=SetHP)) int32 HP;
@@ -44,21 +58,19 @@ public:
 	FOnHealthChangedEventSignature OnHPChanged;
 	FOnDeathEventSignature OnDeath;
 
-	//피조준 인터페이스
-	UFUNCTION(BlueprintCallable)
-	virtual void OnAimByPlayerSight() override;
+	//플레이어를 바라보는 방향
+	UFUNCTION()
+	FVector GetPlayerGazeDir() const;
 
-	//일반적인 데미지 인터페이스
-	UFUNCTION(BlueprintCallable)
-	virtual void OnDamaged(FFireInfo Info) override;
+	//플레이어를 바라보는 방향과 수직이고 플레이어 상단 방향
+	UFUNCTION()
+	FVector GetPlayerGazeUpDir() const;
 
-	//크리티컬 데미지 인터페이스
-	UFUNCTION(BlueprintCallable)
-	virtual void OnCriticalDamaged(FFireInfo Info) override;
+	//플레이어를 바라보는 방향과 수직이고 플레이어 우측 방향
+	UFUNCTION()
+	FVector GetPlayerGazeRightDir() const;
 
 protected:
-	virtual void BeginPlay() override;
-
 	//체력 프로퍼티
 	UPROPERTY(VisibleAnywhere)
 	int32 Health;
@@ -68,7 +80,6 @@ protected:
 	TObjectPtr<UDamageActorPoolWorldSubsystem> DamageActorPool;
 
 public:
-
 	//현재 목표로 하는 폰
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<AActor> TargetPawn;

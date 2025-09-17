@@ -1,111 +1,58 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy/Shank/Common/ShankSpawner.h"
-#include "Components/ArrowComponent.h"
-#include "Components/SphereComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
-#include "Enemy/Core/PlayerDetectVolume.h"
 #include "Enemy/Shank/Common/ShankBase.h"
-#include "Kismet/KismetMathLibrary.h"
 
-AShankSpawner::AShankSpawner() : NumOfStock(8), SpawnMin(4), SpawnMax(4), LaunchConeAngle(15)
+AShankSpawner::AShankSpawner()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
-	//스폰된 생크들이 사출되는 방향을 가리키는 애로우 컴포넌트
-	LaunchDirection = CreateDefaultSubobject<UArrowComponent>(FName("SpawnDirection"));
-	LaunchDirection->ArrowSize = 5;
-	LaunchDirection->SetupAttachment(GetRootComponent());
-}
+	//정찰 생크 소환
+	if (static ConstructorHelpers::FClassFinder<AShankBase>
+		Finder(TEXT("/Game/Enemies/Shank/BP_ScoutShank.BP_ScoutShank_C"));
+		Finder.Class)
+	{
+		EnemyList.Emplace(Finder.Class);
+	}
 
-void AShankSpawner::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	//자폭 생크 소환
+	if (static ConstructorHelpers::FClassFinder<AShankBase>
+		Finder(TEXT("/Game/Enemies/Shank/BP_SelfDestructShank.BP_SelfDestructShank_C"));
+		Finder.Class)
+	{
+		EnemyList.Emplace(Finder.Class);
+	}
 }
 
 void AShankSpawner::OnDetectPlayerPawn()
 {
 	//최초 생크 사출
-	LaunchShanks(FMath::RandRange(SpawnMin, SpawnMax));
+	RequestSpawnEnemies(FMath::RandRange(SpawnMin, SpawnMax));
 
 	//2초마다 주기적으로 생크 사출
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
 	{
-		LaunchShanks(FMath::RandRange(SpawnMin, SpawnMax));
+		RequestSpawnEnemies(FMath::RandRange(SpawnMin, SpawnMax));
 	}, SpawnRate, true);
 }
 
-void AShankSpawner::OnConstruction(const FTransform& Transform)
+void AShankSpawner::SpawnSpecific(const FTransform& SpawnTransform)
 {
-	Super::OnConstruction(Transform);
+	Super::SpawnSpecific(SpawnTransform);
 
-	if (BindPlayerDetectVolume == false)
-	{
-		BindPlayerDetectVolume = GetWorld()->SpawnActor<APlayerDetectVolume>();
-		BindPlayerDetectVolume->SetActorLocation(GetActorLocation());
-		BindPlayerDetectVolume->BindSpawner = this;
-	}
-}
-
-void AShankSpawner::SpawnShank()
-{
-	//전부 소진
-	if (NumOfStock <= 0)
-	{
-		return;
-	}
+	//이번 에너미 클래스 획득
+	const TSubclassOf<AEnemyBase> ThisOrder = StockList[SpawnCounter++];
 	
-	//원뿔 범위로 변환
-	const FVector ConeDirection = LaunchDirection->GetForwardVector();
-	const FVector RandomDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(ConeDirection, LaunchConeAngle);
-	const FVector SpawnLocation = LaunchDirection->GetComponentLocation();
-	const FRotator SpawnRotation = RandomDirection.Rotation();
-	const FTransform SpawnTransform(SpawnRotation, SpawnLocation);
-		
-	//정찰 생크 스폰
-	if (const AShankBase* SpawnShank = GetWorld()->SpawnActor<AShankBase>(ScoutShankClass, SpawnTransform); SpawnShank && SpawnShank->DroneMoveComp)
+	//생크 스폰
+	if (AEnemyBase* Spawned = GetWorld()->SpawnActor<AEnemyBase>(ThisOrder, SpawnTransform))
 	{
-		//사출
-		SpawnShank->DroneMoveComp->Launch(RandomDirection);
-	}
-
-	//재고 감소
-	NumOfStock -= 1;
-}
-
-void AShankSpawner::LaunchShanks(const int32 Count)
-{
-	//유효하지 않은 요청
-	if (Count < 1)
-	{
-		return;
-	}
-	
-	//이전 요청이 아직 마무리 되지 않았다면
-	if (SpawnTimerHandle.IsValid())
-	{
-		return;
-	}
-	
-	//이전 요청을 처리할 때까지 추가 요청을 차단
-	GetWorldTimerManager().SetTimer(SpawnTimerHandle, [this]()
-	{
-		GetWorldTimerManager().ClearTimer(SpawnTimerHandle);
-	}, Count * 0.25, false);
-
-	//델리게이트 바인딩
-	FTimerDelegate Delegate;
-	Delegate.BindUFunction(this, FName("SpawnShank"));
-	
-	//생크 1회 스폰
-	Delegate.Execute();
-	
-	//요청한 만큼 생크를 반복 스폰
-	for (int32 i = 0; i < Count; i++)
-	{
-		FTimerHandle Temp;
-		GetWorldTimerManager().SetTimer(Temp, Delegate, i * 0.5, false);	
+		if (const AShankBase* SpawnedShank = Cast<AShankBase>(Spawned))
+		{
+			//사출
+			SpawnedShank->DroneMoveComp->Launch(SpawnTransform.GetRotation().GetForwardVector());
+		}
 	}
 }

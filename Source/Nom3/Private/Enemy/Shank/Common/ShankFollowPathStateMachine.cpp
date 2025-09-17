@@ -23,7 +23,7 @@ void UShankFollowPathStateMachine::EnterState()
 	//목표 위치
 	if (FVector Value; OwnerShank->PathQueue.Dequeue(Value))
 	{
-		OwnerShank->TargetLocation = Value;	
+		OwnerShank->Destination = Value;	
 	}
 
 	//초반 가속
@@ -40,7 +40,7 @@ void UShankFollowPathStateMachine::ExecuteState()
 	}
 	
 	//목표까지의 차이 벡터
-	const FVector TargetDiff = OwnerShank->TargetLocation - OwnerShank->GetActorLocation();
+	const FVector TargetDiff = OwnerShank->Destination - OwnerShank->GetActorLocation();
 
 	//목표로 향하는 방향
 	const FVector TargetDir = TargetDiff.GetSafeNormal();

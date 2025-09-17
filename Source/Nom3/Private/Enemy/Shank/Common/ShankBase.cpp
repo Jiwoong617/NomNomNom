@@ -170,7 +170,7 @@ void AShankBase::OnAimByPlayerSight()
 void AShankBase::OnDamaged(const FFireInfo Info)
 {
 	//격추 상태에서는 더 이상 피격될 수 없다
-	if (CurrentState == EShankState::Splash)
+	if (HP <= 0)
 	{
 		return;
 	}
@@ -188,7 +188,7 @@ void AShankBase::OnDamaged(const FFireInfo Info)
 void AShankBase::OnCriticalDamaged(const FFireInfo Info)
 {
 	//격추 상태에서는 더 이상 피격될 수 없다
-	if (CurrentState == EShankState::Splash)
+	if (HP <= 0)
 	{
 		return;
 	}
@@ -200,7 +200,7 @@ void AShankBase::OnCriticalDamaged(const FFireInfo Info)
 	HP -= Damage;
 	
 	//자산의 위치에 데미지 액터 풀링
-	DamageActorPool->ShowNormalDamageActor(GetActorLocation(), Damage);
+	DamageActorPool->ShowCriticalDamageActor(GetActorLocation(), Damage);
 }
 
 void AShankBase::OnShotDown(const FVector ShotDir)

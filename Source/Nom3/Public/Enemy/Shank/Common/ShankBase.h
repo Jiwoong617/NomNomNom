@@ -81,7 +81,7 @@ public:
 
 	//현재 목표 위치
 	UPROPERTY(VisibleAnywhere)
-	FVector TargetLocation;
+	FVector Destination;
 
 	//이동 경로 위치를 담는 큐
 	TQueue<FVector> PathQueue;
