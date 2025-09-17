@@ -68,9 +68,9 @@ protected:
 	bool bIsDead = false;
 	
 	//Basic Status
-	float MaxSpeed = 600.f;
-	float JumpForce = 600.f;
-	float GravityMultiplier = 0.85f;
+	float MaxSpeed = 1000.f;
+	float JumpForce = 1200.f;
+	float GravityMultiplier = 1.2f;
 
 	//Movement params
 	float InteractDuration = 0.f;
@@ -225,10 +225,12 @@ protected:
 	//Camera
 	UFUNCTION() void ChangeToFps();
 	UFUNCTION() void ChangeToTps();
+	UFUNCTION() void SightCheck();
 
-	//RagDoll
-	UFUNCTION() void MakeTpsRagdoll();
+	//Die and Respawn
 	FName PrevMeshCollisionProfileName;
+	UFUNCTION() void MakeTpsRagdoll();
+	UFUNCTION() void ReSpawn();
 
 public:
 	UFUNCTION() virtual void OnDamaged(FFireInfo Info) override;
@@ -237,4 +239,8 @@ public:
 	UCameraComponent* GetFpsCam();
 	const EActionState& GetActionState() const;
 	const EMovingState& GetMovingState() const;
+
+	//Anim
+	UFUNCTION()
+	void PlayGunshotAnim(UAnimMontage* Montage);
 };

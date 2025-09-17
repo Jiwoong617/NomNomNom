@@ -2,9 +2,6 @@
 
 
 #include "Core/PlayerFpsAnimation.h"
-
-#include <gsl/pointers>
-
 #include "Core/NomPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -34,4 +31,9 @@ void UPlayerFpsAnimation::NativeUpdateAnimation(float DeltaSeconds)
 		MovingState = Owner->GetMovingState();
 		ActionState = Owner->GetActionState();
 	}
+}
+
+void UPlayerFpsAnimation::PlayGunshotAnim(UAnimMontage* Montage)
+{
+	Montage_Play(Montage);
 }

@@ -42,4 +42,8 @@ public:
 	bool bIsAir;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float CameraRotX = 0.f;
+
+public:
+	UFUNCTION()
+	void PlayGunshotAnim(UAnimMontage* Montage);
 };

@@ -45,10 +45,7 @@ ANomPlayer::ANomPlayer()
 	}
 	ConstructorHelpers::FClassFinder<UPlayerFpsAnimation> TempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Fps.ABP_Fps_C'"));
 	if (TempAnim.Succeeded())
-	{
 		GetMesh()->SetAnimInstanceClass(TempAnim.Class);
-		FpsAnimation = Cast<UPlayerFpsAnimation>(GetMesh()->GetAnimInstance());
-	}
 
 
 	//TPS Mesh
@@ -170,17 +167,28 @@ ANomPlayer::ANomPlayer()
 
 void ANomPlayer::BeginPlay()
 {
-	Super::BeginPlay();
-	auto pc = Cast<APlayerController>(GetController());
-	if (pc)
-	{
-		auto subsys = ULocalPlayer::GetSubsystem
-		<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer());
-		if (subsys)
-		{
-			subsys->AddMappingContext(IMC_NomPlayer, 0);
-		}
-	}
+    Super::BeginPlay();
+    auto pc = Cast<APlayerController>(GetController());
+    if (pc)
+    {
+        auto subsys = ULocalPlayer::GetSubsystem
+        <UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer());
+        if (subsys)
+        {
+            subsys->AddMappingContext(IMC_NomPlayer, 0);
+        }
+
+        // 카메라 상하 보정
+        if (pc->PlayerCameraManager)
+        {
+            pc->PlayerCameraManager->ViewPitchMin = -80.f;
+            pc->PlayerCameraManager->ViewPitchMax = 80.f;
+        }
+    }
+
+	//Anim
+	FpsAnimation = Cast<UPlayerFpsAnimation>(GetMesh()->GetAnimInstance());
+	
 	
     PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
     WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
@@ -190,29 +198,16 @@ void ANomPlayer::BeginPlay()
         SkillComp->DodgeSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill1Cooldown);
         SkillComp->UltimateSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill2Cooldown);
     }
-	PlayerUI->AddToViewport();
-	PlayerUI->UpdateHealthUI(Hp, MaxHp);
-	WeaponComp->Init();
+    PlayerUI->AddToViewport();
+    PlayerUI->UpdateHealthUI(Hp, MaxHp);
+    WeaponComp->Init();
 
 	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
 	BodyBox->Init(FVector(50, 15, 20), ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
 
-	FTimerHandle SightTimerHandle;
-	GetWorldTimerManager().SetTimer(SightTimerHandle, [this]()
-	{
-		const FVector Start = FpsCameraComp->GetComponentLocation();
-		const FVector End = Start + FpsCameraComp->GetForwardVector() * 10000;
-		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
-		Params.AddIgnoredActor(this);
-		if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_Visibility, Params))
-		{
-			if (const auto Enemy = Cast<AEnemyBase>(Hit.GetActor()))
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("OnSight!"));
-				Enemy->OnAimByPlayerSight();
-			}
-		}
-	}, 0.1, true);
+	SightCheck();
+
+	SetActorScale3D(FVector(2));
 }
 
 bool ANomPlayer::CanJumpInternal_Implementation() const
@@ -372,9 +367,16 @@ void ANomPlayer::MoveFunc(float Right, float Forward)
 void ANomPlayer::InteractHold(const FInputActionValue& Value)
 {
 	float HoldDuration = Value.Get<float>();
+	InteractDuration = HoldDuration;
+
+	if (bIsDead && InteractDuration >= 1.f)
+	{
+		ReSpawn();
+		return;
+	}
+	
 	if (true)
 	{
-		InteractDuration = HoldDuration;
 		// TODO : 에이밍 중이면
 		if (HoldDuration >= 1.f)
 		{
@@ -819,6 +821,26 @@ void ANomPlayer::ChangeToTps()
 	TpsCameraComp->SetActive(true);
 }
 
+void ANomPlayer::SightCheck()
+{
+	FTimerHandle SightTimerHandle;
+	GetWorldTimerManager().SetTimer(SightTimerHandle, [this]()
+	{
+		const FVector Start = FpsCameraComp->GetComponentLocation();
+		const FVector End = Start + FpsCameraComp->GetForwardVector() * 10000;
+		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
+		Params.AddIgnoredActor(this);
+		if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_Visibility, Params))
+		{
+			if (const auto Enemy = Cast<AEnemyBase>(Hit.GetActor()))
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("OnSight!"));
+				Enemy->OnAimByPlayerSight();
+			}
+		}
+	}, 0.1, true);
+}
+
 void ANomPlayer::MakeTpsRagdoll()
 {
 	if (!TpsMeshComp->GetPhysicsAsset())
@@ -830,13 +852,48 @@ void ANomPlayer::MakeTpsRagdoll()
 	if (!TpsMeshComp->IsSimulatingPhysics())
 	{
 		PrevMeshCollisionProfileName = TpsMeshComp->GetCollisionProfileName();
-		// Detach mesh from capsule to avoid parent influence during ragdoll
 		TpsMeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
 		TpsMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		TpsMeshComp->SetSimulatePhysics(true);
 		TpsMeshComp->SetAllBodiesSimulatePhysics(true);
 		TpsMeshComp->WakeAllRigidBodies();
+
+		GetCharacterMovement()->StopMovementImmediately();
 	}
+}
+
+void ANomPlayer::ReSpawn()
+{
+	bIsDead = false;
+	Hp = MaxHp;
+	if (PlayerUI)
+		PlayerUI->UpdateHealthUI(Hp, MaxHp);
+
+	if (TpsMeshComp->IsSimulatingPhysics())
+	{
+		TpsMeshComp->SetAllBodiesSimulatePhysics(false);
+		TpsMeshComp->SetSimulatePhysics(false);
+		TpsMeshComp->PutAllRigidBodiesToSleep();
+	}
+	if (!PrevMeshCollisionProfileName.IsNone())
+		TpsMeshComp->SetCollisionProfileName(PrevMeshCollisionProfileName);
+	else
+		TpsMeshComp->SetCollisionProfileName(TEXT("NoCollision"));
+	
+	TpsMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	TpsMeshComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	TpsMeshComp->SetRelativeLocation(FVector(0, 0, -87));
+	TpsMeshComp->SetRelativeRotation(FRotator(0, -90, 0));
+
+	ActionState = EActionState::Idle;
+	MovingState = EMovingState::Idle;
+	bIsAiming = false;
+	bIsHoldFire = false;
+	bIsHoldAim = false;
+
+	GetCharacterMovement()->StopMovementImmediately();
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	ChangeToFps();
 }
 
 //여기에 데미지 함수 구현
@@ -921,4 +978,9 @@ const EActionState& ANomPlayer::GetActionState() const
 const EMovingState& ANomPlayer::GetMovingState() const
 {
 	return MovingState;
+}
+
+void ANomPlayer::PlayGunshotAnim(UAnimMontage* Montage)
+{
+	FpsAnimation->PlayGunshotAnim(Montage);
 }
