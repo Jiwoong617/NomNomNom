@@ -364,36 +364,25 @@ void ANomPlayer::MoveFunc(float Right, float Forward)
 	}
 }
 
-void ANomPlayer::InteractHold(const FInputActionValue& Value)
+void ANomPlayer::InteractHold(const FInputActionInstance& Value)
 {
-	float HoldDuration = Value.Get<float>();
-	InteractDuration = HoldDuration;
-
+	InteractDuration = Value.GetTriggeredTime();
 	if (bIsDead)
 	{
-		PRINTLOG(TEXT("%f"), InteractDuration);
 		PlayerUI->UpdateRespawnBar(InteractDuration);
 		if (InteractDuration >= 1.f)
 		{
 			ReSpawn();
 			InteractDuration = 0.f;
 		}
-		
 		return;
 	}
 	
 	if (true)
 	{
 		// TODO : 에이밍 중이면
-		if (HoldDuration >= 1.f)
-		{
-			PRINTINFO();
+		if (InteractDuration >= 1.f)
 			InteractDuration = 0.f;
-		}
-	}
-	else
-	{
-		InteractDuration = 0.f;
 	}
 }
 
@@ -934,6 +923,7 @@ void ANomPlayer::OnDamaged(FFireInfo Info)
 
 		MakeTpsRagdoll();
 		PlayerUI->IsPlayerDead(true);
+		PlayerUI->UpdateRespawnBar(0);
 	}
 }
 
@@ -967,6 +957,7 @@ void ANomPlayer::OnCriticalDamaged(FFireInfo Info)
 
 		MakeTpsRagdoll();
 		PlayerUI->IsPlayerDead(true);
+		PlayerUI->UpdateRespawnBar(0);
 	}
 }
 

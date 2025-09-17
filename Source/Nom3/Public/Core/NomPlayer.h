@@ -186,7 +186,7 @@ protected:
 
 	//interaction
 	UFUNCTION()
-	void InteractHold(const FInputActionValue& Value);
+	void InteractHold(const FInputActionInstance& Value);
 
 	//Battle
 	UFUNCTION()
