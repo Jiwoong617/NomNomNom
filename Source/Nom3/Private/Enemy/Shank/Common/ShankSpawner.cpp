@@ -41,7 +41,15 @@ void AShankSpawner::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
+<<<<<<< Updated upstream
 	if (BindPlayerDetectVolume == false)
+=======
+	//이번 에너미 클래스 획득
+	const TSubclassOf<AEnemyActorBase> ThisOrder = StockList[SpawnCounter++];
+	
+	//생크 스폰
+	if (AEnemyActorBase* Spawned = GetWorld()->SpawnActor<AEnemyActorBase>(ThisOrder, SpawnTransform))
+>>>>>>> Stashed changes
 	{
 		BindPlayerDetectVolume = GetWorld()->SpawnActor<APlayerDetectVolume>();
 		BindPlayerDetectVolume->SetActorLocation(GetActorLocation());

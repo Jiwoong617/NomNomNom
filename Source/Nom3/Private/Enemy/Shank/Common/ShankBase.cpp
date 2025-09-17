@@ -12,8 +12,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Nom3/Nom3.h"
 
-AShankBase::AShankBase() :
-	CurrentState(EShankState::Sleep)
+AShankBase::AShankBase()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -84,81 +83,10 @@ void AShankBase::Tick(float DeltaTime)
 	//유효한 상태 머신이 설정되어 있다면
 	if (CurrentStateMachine)
 	{
-		//현재 생크 상태 머신 실행
-		CurrentStateMachine->ExecuteState();
-
 		//목표 방향
 		const FVector TargetDir = (TargetPawn->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 		const FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(TargetDir, GetActorUpVector());
 		MeshSceneComp->SetWorldRotation(TargetRot);
-	}
-}
-
-// void AShankBase::SetCurrentState(const EShankState Value)
-// {
-// 	//다른 상태 머신으로의 전환 요청
-// 	if (CurrentState != Value)
-// 	{
-// 		//임시
-// 		const auto Temp = CurrentStateMachine;
-//
-// 		//상태 전환
-// 		CurrentState = Value;
-//
-// 		//상태 머신 선택
-// 		switch (CurrentState)
-// 		{
-// 		case EShankState::FindPath:
-// 			{
-// 				CurrentStateMachine = FindPathStateMachine;
-// 				break;
-// 			}
-// 		case EShankState::FollowPath:
-// 			{
-// 				CurrentStateMachine = FollowPathStateMachine;
-// 				break;
-// 			}
-// 		case EShankState::ReverseThrust:
-// 			{
-// 				CurrentStateMachine = ReverseThrustStateMachine;
-// 				break;
-// 			}
-// 		case EShankState::Splash:
-// 			{
-// 				CurrentStateMachine = nullptr;
-// 				break;
-// 			}
-// 		default:
-// 			{
-// 				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Not Implemented!"));
-// 			};
-// 		}
-// 		
-// 		//실행 중이던 상태에서 Exit
-// 		if (Temp)
-// 		{
-// 			Temp->ExitState();	
-// 		}
-// 	}
-// }
-
-UShankStateMachineBase* AShankBase::GetCurrentStateMachine() const
-{
-	return CurrentStateMachine;
-}
-
-void AShankBase::ChangeCurrentStateMachine(UShankStateMachineBase* StateMachineToChange)
-{
-	//임시 저장
-	const auto Before = CurrentStateMachine;
-
-	//스테이트 머신 변경
-	CurrentStateMachine = StateMachineToChange;
-
-	//탈출
-	if (Before)
-	{
-		Before->ExitState();	
 	}
 }
 

@@ -22,7 +22,7 @@
 #include "Core/PlayerFpsAnimation.h"
 #include "Core/PlayerUI.h"
 #include "Core/SkillComponent.h"
-#include "Enemy/Core/EnemyBase.h"
+#include "Enemy/Core/EnemyActorBase.h"
 #include "Kismet/GameplayStatics.h"
 
 ANomPlayer::ANomPlayer()
@@ -205,9 +205,28 @@ void ANomPlayer::BeginPlay()
 	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
 	BodyBox->Init(FVector(50, 15, 20), ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
 
+<<<<<<< Updated upstream
 	SightCheck();
 
 	SetActorScale3D(FVector(2));
+=======
+	FTimerHandle SightTimerHandle;
+	GetWorldTimerManager().SetTimer(SightTimerHandle, [this]()
+	{
+		const FVector Start = FpsCameraComp->GetComponentLocation();
+		const FVector End = Start + FpsCameraComp->GetForwardVector() * 10000;
+		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
+		Params.AddIgnoredActor(this);
+		if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_Visibility, Params))
+		{
+			if (const auto Enemy = Cast<AEnemyActorBase>(Hit.GetActor()))
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("OnSight!"));
+				Enemy->OnAimByPlayerSight();
+			}
+		}
+	}, 0.1, true);
+>>>>>>> Stashed changes
 }
 
 bool ANomPlayer::CanJumpInternal_Implementation() const
