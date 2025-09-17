@@ -369,9 +369,16 @@ void ANomPlayer::InteractHold(const FInputActionValue& Value)
 	float HoldDuration = Value.Get<float>();
 	InteractDuration = HoldDuration;
 
-	if (bIsDead && InteractDuration >= 1.f)
+	if (bIsDead)
 	{
-		ReSpawn();
+		PRINTLOG(TEXT("%f"), InteractDuration);
+		PlayerUI->UpdateRespawnBar(InteractDuration);
+		if (InteractDuration >= 1.f)
+		{
+			ReSpawn();
+			InteractDuration = 0.f;
+		}
+		
 		return;
 	}
 	
@@ -894,6 +901,7 @@ void ANomPlayer::ReSpawn()
 	GetCharacterMovement()->StopMovementImmediately();
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	ChangeToFps();
+	PlayerUI->IsPlayerDead(false);
 }
 
 //여기에 데미지 함수 구현
@@ -925,6 +933,7 @@ void ANomPlayer::OnDamaged(FFireInfo Info)
 		UnCrouch();
 
 		MakeTpsRagdoll();
+		PlayerUI->IsPlayerDead(true);
 	}
 }
 
@@ -957,6 +966,7 @@ void ANomPlayer::OnCriticalDamaged(FFireInfo Info)
 		UnCrouch();
 
 		MakeTpsRagdoll();
+		PlayerUI->IsPlayerDead(true);
 	}
 }
 

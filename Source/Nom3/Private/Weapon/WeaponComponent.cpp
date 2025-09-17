@@ -93,9 +93,17 @@ void UWeaponComponent::Init()
 	const FVector AimSocketLocLocal = ParentFrame.InverseTransformPosition(AimSocketLoc);
 	AimCamLoc = AimSocketLocLocal;
 
-	OnChangeWeaponDelegate.Broadcast(0, CurrentWeapon->GetData()->WeaponImg, CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
-	OnChangeWeaponDelegate.Broadcast(1, WeaponList[1]->GetData()->WeaponImg, WeaponList[1]->CurrentAmmo, 0);
-	OnChangeWeaponDelegate.Broadcast(2, WeaponList[2]->GetData()->WeaponImg, WeaponList[2]->CurrentAmmo, 0);
+	// Initialize UI slot mapping (weaponIdx -> slotIdx)
+	WeaponIndexToSlot.SetNum(WeaponList.Num());
+	for (int32 i = 0; i < WeaponList.Num(); ++i)
+		WeaponIndexToSlot[i] = i;
+
+	for (int32 i = 0; i < WeaponList.Num(); ++i)
+	{
+		int32 slot = WeaponIndexToSlot[i];
+		int32 maxAmmo = (i == CurrentWeaponIdx) ? WeaponList[i]->MaxAmmo : 0;
+		OnChangeWeaponDelegate.Broadcast(slot, WeaponList[i]->GetData()->WeaponImg, WeaponList[i]->CurrentAmmo, maxAmmo);
+	}
 }
 
 void UWeaponComponent::FireStart()
@@ -190,13 +198,25 @@ void UWeaponComponent::ChangeWeapon(int32 idx)
 	{
 		return;
 	}
+
+	//바뀐 무기 변경
+	int32 oldCurrentIdx = CurrentWeaponIdx;
+	int32 targetSlot = WeaponIndexToSlot.IsValidIndex(idx) ? WeaponIndexToSlot[idx] : idx;
+	OnChangeWeaponDelegate.Broadcast(targetSlot, CurrentWeapon->GetData()->WeaponImg, CurrentWeapon->CurrentAmmo, 0);
 	
-	OnChangeWeaponDelegate.Broadcast((idx == 0 ? CurrentWeaponIdx : idx), CurrentWeapon->GetData()->WeaponImg, CurrentWeapon->CurrentAmmo, 0);
 	CurrentWeapon->SetActorHiddenInGame(true);
 	CurrentWeaponIdx = idx;
 	CurrentWeapon = WeaponList[idx];
 	WeaponList[idx]->SetActorHiddenInGame(false);
 	OnChangeWeaponDelegate.Broadcast(0, CurrentWeapon->GetData()->WeaponImg, CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
+
+	// UI 슬롯 매핑
+	if (WeaponIndexToSlot.IsValidIndex(oldCurrentIdx) && WeaponIndexToSlot.IsValidIndex(idx))
+	{
+		int32 tmp = WeaponIndexToSlot[oldCurrentIdx];
+		WeaponIndexToSlot[oldCurrentIdx] = WeaponIndexToSlot[idx];
+		WeaponIndexToSlot[idx] = tmp;
+	}
 }
 
 void UWeaponComponent::OnWeaponChanged(int32 idx)

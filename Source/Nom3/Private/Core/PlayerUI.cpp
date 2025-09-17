@@ -3,6 +3,7 @@
 
 #include "Core/PlayerUI.h"
 
+#include "Components/CanvasPanel.h"
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
@@ -62,4 +63,17 @@ void UPlayerUI::UpdateSkill2Cooldown(float cool, float coolTime)
 		else
 			Bar_Skill2->SetPercent(1.f);
 	}
+}
+
+void UPlayerUI::IsPlayerDead(bool isDaed)
+{
+	if (isDaed)
+		Panel_Dead->SetVisibility(ESlateVisibility::Visible);
+	else
+		Panel_Dead->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UPlayerUI::UpdateRespawnBar(float value)
+{
+	Bar_Respawn->SetPercent(value);
 }

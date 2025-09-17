@@ -13,6 +13,6 @@ UDodgeSkill::UDodgeSkill()
 
 void UDodgeSkill::UseSkill()
 {
-	Owner->LaunchCharacter(Owner->GetActorForwardVector() * 1500.f
+	Owner->LaunchCharacter( Owner->GetActorForwardVector() * (1500.f + Owner->GetVelocity().X)
 	+ Owner->GetActorUpVector() * 300, true, true);
 }

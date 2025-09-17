@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "UObject/UnrealTypePrivate.h"
 #include "PlayerUI.generated.h"
 
+class UCanvasPanel;
 class UImage;
 class UProgressBar;
 class UTextBlock;
@@ -33,6 +35,9 @@ protected:
 	UPROPERTY(meta=(BindWidget)) UTextBlock* TEXT_Weapon2Ammo;
 	UPROPERTY(meta=(BindWidget)) UTextBlock* TEXT_Weapon3Ammo;
 
+	UPROPERTY(meta=(BindWidget)) UCanvasPanel* Panel_Dead;
+	UPROPERTY(meta=(BindWidget)) UProgressBar* Bar_Respawn;
+
 	UPROPERTY() TArray<UImage*> WeaponImgs;
 	UPROPERTY() TArray<UTextBlock*> AmmoTexts;
 	
@@ -51,4 +56,9 @@ public:
     void UpdateSkill1Cooldown(float cool, float coolTime);
     UFUNCTION(BlueprintCallable)
     void UpdateSkill2Cooldown(float cool, float coolTime);
+
+	UFUNCTION(BlueprintCallable)
+	void IsPlayerDead(bool isDaed);
+	UFUNCTION()
+	void UpdateRespawnBar(float value);
 };

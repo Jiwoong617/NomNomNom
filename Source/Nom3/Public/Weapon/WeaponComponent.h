@@ -39,12 +39,16 @@ private:
 	ANomPlayer* Owner;
 
 	//Weapon
-	UPROPERTY(EditAnywhere)
-	TArray<AWeaponBase*> WeaponList;
+    UPROPERTY(EditAnywhere)
+    TArray<AWeaponBase*> WeaponList;
 	UPROPERTY(EditAnywhere)
 	int32 CurrentWeaponIdx = 0;
 	UPROPERTY(EditAnywhere)
-	AWeaponBase* CurrentWeapon;
+    AWeaponBase* CurrentWeapon;
+
+    // UI slot mapping for each weapon index (weaponIdx -> current UI slot)
+    UPROPERTY()
+    TArray<int32> WeaponIndexToSlot;
 
 	//Socket Name
 	UPROPERTY(EditAnywhere)
