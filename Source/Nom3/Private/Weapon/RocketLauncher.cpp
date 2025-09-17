@@ -3,6 +3,7 @@
 
 #include "Weapon/RocketLauncher.h"
 
+#include "Weapon/HomingMissile.h"
 #include "Weapon/WeaponData.h"
 
 
@@ -25,6 +26,10 @@ ARocketLauncher::ARocketLauncher()
 		CurrentAmmo = WeaponData->AmmoCount;
 		MaxAmmo = WeaponData->MaxAmmo;
 	}
+
+	ConstructorHelpers::FClassFinder<AHomingMissile> TempMissile(TEXT("/Script/Engine.Blueprint'/Game/BluePrints/Weapons/BP_HomingMissile.BP_HomingMissile_C'"));
+	if (TempMissile.Succeeded())
+		Missile = TempMissile.Class;
 }
 
 // Called when the game starts or when spawned
@@ -38,4 +43,26 @@ void ARocketLauncher::BeginPlay()
 void ARocketLauncher::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ARocketLauncher::AimFire()
+{
+	NoAimFire();
+}
+
+void ARocketLauncher::NoAimFire()
+{
+	GetWorldTimerManager().SetTimer(FireTimer, [this]()
+	{
+		AHomingMissile* mis = GetWorld()->SpawnActor<AHomingMissile>(Missile);
+		FTransform trans = WeaponMeshComp->GetSocketTransform(FireSocketName);
+		mis->InitFire(WeaponData->Damage, trans.GetLocation(), trans.GetRotation().Rotator());
+		
+		FireCounter++;
+		if (FireCounter == 6)
+		{
+			GetWorldTimerManager().ClearTimer(FireTimer);
+			FireCounter = 0;
+		}
+	}, 0.1f, true);
 }
