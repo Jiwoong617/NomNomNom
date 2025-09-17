@@ -43,7 +43,7 @@ public:
 	UPROPERTY(EditAnywhere, Category="Spawning", meta=(ToolTip="랜덤으로 선택될 수 있는 에너미 클래스 리스트"))
 	TArray<TSubclassOf<AEnemyBase>> EnemyList;
 
-	UPROPERTY(VisibleAnywhere, Category="Spawning", meta=(ToolTip="이 스포너가 순서내도 소환할 에너미 클래스 배열. 직접 설정 가능하나 NumOfStock이 채워질 때까지 랜덤 요소로 채워진다."))
+	UPROPERTY(EditAnywhere, Category="Spawning", meta=(ToolTip="이 스포너가 순서내도 소환할 에너미 클래스 배열. 직접 설정 가능하나 NumOfStock이 채워질 때까지 랜덤 요소로 채워진다."))
 	TArray<TSubclassOf<AEnemyBase>> StockList;
 
 	UPROPERTY(VisibleAnywhere)

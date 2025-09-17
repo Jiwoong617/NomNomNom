@@ -47,12 +47,12 @@ AShankBase::AShankBase() :
 	//역추진 상태 머신
 	ReverseThrustStateMachine = CreateDefaultSubobject<UShankReverseThrustStateMachine>(FName("ReverseThrustStateMachine"));
 
-	//나이아가라 이펙트 로드
+	//나이아가라 시스템 로드
 	if (static ConstructorHelpers::FObjectFinder<UNiagaraSystem> Finder(
-		TEXT("/Game/VEffects/Free_Fire/Shared/Particles/NS_Fire_Floor_02_Smoke.NS_Fire_Floor_02_Smoke"));
+		TEXT("/Game/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_06.Niagara_Explosion_06"));
 		Finder.Succeeded())
 	{
-		FireNiagara = Finder.Object;
+		ExplosionNiagara = Finder.Object;
 	}
 	
 	//체력
@@ -218,7 +218,7 @@ void AShankBase::OnShotDown(const FVector ShotDir)
 	DamageDynamicInstance->SetScalarParameterValue(FName("opacity"), 1.0f);
 
 	//스폰
-	UNiagaraFunctionLibrary::SpawnSystemAttached(FireNiagara, GetRootComponent(), FName(""), GetActorLocation(), GetActorRotation(), EAttachLocation::Type::SnapToTarget, true);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionNiagara, GetActorLocation(), GetActorRotation(), FVector(1), true);
 	
 	//10초 뒤에 소멸
 	FTimerHandle DestroyHandle;

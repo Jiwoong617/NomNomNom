@@ -29,17 +29,19 @@ void USelfDestructFinalAssaultStateMachine::ExecuteState()
 		return;
 	}
 
-	//목표를 향해 돌진한다 상공을 목표 위치로 잡는다
+	//목표를 향해 돌진한다
 	OwnerShank->Destination = OwnerShank->TargetPawn->GetActorLocation();
 
+	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("What the Fuck!?"));
+
 	//목표와의 거리에 따라
-	if (const FVector TargetDiff = OwnerShank->Destination - OwnerShank->GetActorLocation();
-		TargetDiff.Length() < 50)
+	if (const FVector TargetDiff = OwnerShank->TargetPawn->GetActorLocation() - OwnerShank->GetActorLocation();
+		TargetDiff.Length() < 750)
 	{
 		//체력이 0이되면 자연스럽게 자폭하며 아무런 상태 머신도 실행되지 않는다
 		OwnerShank->HP = 0;
 	}
-	else if (TargetDiff.Length() >= 500)
+	else if (TargetDiff.Length() >= 1500)
 	{
 		//목표에게 도달할 수 있는 새로운 경로를 찾아낸다
 		OwnerShank->ChangeCurrentStateMachine(OwnerShank->FindPathStateMachine);

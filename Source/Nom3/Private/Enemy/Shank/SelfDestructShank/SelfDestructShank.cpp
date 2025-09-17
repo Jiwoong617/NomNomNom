@@ -44,12 +44,15 @@ void ASelfDestructShank::Tick(float DeltaSeconds)
 	//유효한 상태 머신이 설정되어 있다면
 	if (CurrentStateMachine)
 	{
-		//목표와의 거리가 5m 미만 이라면
-		if (const FVector Diff = TargetPawn->GetActorLocation() - GetActorLocation();
-			Diff.Length() < 500)
+		if (CurrentStateMachine != FinalAssaultStateMachine)
 		{
-			//최종 돌격 상태 머신으로 전환
-			ChangeCurrentStateMachine(FinalAssaultStateMachine);
+			//목표와의 거리가 15m 미만 이라면
+			if (const FVector Diff = TargetPawn->GetActorLocation() - GetActorLocation();
+				Diff.Length() < 1500)
+			{
+				//최종 돌격 상태 머신으로 전환
+				ChangeCurrentStateMachine(FinalAssaultStateMachine);
+			}	
 		}
 	}
 }
@@ -66,7 +69,7 @@ void ASelfDestructShank::OnShotDown(const FVector ShotDir)
 	ActorsToIgnore.Add(this);
 
 	//스피어 트레이스
-	UKismetSystemLibrary::SphereOverlapComponents(GetWorld(), GetActorLocation(), 300,
+	UKismetSystemLibrary::SphereOverlapComponents(GetWorld(), GetActorLocation(), 750,
 		TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType1, ObjType2 }, DamageComp->StaticClass(), ActorsToIgnore, OutComponents);
 
 	//데미지 정보
@@ -80,6 +83,4 @@ void ASelfDestructShank::OnShotDown(const FVector ShotDir)
 			OtherDamageComp->OnDamaged(Info);
 		}
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("SelfDestruct!!!"));
 }

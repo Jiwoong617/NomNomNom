@@ -126,7 +126,7 @@ protected:
 	TObjectPtr<UMaterialInstanceDynamic> DamageDynamicInstance;
 
 	UPROPERTY()
-	TObjectPtr<UNiagaraSystem> FireNiagara;
+	TObjectPtr<UNiagaraSystem> ExplosionNiagara;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void OnShotDown(const FVector ShotDir);
