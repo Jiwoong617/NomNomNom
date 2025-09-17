@@ -1,18 +1,18 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ScoutShankReverseThrustStateMachine.h"
+#include "Enemy/Shank/Common/ShankReverseThrustStateMachine.h"
 
 #include "Enemy/Components/DroneMovementComponent.h"
-#include "Enemy/Shank/ShankBase.h"
+#include "Enemy/Shank/Common/ShankBase.h"
 
-UScoutShankReverseThrustStateMachine::UScoutShankReverseThrustStateMachine()
+UShankReverseThrustStateMachine::UShankReverseThrustStateMachine()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UScoutShankReverseThrustStateMachine::EnterState()
+void UShankReverseThrustStateMachine::EnterState()
 {
 	Super::EnterState();
 
@@ -28,7 +28,7 @@ void UScoutShankReverseThrustStateMachine::EnterState()
 	LimitTimeInState = 0.5;
 }
 
-void UScoutShankReverseThrustStateMachine::ExecuteState()
+void UShankReverseThrustStateMachine::ExecuteState()
 {
 	Super::ExecuteState();
 
@@ -56,19 +56,19 @@ void UScoutShankReverseThrustStateMachine::ExecuteState()
 		{
 			//추진력를 0으로 초기화해줘야 오류가 발생하지 않는다
 			OwnerShank->DroneMoveComp->ThrottleOff();
-		
+
 			//상태 머신 전환
-			OwnerShank->SHANK_STATE = EShankState::FindPath;	
+			OwnerShank->ChangeCurrentStateMachine(OwnerShank->FindPathStateMachine);
 		}
 		else
 		{
 			//상태 머신 전환
-			OwnerShank->SHANK_STATE = EShankState::FollowPath;
+			OwnerShank->ChangeCurrentStateMachine(OwnerShank->FollowPathStateMachine);
 		}
 	}
 }
 
-void UScoutShankReverseThrustStateMachine::ExitState()
+void UShankReverseThrustStateMachine::ExitState()
 {
 	Super::ExitState();
 

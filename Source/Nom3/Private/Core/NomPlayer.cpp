@@ -21,6 +21,7 @@
 #include "Core/PlayerDamageComponent.h"
 #include "Core/PlayerFpsAnimation.h"
 #include "Core/PlayerUI.h"
+#include "Core/SkillComponent.h"
 #include "Enemy/Core/EnemyBase.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -111,8 +112,10 @@ ANomPlayer::ANomPlayer()
 	if (playerui.Succeeded())
 		PlayerUIClass = playerui.Class;
 	
-	//Add Component
-	WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
+    //Add Component
+    WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
+    SkillComp = CreateDefaultSubobject<USkillComponent>("SkillComp");
+	
 	//////////////////////////////Input/////////////////////////////////
 	{
 		ConstructorHelpers::FObjectFinder<UInputMappingContext> TempIMC(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Input/IMC_Player.IMC_Player'"));
@@ -178,24 +181,15 @@ void ANomPlayer::BeginPlay()
 			subsys->AddMappingContext(IMC_NomPlayer, 0);
 		}
 	}
-
-	TArray<USceneComponent*> ChildComps;
-	WeaponListSceneComp->GetChildrenComponents(true, ChildComps);
-	for (USceneComponent* childs : ChildComps)
-	{	
-		if (UChildActorComponent* child = Cast<UChildActorComponent>(childs))
-		{
-            // 무기 부착 시 소켓 위치/회전에 정확히 스냅되도록 처리
-            child->AttachToComponent(
-                GetMesh(),
-                FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld,
-							  EAttachmentRule::KeepWorld, false),
-                TEXT("WeaponSocket"));
-		}
-	}
-	PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
-	WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
-	WeaponComp->OnChangeWeaponDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateEquipedWeaponUI);
+	
+    PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
+    WeaponComp->OnBulletChangeDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateAmmoUI);
+    WeaponComp->OnChangeWeaponDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateEquipedWeaponUI);
+    if (SkillComp && PlayerUI)
+    {
+        SkillComp->DodgeSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill1Cooldown);
+        SkillComp->UltimateSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill2Cooldown);
+    }
 	PlayerUI->AddToViewport();
 	PlayerUI->UpdateHealthUI(Hp, MaxHp);
 	WeaponComp->Init();
@@ -214,6 +208,7 @@ void ANomPlayer::BeginPlay()
 		{
 			if (const auto Enemy = Cast<AEnemyBase>(Hit.GetActor()))
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("OnSight!"));
 				Enemy->OnAimByPlayerSight();
 			}
 		}
@@ -619,7 +614,7 @@ void ANomPlayer::LeftHandEnd()
 
 void ANomPlayer::Skill()
 {
-	if (bIsDead) return;
+    if (bIsDead) return;
 	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
@@ -643,8 +638,11 @@ void ANomPlayer::Skill()
 	if (MovingState == EMovingState::Running)
 		MovingState = EMovingState::Idle;
 
-	ChangeToTps();
+    if (!SkillComp->UseDodgeSkill())
+        return;
 
+    ChangeToTps();
+	
 	//TODO : 몽타쥬로 바꿀 것
 	PRINTINFO();
 	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
@@ -673,7 +671,7 @@ void ANomPlayer::SkillEnd()
 
 void ANomPlayer::UltimateSkill()
 {
-	if (bIsDead) return;
+    if (bIsDead) return;
 	
 	if (ActionState == EActionState::Skill || ActionState == EActionState::ChangeWeapon || ActionState == EActionState::LeftHand)
 		return;
@@ -697,7 +695,11 @@ void ANomPlayer::UltimateSkill()
 	if (MovingState == EMovingState::Running)
 		MovingState = EMovingState::Idle;
 
-	ChangeToTps();
+    if (!SkillComp->UseUltimateSkill())
+        return;
+
+    ChangeToTps();
+	
 	PRINTINFO();
 	//TODO : 몽타쥬로 바꿀 것
 	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
@@ -817,9 +819,32 @@ void ANomPlayer::ChangeToTps()
 	TpsCameraComp->SetActive(true);
 }
 
+void ANomPlayer::MakeTpsRagdoll()
+{
+	if (!TpsMeshComp->GetPhysicsAsset())
+	{
+		PRINTINFO();
+		return;
+	}
+
+	if (!TpsMeshComp->IsSimulatingPhysics())
+	{
+		PrevMeshCollisionProfileName = TpsMeshComp->GetCollisionProfileName();
+		// Detach mesh from capsule to avoid parent influence during ragdoll
+		TpsMeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
+		TpsMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		TpsMeshComp->SetSimulatePhysics(true);
+		TpsMeshComp->SetAllBodiesSimulatePhysics(true);
+		TpsMeshComp->WakeAllRigidBodies();
+	}
+}
+
 //여기에 데미지 함수 구현
 void ANomPlayer::OnDamaged(FFireInfo Info)
 {
+	if (ActionState == EActionState::Skill || Hp <= 0)
+		return;
+	
 	if (Info.TeamInfo == ETeamInfo::Player)
 		Hp -= Info.Damage / 100;
 	else
@@ -842,14 +867,16 @@ void ANomPlayer::OnDamaged(FFireInfo Info)
 		OnAimCanceled();
 		UnCrouch();
 
-		TpsMeshComp->SetSimulatePhysics(true);
-		TpsMeshComp->WakeAllRigidBodies();
+		MakeTpsRagdoll();
 	}
 }
 
 //여기에 크리티컬 데미지 함수 구현
 void ANomPlayer::OnCriticalDamaged(FFireInfo Info)
 {
+	if (ActionState == EActionState::Skill || Hp <= 0)
+		return;
+	
 	if (Info.TeamInfo == ETeamInfo::Player)
 		Hp -= Info.Damage * 2 / 100;
 	else
@@ -872,8 +899,7 @@ void ANomPlayer::OnCriticalDamaged(FFireInfo Info)
 		OnAimCanceled();
 		UnCrouch();
 
-		TpsMeshComp->SetSimulatePhysics(true);
-		TpsMeshComp->WakeAllRigidBodies();
+		MakeTpsRagdoll();
 	}
 }
 

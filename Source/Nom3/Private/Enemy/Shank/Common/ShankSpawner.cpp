@@ -1,12 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ShankSpawner.h"
+#include "Enemy/Shank/Common/ShankSpawner.h"
 #include "Components/ArrowComponent.h"
 #include "Components/SphereComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
 #include "Enemy/Core/PlayerDetectVolume.h"
-#include "Enemy/Shank/ShankBase.h"
-#include "Kismet/GameplayStatics.h"
+#include "Enemy/Shank/Common/ShankBase.h"
 #include "Kismet/KismetMathLibrary.h"
 
 AShankSpawner::AShankSpawner() : NumOfStock(8), SpawnMin(4), SpawnMax(4), LaunchConeAngle(15)

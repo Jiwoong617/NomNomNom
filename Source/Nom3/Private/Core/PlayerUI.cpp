@@ -39,5 +39,27 @@ void UPlayerUI::UpdateEquipedWeaponUI(int32 idx, UTexture2D* img, int32 ammo, in
 
 	//TODO : 버그 있음 고쳐야됨
 	WeaponImgs[idx]->SetBrushFromTexture(img, false);
-	AmmoTexts[idx]->SetText(FText::AsNumber(ammo));
+    AmmoTexts[idx]->SetText(FText::AsNumber(ammo));
+}
+
+void UPlayerUI::UpdateSkill1Cooldown(float cool, float coolTime)
+{
+    if (Bar_Skill1)
+    {
+        if (cool < coolTime)
+            Bar_Skill1->SetPercent(FMath::Clamp(cool / coolTime, 0.f, 1.f));
+        else
+            Bar_Skill1->SetPercent(1.f);
+    }
+}
+
+void UPlayerUI::UpdateSkill2Cooldown(float cool, float coolTime)
+{
+	if (Bar_Skill2)
+	{
+		if (cool < coolTime)
+			Bar_Skill2->SetPercent(FMath::Clamp(cool / coolTime, 0.f, 1.f));
+		else
+			Bar_Skill2->SetPercent(1.f);
+	}
 }

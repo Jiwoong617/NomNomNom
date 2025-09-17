@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "PlayerDetectVolume.generated.h"
 
+//전방 선언
 class USphereComponent;
 class AEnemySpawnerBase;
 

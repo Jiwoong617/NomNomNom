@@ -12,6 +12,7 @@ class UPlayerFpsAnimation;
 class UPlayerUI;
 class UPlayerDamageComponent;
 class UWeaponComponent;
+class USkillComponent;
 class UCameraComponent;
 class USpringArmComponent;
 struct FInputActionValue;
@@ -95,9 +96,11 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* TpsCameraComp;
 	
-	//Components
-	UPROPERTY(EditAnywhere)
-	UWeaponComponent* WeaponComp;
+    //Components
+    UPROPERTY(EditAnywhere)
+    UWeaponComponent* WeaponComp;
+    UPROPERTY(EditAnywhere)
+    USkillComponent* SkillComp;
 	
 	//Inputs
 	UPROPERTY(EditAnywhere)
@@ -222,6 +225,10 @@ protected:
 	//Camera
 	UFUNCTION() void ChangeToFps();
 	UFUNCTION() void ChangeToTps();
+
+	//RagDoll
+	UFUNCTION() void MakeTpsRagdoll();
+	FName PrevMeshCollisionProfileName;
 
 public:
 	UFUNCTION() virtual void OnDamaged(FFireInfo Info) override;

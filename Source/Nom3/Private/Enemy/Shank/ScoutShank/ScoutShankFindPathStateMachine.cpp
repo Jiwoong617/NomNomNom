@@ -1,7 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Shank/ScoutShankFindPathStateMachine.h"
-#include "Enemy/Shank/ShankBase.h"
+#include "Enemy/Shank/ScoutShank/ScoutShankFindPathStateMachine.h"
+
+#include "Enemy/Shank/Common/ShankBase.h"
 
 UScoutShankFindPathStateMachine::UScoutShankFindPathStateMachine()
 {
@@ -47,8 +48,7 @@ void UScoutShankFindPathStateMachine::ExecuteState()
 	//제한 시간 초과
 	if (ElapsedTimeInState > LimitTimeInState)
 	{
-		//상태 머신 전환
-		OwnerShank->SHANK_STATE = EShankState::FollowPath;
+		OwnerShank->ChangeCurrentStateMachine(OwnerShank->FollowPathStateMachine);
 	}
 }
 
@@ -69,7 +69,7 @@ void UScoutShankFindPathStateMachine::DecideTargetLocation() const
 	const FVector RightDir = OwnerShank->TargetPawn->GetActorRightVector();
 	
 	//북극에서 적도를 향해 랜덤 범위만큼
-	FVector RandDir = UpDir.RotateAngleAxis(FMath::RandRange(60, 85), RightDir);
+	FVector RandDir = UpDir.RotateAngleAxis(FMath::RandRange(70, 85), RightDir);
 	
 	//북극축을 기준으로 랜덤 범위만큼 회전
 	RandDir = RandDir.RotateAngleAxis(FMath::RandRange(-180, 180), UpDir);

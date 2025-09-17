@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ShankStateMachineBase.h"
+#include "Enemy/Shank/Common/ShankStateMachineBase.h"
 #include "ScoutShankFindPathStateMachine.generated.h"
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))

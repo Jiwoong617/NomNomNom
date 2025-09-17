@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "ShankSpawner.generated.h"
 
+//전방 선언
 class APlayerDetectVolume;
 class USphereComponent;
 class UArrowComponent;

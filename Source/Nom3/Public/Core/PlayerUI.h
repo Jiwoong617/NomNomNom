@@ -37,12 +37,18 @@ protected:
 	UPROPERTY() TArray<UTextBlock*> AmmoTexts;
 	
 public:
-	UFUNCTION(BlueprintCallable)
-	void UpdateAmmoUI(int32 currentammo, int32 maxammo);
+    UFUNCTION(BlueprintCallable)
+    void UpdateAmmoUI(int32 currentammo, int32 maxammo);
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateHealthUI(float health, float maxhealth);
 
-	UFUNCTION(BlueprintCallable)
-	void UpdateEquipedWeaponUI(int32 idx, UTexture2D* img, int32 ammo, int32 maxammo = 0);
+    UFUNCTION(BlueprintCallable)
+    void UpdateEquipedWeaponUI(int32 idx, UTexture2D* img, int32 ammo, int32 maxammo = 0);
+
+    // 스킬 쿨다운 UI 업데이트(남은시간, 총시간), skill 1 - dodge, skill2 - ult
+    UFUNCTION(BlueprintCallable)
+    void UpdateSkill1Cooldown(float cool, float coolTime);
+    UFUNCTION(BlueprintCallable)
+    void UpdateSkill2Cooldown(float cool, float coolTime);
 };

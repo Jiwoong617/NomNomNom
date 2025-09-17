@@ -6,8 +6,9 @@
 #include "Enemy/Components/FireProjectileComponentBase.h"
 #include "ScoutShankShooterComponent.generated.h"
 
+//전방 선언
+class AProjectileBase;
 class ANomPlayer;
-class AScoutShankProjectile;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class NOM3_API UScoutShankShooterComponent : public UFireProjectileComponentBase
@@ -26,7 +27,7 @@ public:
 
 	//정찰 생크가 발사하는 총탄 클래스
 	UPROPERTY(VisibleAnywhere)
-	TSubclassOf<AScoutShankProjectile> ScoutShankBulletClass;
+	TSubclassOf<AProjectileBase> ScoutShankBulletClass;
 
 	//정찰 생크 발사 사운드
 	UPROPERTY(VisibleAnywhere)

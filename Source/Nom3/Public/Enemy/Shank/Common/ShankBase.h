@@ -9,17 +9,18 @@
 #include "Interfaces/Damagable.h"
 #include "ShankBase.generated.h"
 
-class UNiagaraSystem;
 //전방 선언
+class UShankDamageComponent;
+class UNiagaraSystem;
 class UDamageComponent;
 class UArrowComponent;
 class AScoutShankProjectile;
-class UScoutShankReverseThrustStateMachine;
+class UShankReverseThrustStateMachine;
 class UScoutShankFindPathStateMachine;
 class UShankStateMachineBase;
 class UDroneMovementComponent;
 class USphereComponent;
-class UScoutShankFollowPathStateMachine;
+class UShankFollowPathStateMachine;
 
 UENUM()
 enum class EShankType : uint8
@@ -58,21 +59,25 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComp;
 
+	//데미지 컴포넌트
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UShankDamageComponent> DamageComp;
+
 	//드론 무브 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDroneMovementComponent> DroneMoveComp;
 
 	//경로 탐색 상태 머신
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UScoutShankFindPathStateMachine> FindPathStateMachine;
+	TObjectPtr<UShankStateMachineBase> FindPathStateMachine;
 
 	//경로 추적 상태 머신
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UScoutShankFollowPathStateMachine> CircleStateMachine;
+	TObjectPtr<UShankStateMachineBase> FollowPathStateMachine;
 
 	//역추진 상태 머신
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UScoutShankReverseThrustStateMachine> ReverseThrustStateMachine;
+	TObjectPtr<UShankStateMachineBase> ReverseThrustStateMachine;
 
 	//현재 목표 위치
 	UPROPERTY(VisibleAnywhere)
@@ -86,17 +91,22 @@ public:
 	FTimerHandle EvadeTimerHandle;
 
 	//생크 스테이트 프로퍼티
-	__declspec(property(get=GetCurrentState, put=SetCurrentState)) EShankState SHANK_STATE;
-	FORCEINLINE EShankState GetCurrentState() const { return CurrentState; }
-	void SetCurrentState(const EShankState Value);
+	// __declspec(property(get=GetCurrentState, put=SetCurrentState)) EShankState SHANK_STATE;
+	// FORCEINLINE EShankState GetCurrentState() const { return CurrentState; }
+	// void SetCurrentState(const EShankState Value);
+
+	//생크 스테이트 머신
+	UShankStateMachineBase* GetCurrentStateMachine() const;
+	void ChangeCurrentStateMachine(UShankStateMachineBase* StateMachineToChange);
 
 	//플레이어 시선 노출 인터페이스 구현
 	virtual void OnAimByPlayerSight() override;
 
-	//데미지 인터페이스 구현
+	//일반적인 데미지 인터페이스 구현
 	virtual void OnDamaged(FFireInfo Info) override;
 
 	//크리티컬 데미지 인터페이스 구현
+	virtual void OnCriticalDamaged(FFireInfo Info) override;
 
 protected:
 	virtual void BeginPlay() override;

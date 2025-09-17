@@ -3,7 +3,7 @@
 #include "Enemy/Core/PlayerDetectVolume.h"
 #include "Components/SphereComponent.h"
 #include "Core/NomPlayer.h"
-#include "Enemy/Shank/ShankSpawner.h"
+#include "Enemy/Core/EnemySpawnerBase.h"
 
 APlayerDetectVolume::APlayerDetectVolume()
 {
