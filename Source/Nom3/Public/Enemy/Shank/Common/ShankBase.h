@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "ShankStateMachineBase.h"
 #include "Containers/Queue.h"
-#include "Enemy/Core/EnemyActorBase.h"
+#include "Enemy/Core/EnemyBase.h"
 #include "Interfaces/Damagable.h"
 #include "ShankBase.generated.h"
 
@@ -29,8 +29,18 @@ enum class EShankType : uint8
 	SelfDestructShank = 1 UMETA(DisplayName = "SelfDestructShank"),
 };
 
+UENUM()
+enum class EShankState : uint8
+{
+	Sleep = 0 UMETA(DisplayName = "Sleep"),
+	FindPath = 1 UMETA(DisplayName = "FindPath"),
+	FollowPath = 2 UMETA(DisplayName = "FollowPath"),
+	ReverseThrust = 3 UMETA(DisplayName = "ReverseThrust"),
+	Splash = 4 UMETA(DisplayName = "Splash"),
+};
+
 UCLASS()
-class NOM3_API AShankBase : public AEnemyActorBase
+class NOM3_API AShankBase : public AEnemyBase
 {
 	GENERATED_BODY()
 
@@ -80,6 +90,15 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	FTimerHandle EvadeTimerHandle;
 
+	//생크 스테이트 프로퍼티
+	// __declspec(property(get=GetCurrentState, put=SetCurrentState)) EShankState SHANK_STATE;
+	// FORCEINLINE EShankState GetCurrentState() const { return CurrentState; }
+	// void SetCurrentState(const EShankState Value);
+
+	//생크 스테이트 머신
+	UShankStateMachineBase* GetCurrentStateMachine() const;
+	void ChangeCurrentStateMachine(UShankStateMachineBase* StateMachineToChange);
+
 	//플레이어 시선 노출 인터페이스 구현
 	virtual void OnAimByPlayerSight() override;
 
@@ -93,6 +112,14 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	//현재 상태 열거형 프로퍼티
+	UPROPERTY(VisibleAnywhere)
+	EShankState CurrentState;
+
+	//현재 상태 머신
+	UPROPERTY()
+	UShankStateMachineBase* CurrentStateMachine;
 
 	//다이나믹 머터리얼 인스턴스
 	UPROPERTY()

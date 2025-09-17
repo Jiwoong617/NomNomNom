@@ -8,10 +8,6 @@
 #include "ShankSpawner.generated.h"
 
 //전방 선언
-<<<<<<< Updated upstream
-=======
-class AEnemyActorBase;
->>>>>>> Stashed changes
 class APlayerDetectVolume;
 class USphereComponent;
 class UArrowComponent;
