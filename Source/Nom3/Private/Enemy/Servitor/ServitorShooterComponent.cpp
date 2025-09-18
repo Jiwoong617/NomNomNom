@@ -17,7 +17,7 @@ UServitorShooterComponent::UServitorShooterComponent()
 
 	//정찰 생크 총알 블루프린트 클래스
 	if (static ConstructorHelpers::FClassFinder<AProjectileBase>
-		Finder(TEXT("/Game/Enemies/Shank/BP_ScoutShankBullet.BP_ScoutShankBullet_C"));
+		Finder(TEXT("/Game/Enemies/Drone/Servitor/BP_ServitorBullet.BP_ServitorBullet_C"));
 		Finder.Succeeded())
 	{
 		ServitorBulletClass = Finder.Class;
@@ -25,11 +25,16 @@ UServitorShooterComponent::UServitorShooterComponent()
 
 	//사운드 큐 로드
 	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
-		TEXT("/Game/Asset/ScoutShank/Sound/SC_ScoutShankFireCue.SC_ScoutShankFireCue"));
+		TEXT("/Game/Asset/Boss_Servitor/Sound/SC_ServitorFireCue.SC_ServitorFireCue"));
 		Finder.Succeeded())
 	{
 		ServitorFireSound = Finder.Object;
 	}
+
+	//자동 사격
+	AutoFireRate = 2;
+	AutoFireMin = 1;
+	AutoFireMax = 1;
 }
 
 void UServitorShooterComponent::FireBulletOnce() const

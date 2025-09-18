@@ -18,6 +18,13 @@ protected:
 	//사격 간격 타이머 핸들러
 	FTimerHandle FireIntervalTimerHandle;
 
+	//자동 사격 간격
+	float AutoFireRate;
+
+	//자동 사격 1회 당 총알 범위
+	int32 AutoFireMin;
+	int32 AutoFireMax;
+
 	//사격 카운트
 	UPROPERTY(VisibleAnywhere)
 	int32 FireCount;
@@ -28,7 +35,7 @@ protected:
 	
 public:
 	UFireProjectileComponentBase();
-	
+
 	//자동 사격 활성화
 	UFUNCTION(BlueprintCallable)
 	virtual void ActiveAutoFire();

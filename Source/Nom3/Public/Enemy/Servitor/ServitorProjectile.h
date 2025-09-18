@@ -15,8 +15,11 @@ public:
 	AServitorProjectile();
 
 protected:
-	virtual void BeginPlay() override;
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
-public:
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UStaticMeshComponent> MeshComp;
+
+	UFUNCTION()
+	void Explode();
 };

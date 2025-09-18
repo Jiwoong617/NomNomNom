@@ -9,6 +9,7 @@
 #include "Interfaces/Damagable.h"
 #include "EnemyActorBase.generated.h"
 
+class UWidgetComponent;
 class UStateMachineBase;
 //델리게이트 선언
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChangedEventSignature, int32);
@@ -42,6 +43,10 @@ public:
 	//체력 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UEnemyHealthComponent> HealthComp;
+
+	//체력 등의 스테이터스를 표시하는 위젯 컴포넌트
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UWidgetComponent> StatusWidgetComp;
 
 	//피조준 인터페이스
 	UFUNCTION(BlueprintCallable)

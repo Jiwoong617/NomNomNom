@@ -82,17 +82,37 @@ void ASelfDestructShank::OnShotDown(const FVector ShotDir)
 
 	//스피어 트레이스
 	UKismetSystemLibrary::SphereOverlapComponents(GetWorld(), GetActorLocation(), 750,
-		TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType1, ObjType2 }, CriticalDamageComp->StaticClass(), ActorsToIgnore, OutComponents);
+		TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType1, ObjType2 }, nullptr, ActorsToIgnore, OutComponents);
 
 	//데미지 정보
-	const FFireInfo Info = FFireInfo(2500, GetActorLocation(), ETeamInfo::Enemy, false);
+	const FFireInfo Info = FFireInfo(25000, GetActorLocation(), ETeamInfo::Enemy, false);
+
+	//적중 여부 검색용 맵
+	TMap<AActor*, bool> Map;
 	
-	//데미지 컴포넌트
+	//컴포넌트 중에서
 	for (const auto Component : OutComponents)
 	{
+		//데미지 컴포넌트를 찾는데 성공했다면
 		if (const auto OtherDamageComp = Cast<UDamageComponent>(Component))
 		{
+			//이미 데미지를 적용한 대상이라면 건너뛰기
+			if (Map.Find(OtherDamageComp->GetOwner()) != nullptr)
+			{
+				continue;
+			}
+
+			//몸체가 아니라면 무시한다
+			if (OtherDamageComp->BodyType != EBodyType::Body)
+			{
+				continue;
+			}
+			
+			//데미지 적용
 			OtherDamageComp->OnDamaged(Info);
+
+			//소유자 등록
+			Map.Add(OtherDamageComp->GetOwner());
 		}
 	}
 }
