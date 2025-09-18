@@ -408,9 +408,23 @@
       <change beforePath="$PROJECT_DIR$/../Nom3.sln.DotSettings.user" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Nom3.uproject" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/stoneVex/VexStone.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/stoneVex/VexStone.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/Servitor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/Servitor.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/ServitorAntenna.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/ServitorAntenna.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/ServitorCore.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/ServitorCore.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/ServitorCoreFanRotation.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/ServitorCoreFanRotation.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/ServitorEye.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/ServitorEye.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/ServitorShell.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Boss_Servitor/ServitorShell.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/FX/spark/Enemy_Spark.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/FX/spark/Enemy_Spark.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/FX/spark/Spark.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/FX/spark/Spark.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Factory/TEX/RasputinConcrete02-_dyed.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Factory/TEX/RasputinConcrete02-_dyed.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Factory/computer_room/RasputinTrim09.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Factory/computer_room/RasputinTrim09.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Factory/under/RasputinTrim01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Factory/under/RasputinTrim01.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Factory/under/RasputinTrim02.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Factory/under/RasputinTrim02.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Factory/under/RasputinTrim17.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Factory/under/RasputinTrim17.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Wall/RasputinConcrete02.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Wall/RasputinConcrete02.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrints/MAP_MovingObject/BP_Elevator.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrints/MAP_MovingObject/BP_Elevator.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Maps/LEVELnONE.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/LEVELnONE.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Map/InteractiveButton.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Map/InteractiveButton.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Weapons/GrenadeLauncher/Materials/M_ProjectileBullet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Weapons/GrenadeLauncher/Materials/M_ProjectileBullet.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Source/Nom3.Target.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Source/Nom3/Nom3.Build.cs" beforeDir="false" />
@@ -608,7 +622,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1758178497793</updated>
-      <workItem from="1758178499348" duration="2579000" />
+      <workItem from="1758178499348" duration="4773000" />
     </task>
     <servers />
   </component>
