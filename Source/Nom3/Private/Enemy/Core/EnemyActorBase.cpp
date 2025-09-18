@@ -2,7 +2,9 @@
 
 #include "Enemy/Core/EnemyActorBase.h"
 
+#include "Components/WidgetComponent.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
+#include "Enemy/Core/EnemyStatus.h"
 #include "Enemy/Core/StateMachineBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Enemy/Damage/DamageActorPoolWorldSubsystem.h"
@@ -15,6 +17,17 @@ AEnemyActorBase::AEnemyActorBase()
 
 	//체력 컴포넌트 부착
 	HealthComp = CreateDefaultSubobject<UEnemyHealthComponent>(FName("HealthComp"));
+
+	//위젯 컴포넌트 부착
+	if (static ConstructorHelpers::FClassFinder<UEnemyStatus>
+		Finder(TEXT("/Game/Enemies/Default/WBP_EnemyStatus.WBP_EnemyStatus_C"));
+		Finder.Class)
+	{
+		StatusWidgetComp = CreateDefaultSubobject<UWidgetComponent>(FName("StatusWidgetComp"));
+		StatusWidgetComp->SetWidgetClass(Finder.Class);
+		StatusWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+		StatusWidgetComp->SetDrawSize(FVector2D(150, 10));		
+	}
 }
 
 void AEnemyActorBase::BeginPlay()
@@ -87,6 +100,12 @@ void AEnemyActorBase::OnDamaged(const FFireInfo Info)
 	
 	//자산의 위치에 데미지 액터 풀링
 	DamageActorPool->ShowNormalDamageActor(GetActorLocation(), Damage);
+
+	//체력 비율 업데이트
+	if (const auto StatusWidget = Cast<UEnemyStatus>(StatusWidgetComp->GetWidget()))
+	{
+		StatusWidget->UpdateHPBar(HealthComp->GetHPPercent());
+	}
 }
 
 void AEnemyActorBase::OnCriticalDamaged(const FFireInfo Info)
@@ -105,6 +124,12 @@ void AEnemyActorBase::OnCriticalDamaged(const FFireInfo Info)
 	
 	//자산의 위치에 데미지 액터 풀링
 	DamageActorPool->ShowCriticalDamageActor(GetActorLocation(), Damage);
+
+	//체력 비율 업데이트
+	if (const auto StatusWidget = Cast<UEnemyStatus>(StatusWidgetComp->GetWidget()))
+	{
+		StatusWidget->UpdateHPBar(HealthComp->GetHPPercent());
+	}
 }
 
 FVector AEnemyActorBase::GetPlayerGazeDir() const

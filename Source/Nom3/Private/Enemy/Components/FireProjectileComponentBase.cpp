@@ -5,7 +5,10 @@
 
 UFireProjectileComponentBase::UFireProjectileComponentBase() :
 	ShootRandConeAngle(1),
-	FireCount(0)
+	FireCount(0),
+	AutoFireRate(4),
+	AutoFireMin(1),
+	AutoFireMax(1)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -19,7 +22,7 @@ void UFireProjectileComponentBase::ActiveAutoFire()
 	{
 		//자동 사격 메서드 호출
 		FireBulletMultipleForInnerReq(0.25);
-	}, 4, true);
+	}, AutoFireRate, true);
 }
 
 void UFireProjectileComponentBase::InactiveAutoFire()
@@ -31,7 +34,7 @@ void UFireProjectileComponentBase::InactiveAutoFire()
 void UFireProjectileComponentBase::FireBulletMultipleForInnerReq(const float Delay)
 {
 	//사격 횟수 결정
-	const int Num = FMath::RandRange(1, 5);
+	const int Num = FMath::RandRange(AutoFireMin, AutoFireMax);
 
 	//요청 수행
 	FireBulletMultiple(Num, Delay);

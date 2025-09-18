@@ -11,5 +11,6 @@ UEnemyHealthComponent::UEnemyHealthComponent()
 
 void UEnemyHealthComponent::Init(const int32 HP)
 {
-	Health = HP;
+	MaxHP = HP;
+	CurrentHP = HP;
 }
