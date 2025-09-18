@@ -52,11 +52,14 @@ void ARocketLauncher::AimFire()
 
 void ARocketLauncher::NoAimFire()
 {
+	if (CurrentAmmo <= 0) return;
+	CurrentAmmo--;
+	
 	GetWorldTimerManager().SetTimer(FireTimer, [this]()
 	{
-		AHomingMissile* mis = GetWorld()->SpawnActor<AHomingMissile>(Missile);
 		FTransform trans = WeaponMeshComp->GetSocketTransform(FireSocketName);
-		mis->InitFire(WeaponData->Damage, trans.GetLocation(), trans.GetRotation().Rotator());
+		AHomingMissile* mis = GetWorld()->SpawnActor<AHomingMissile>(Missile, trans);
+		mis->InitFire(WeaponData->Damage, Owner);
 		
 		FireCounter++;
 		if (FireCounter == 6)

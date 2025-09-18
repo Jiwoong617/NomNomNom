@@ -14,13 +14,17 @@
 // Sets default values
 AHomingMissile::AHomingMissile()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	SphereComp = CreateDefaultSubobject<USphereComponent>(FName("SphereComp"));
+	SphereComp->SetCollisionProfileName(FName("Projectile"), true);
+	SetRootComponent(SphereComp);
+
 	PrimaryActorTick.bCanEverTick = true;
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(RootComponent);
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	SphereComp->SetGenerateOverlapEvents(true);
 
+	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMoveComp"));
 	ProjectileMoveComp->MaxSpeed = Speed;
 	ProjectileMoveComp->ProjectileGravityScale = 0.0f;
 	ProjectileMoveComp->bIsHomingProjectile = false;
@@ -36,6 +40,10 @@ void AHomingMissile::BeginPlay()
 
 	FTimerHandle HomingTimer;
 	GetWorldTimerManager().SetTimer(HomingTimer,this, &AHomingMissile::SetHoming, HomingDelay, false);
+	GetWorldTimerManager().SetTimer(CantReachTimer,[this]()
+	{
+		Explode();
+	}, 5.f, false);
 }
 
 // Called every frame
@@ -88,7 +96,7 @@ void AHomingMissile::Explode()
 {
 	EObjectTypeQuery ObjType = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2);
 	TArray<UPrimitiveComponent*> OutComponents;
-	TArray<AActor*> ActorsToIgnore;
+	TArray<AActor*> ActorsToIgnore = {Player};
 
 	if (UKismetSystemLibrary::SphereOverlapComponents(GetWorld(), GetActorLocation(), ExplosionRadius,
 		TArray<TEnumAsByte<EObjectTypeQuery>>{ ObjType }, nullptr, ActorsToIgnore, OutComponents))
@@ -98,12 +106,16 @@ void AHomingMissile::Explode()
 			if (UDamageComponent* DamageComp = Cast<UDamageComponent>(Comp))
 			{
 				float Alpha = FVector::Dist(GetActorLocation(), Comp->GetComponentLocation()) / ExplosionRadius;
-				float Damage = FMath::Lerp(FireInfo.Damage, FireInfo.Damage/2, Alpha);
-				DamageComp->OnDamaged(FFireInfo(Damage, GetActorLocation(), ETeamInfo::Player, false));
+				float dmg = FMath::Lerp(Damage, Damage/2, Alpha);
+				DamageComp->OnDamaged(FFireInfo(dmg, GetActorLocation(), ETeamInfo::Player, false));
 			}
 		}
 	}
 
+	//TODO : 이펙트 넣기
+	DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 12, FColor::Red, false, 2.f, 0, 10);
+
+	GetWorldTimerManager().ClearTimer(CantReachTimer);
 	Destroy();
 }
 
@@ -113,17 +125,9 @@ void AHomingMissile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	Explode();
 }
 
-void AHomingMissile::InitFire(int32 Dmg, FVector Loc, FRotator Rot)
+void AHomingMissile::InitFire(int32 Dmg, AActor* player)
 {
-	FireInfo.Damage = Dmg;
-	FireInfo.ProjectileSpeed = Speed;
-	FireInfo.bIsIgnoreTeam = false;
-	FireInfo.TeamInfo = ETeamInfo::Player;
-	FireInfo.FireLocation = Loc;
-	
-	SetActorLocationAndRotation(Loc, Rot);
-
-	//이동 방향 전환
-	if (ProjectileMoveComp)
-		ProjectileMoveComp->Velocity = FireInfo.ProjectileSpeed * GetActorForwardVector();
+	Damage = Dmg;
+	Player = player;
+	ProjectileMoveComp->Velocity = Speed * GetActorForwardVector();
 }

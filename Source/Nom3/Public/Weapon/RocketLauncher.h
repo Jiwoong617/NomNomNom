@@ -23,7 +23,6 @@ protected:
 
 
 	UPROPERTY(EditAnywhere)
-	class
 	TSubclassOf<AHomingMissile> Missile;
 
 	FTimerHandle FireTimer;

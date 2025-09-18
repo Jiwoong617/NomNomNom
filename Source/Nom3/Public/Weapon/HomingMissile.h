@@ -7,7 +7,7 @@
 #include "HomingMissile.generated.h"
 
 UCLASS()
-class NOM3_API AHomingMissile : public AProjectileBase
+class NOM3_API AHomingMissile : public AActor
 {
 	GENERATED_BODY()
 
@@ -22,13 +22,22 @@ public:
 
 private:
     UPROPERTY(EditAnywhere) UStaticMeshComponent* MeshComp;
+    UPROPERTY(EditAnywhere) USphereComponent* SphereComp;
+    UPROPERTY(EditAnywhere) UProjectileMovementComponent* ProjectileMoveComp;
 
+	FTimerHandle CantReachTimer;
+    
+    UPROPERTY(EditAnywhere)
+    AActor* Player;
+
+    UPROPERTY(EditAnywhere, Category="HomingMissile")
+    int32 Damage;
     UPROPERTY(EditAnywhere, Category="HomingMissile")
     float Speed = 2000.f;
     UPROPERTY(EditAnywhere, Category="HomingMissile")
     float HomingDelay = 0.5f;
     UPROPERTY(EditAnywhere, Category="HomingMissile")
-    float HomingStrength = 5000.f;
+    float HomingStrength = 10000.f;
     UPROPERTY(EditAnywhere, Category="HomingMissile")
     float StraightFlightExplodeDelay = 2.0f;
     UPROPERTY(EditAnywhere, Category="HomingMissile")
@@ -41,5 +50,5 @@ private:
     void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 public:
-    void InitFire(int32 Dmg, FVector Loc, FRotator Rot);
+    void InitFire(int32 Dmg, AActor* player);
 };
