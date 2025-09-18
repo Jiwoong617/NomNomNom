@@ -38,7 +38,6 @@ void UPlayerUI::UpdateEquipedWeaponUI(int32 idx, UTexture2D* img, int32 ammo, in
 	if (maxammo)
 		UpdateAmmoUI(ammo, maxammo);
 
-	//TODO : 버그 있음 고쳐야됨
 	WeaponImgs[idx]->SetBrushFromTexture(img, false);
     AmmoTexts[idx]->SetText(FText::AsNumber(ammo));
 }

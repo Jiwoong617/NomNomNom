@@ -62,7 +62,7 @@ ANomPlayer::ANomPlayer()
 	ConstructorHelpers::FClassFinder<UPlayerFpsAnimation> TempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Fps.ABP_Fps_C'"));
 	if (TempAnim.Succeeded())
 		GetMesh()->SetAnimInstanceClass(TempAnim.Class);
-	ConstructorHelpers::FClassFinder<UPlayerFpsAnimation> TempTpsAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Tps.ABP_Tps_C'"));
+	ConstructorHelpers::FClassFinder<UPlayerTpsAnimation> TempTpsAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Tps.ABP_Tps_C'"));
 	if (TempTpsAnim.Succeeded())
 		TpsMeshComp->SetAnimInstanceClass(TempTpsAnim.Class);
 
@@ -81,6 +81,7 @@ ANomPlayer::ANomPlayer()
 	//TPS Cam Settings
 	TpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("TPS Spring Arm");
 	TpsSpringArmComp->SetupAttachment(RootComponent);
+	TpsSpringArmComp->TargetArmLength = 600.f;
 	TpsSpringArmComp->bUsePawnControlRotation = true;
 	TpsSpringArmComp->SetRelativeLocation(FVector(0, 0, 50));
 	TpsSpringArmComp->SetRelativeRotation(FRotator(-45, 0, 0));
