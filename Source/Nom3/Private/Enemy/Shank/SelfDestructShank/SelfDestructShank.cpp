@@ -3,7 +3,7 @@
 #include "Enemy/Shank/SelfDestructShank/SelfDestructShank.h"
 #include "KismetTraceUtils.h"
 #include "Core/DamageComponent.h"
-#include "Enemy/Shank/Common/ShankDamageComponent.h"
+#include "Enemy/Shank/Common/DroneDamageComponent.h"
 #include "Enemy/Shank/SelfDestructShank/SelfDestructFinalAssaultStateMachine.h"
 #include "Enemy/Shank/SelfDestructShank/SelfDestructFindPathStateMachine.h"
 
@@ -22,6 +22,12 @@ ASelfDestructShank::ASelfDestructShank()
 		SkeletalMeshComp->SetRelativeRotation(FRotator(0, -90, 0));
 	}
 
+	//크리티컬 데미지 컴포넌트
+	CriticalDamageComp = CreateDefaultSubobject<UDroneDamageComponent>(FName("CriticalDamageComp"));
+	CriticalDamageComp->SetRelativeLocation(FVector(0, 0, 110));
+	CriticalDamageComp->SetBoxExtent(FVector(120, 90, 90));
+	CriticalDamageComp->SetupAttachment(SkeletalMeshComp);
+
 	//자폭 생크 전용의 경로 탐색 스테이트 머신 부착
 	FindPathStateMachine = CreateDefaultSubobject<USelfDestructFindPathStateMachine>(FName("FindPathStateMachine"));
 
@@ -34,7 +40,10 @@ void ASelfDestructShank::BeginPlay()
 	Super::BeginPlay();
 
 	//데미지 컴포넌트 초기화
-	DamageComp->Init(ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
+	CriticalDamageComp->Init(ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
+
+	//머터리얼 다이나믹 인스턴스 적용 
+	DamageDynamicInstance = SkeletalMeshComp->CreateDynamicMaterialInstance(9);
 }
 
 void ASelfDestructShank::Tick(float DeltaSeconds)
@@ -61,6 +70,9 @@ void ASelfDestructShank::OnShotDown(const FVector ShotDir)
 {
 	Super::OnShotDown(ShotDir);
 
+	//다이나믹 머터리얼 인스턴스
+	DamageDynamicInstance->SetScalarParameterValue(FName("Opacity"), 0);
+
 	//패러미터
 	const EObjectTypeQuery ObjType1 = UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel1);
 	const EObjectTypeQuery ObjType2 = UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel2);
@@ -70,7 +82,7 @@ void ASelfDestructShank::OnShotDown(const FVector ShotDir)
 
 	//스피어 트레이스
 	UKismetSystemLibrary::SphereOverlapComponents(GetWorld(), GetActorLocation(), 750,
-		TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType1, ObjType2 }, DamageComp->StaticClass(), ActorsToIgnore, OutComponents);
+		TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType1, ObjType2 }, CriticalDamageComp->StaticClass(), ActorsToIgnore, OutComponents);
 
 	//데미지 정보
 	const FFireInfo Info = FFireInfo(2500, GetActorLocation(), ETeamInfo::Enemy, false);

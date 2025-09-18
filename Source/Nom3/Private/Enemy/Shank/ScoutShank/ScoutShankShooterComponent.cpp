@@ -6,14 +6,6 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Enemy/Core/ProjectileBase.h"
 
-void UScoutShankShooterComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	//플레이어 캐릭터 획득
-	PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-}
-
 UScoutShankShooterComponent::UScoutShankShooterComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -35,6 +27,14 @@ UScoutShankShooterComponent::UScoutShankShooterComponent()
 	{
 		ScoutFireSound = Finder.Object;
 	}
+}
+
+void UScoutShankShooterComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//플레이어 캐릭터 획득
+	PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
 }
 
 void UScoutShankShooterComponent::FireBulletOnce() const

@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Enemy/Shank/Common/ShankStateMachineBase.h"
+#include "Enemy/Shank/Common/DroneStateMachineBase.h"
 #include "SelfDestructFindPathStateMachine.generated.h"
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class NOM3_API USelfDestructFindPathStateMachine : public UShankStateMachineBase
+class NOM3_API USelfDestructFindPathStateMachine : public UDroneStateMachineBase
 {
 	GENERATED_BODY()
 

@@ -13,11 +13,114 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="DpaMonitoringSettings">
+    <option name="firstShow" value="false" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Private/Math/UnrealMath.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/Math/Vector.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/Engine/GameInstance.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Public/Materials/MaterialExpressionTime.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Public/Subsystems/SubsystemCollection.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Nom3.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/ProjectileBase.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Interfaces/OnAimByPlayerSight.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/Servitor.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorPathFindStateMachine.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorProjectile.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorShooterComponent.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/SelfDestructShank/SelfDestructShank.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/ProjectileBase.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Interfaces/OnAimByPlayerSight.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/Servitor.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/ServitorPathFindStateMachine.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/ServitorProjectile.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/ServitorShooterComponent.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Shank/SelfDestructShank/SelfDestructShank.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Interfaces/CriticalDamagable.h" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Uproject.이름이 지정되지 않았습니다.executor": "Run",
     "node.js.selected.package.tslint": "(autodetect)"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="이름이 지정되지 않았습니다" type="Uproject" factoryName="rider.uproject" nameIsGenerated="true">
+      <configuration_1 setup="1">
+        <option name="CONFIGURATION" value="DebugGame Editor" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor-Win64-DebugGame.exe" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\Unreal Projects\NomNomNom\Nom3.uproject&quot;" />
+        <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+        <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="1" />
+        <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Nom3.uproject" />
+      </configuration_1>
+      <configuration_2 setup="1">
+        <option name="CONFIGURATION" value="DebugGame" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/Binaries/Win64/Nom3-Win64-DebugGame.exe" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
+        <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+        <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="1" />
+        <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Nom3.uproject" />
+      </configuration_2>
+      <configuration_3 setup="1">
+        <option name="CONFIGURATION" value="Development Editor" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor.exe" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\Unreal Projects\NomNomNom\Nom3.uproject&quot;" />
+        <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+        <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="1" />
+        <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Nom3.uproject" />
+      </configuration_3>
+      <configuration_4 setup="1">
+        <option name="CONFIGURATION" value="Development" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/Binaries/Win64/Nom3.exe" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
+        <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+        <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="1" />
+        <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Nom3.uproject" />
+      </configuration_4>
+      <configuration_5 setup="1">
+        <option name="CONFIGURATION" value="Shipping" />
+        <option name="PLATFORM" value="Win64" />
+        <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
+        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/Binaries/Win64/Nom3-Win64-Shipping.exe" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
+        <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
+        <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
+        <option name="PASS_PARENT_ENVS" value="1" />
+        <option name="USE_EXTERNAL_CONSOLE" value="1" />
+        <option name="TERMINAL_INTERACTION_BEHAVIOR" value="FORCE_CONSOLE" />
+        <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Nom3.uproject" />
+      </configuration_5>
+      <option name="DEFAULT_PROJECT_PATH" value="$PROJECT_DIR$/Nom3.uproject" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Nom3.uproject" />
+      <option name="AUTO_SELECT_PRIORITY" value="10010" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+  </component>
   <component name="TaskManager">
     <servers />
   </component>

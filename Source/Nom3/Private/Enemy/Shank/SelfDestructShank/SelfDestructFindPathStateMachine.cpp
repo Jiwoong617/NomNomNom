@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy/Shank/SelfDestructShank/SelfDestructFindPathStateMachine.h"
-#include "Enemy/Shank/Common/ShankBase.h"
+#include "Enemy/Shank/Common/DroneBase.h"
 
 USelfDestructFindPathStateMachine::USelfDestructFindPathStateMachine()
 {
@@ -14,7 +14,7 @@ void USelfDestructFindPathStateMachine::EnterState()
 {
 	Super::EnterState();
 
-	if (OwnerShank == false)
+	if (OwnerDrone == false)
 	{
 		return;
 	}
@@ -33,7 +33,7 @@ void USelfDestructFindPathStateMachine::ExecuteState()
 {
 	Super::ExecuteState();
 
-	if (OwnerShank == false)
+	if (OwnerDrone == false)
 	{
 		return;
 	}
@@ -41,7 +41,7 @@ void USelfDestructFindPathStateMachine::ExecuteState()
 	//제한 시간 초과
 	if (ElapsedTimeInState > LimitTimeInState)
 	{
-		OwnerShank->ChangeCurrentStateMachine(OwnerShank->FollowPathStateMachine);
+		OwnerDrone->ChangeCurrentStateMachine(OwnerDrone->FollowPathStateMachine);
 	}
 }
 
@@ -49,7 +49,7 @@ void USelfDestructFindPathStateMachine::ExitState()
 {
 	Super::ExitState();
 	
-	if (OwnerShank == false)
+	if (OwnerDrone == false)
 	{
 		return;
 	}
@@ -58,23 +58,23 @@ void USelfDestructFindPathStateMachine::ExitState()
 void USelfDestructFindPathStateMachine::DecideTargetLocation() const
 {
 	//목표의 방향 요소 벡터
-	const FVector UpDir = OwnerShank->TargetPawn->GetActorUpVector();
+	const FVector UpDir = OwnerDrone->TargetPawn->GetActorUpVector();
 
 	//목표의 2m 상공을 목표 위치로 잡는다
-	OwnerShank->Destination = OwnerShank->TargetPawn->GetActorLocation() + UpDir * 200;
+	OwnerDrone->Destination = OwnerDrone->TargetPawn->GetActorLocation() + UpDir * 200;
 }
 
 void USelfDestructFindPathStateMachine::CalculatePaths() const
 {
 	//경로 배열을 비운다
-	OwnerShank->PathQueue.Empty();
+	OwnerDrone->PathQueue.Empty();
 
 	//시작 위치와 목표 위치
-	const FVector StartLocation = OwnerShank->GetActorLocation();
-	const FVector TargetLocation = OwnerShank->Destination;
+	const FVector StartLocation = OwnerDrone->GetActorLocation();
+	const FVector TargetLocation = OwnerDrone->Destination;
 
 	//시선 방향에 우측 벡터
-	const FVector GazeRightDir = OwnerShank->GetPlayerGazeRightDir();
+	const FVector GazeRightDir = OwnerDrone->GetPlayerGazeRightDir();
 
 	//세그먼트 개수
 	constexpr int32 NumSegments = 3;
@@ -96,12 +96,12 @@ void USelfDestructFindPathStateMachine::CalculatePaths() const
 		IntermediatePoint += GazeRightDir * RandomOffset;
 
 		//중간 경로 삽입
-		OwnerShank->PathQueue.Enqueue(IntermediatePoint);
+		OwnerDrone->PathQueue.Enqueue(IntermediatePoint);
 		DebugDrawPointArray.Add(IntermediatePoint);
 	}
 
 	//최종 목표 삽입
-	OwnerShank->PathQueue.Enqueue(TargetLocation);
+	OwnerDrone->PathQueue.Enqueue(TargetLocation);
 	DebugDrawPointArray.Add(TargetLocation);
 
 	//목표까지 가는 경로 디버그 드로우
