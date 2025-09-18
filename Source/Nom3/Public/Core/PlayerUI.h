@@ -51,11 +51,13 @@ public:
     UFUNCTION(BlueprintCallable)
     void UpdateEquipedWeaponUI(int32 idx, UTexture2D* img, int32 ammo, int32 maxammo = 0);
 
-    // 스킬 쿨다운 UI 업데이트(남은시간, 총시간), skill 1 - dodge, skill2 - ult
+    // 스킬 쿨다운 UI 업데이트(남은시간, 총시간), skill1 - throw, skill2 - dodge, skill3 - ult
     UFUNCTION(BlueprintCallable)
     void UpdateSkill1Cooldown(float cool, float coolTime);
     UFUNCTION(BlueprintCallable)
     void UpdateSkill2Cooldown(float cool, float coolTime);
+    UFUNCTION(BlueprintCallable)
+    void UpdateSkill3Cooldown(float cool, float coolTime);
 
 	UFUNCTION(BlueprintCallable)
 	void IsPlayerDead(bool isDaed);

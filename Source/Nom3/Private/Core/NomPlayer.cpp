@@ -195,8 +195,9 @@ void ANomPlayer::BeginPlay()
     WeaponComp->OnChangeWeaponDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateEquipedWeaponUI);
     if (SkillComp && PlayerUI)
     {
-        SkillComp->DodgeSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill1Cooldown);
-        SkillComp->UltimateSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill2Cooldown);
+        SkillComp->ThrowSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill1Cooldown);
+        SkillComp->DodgeSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill2Cooldown);
+        SkillComp->UltimateSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill3Cooldown);
     }
     PlayerUI->AddToViewport();
     PlayerUI->UpdateHealthUI(Hp, MaxHp);

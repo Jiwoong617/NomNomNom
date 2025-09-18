@@ -65,6 +65,17 @@ void UPlayerUI::UpdateSkill2Cooldown(float cool, float coolTime)
 	}
 }
 
+void UPlayerUI::UpdateSkill3Cooldown(float cool, float coolTime)
+{
+	if (Bar_Skill3)
+	{
+		if (cool < coolTime)
+			Bar_Skill3->SetPercent(FMath::Clamp(cool / coolTime, 0.f, 1.f));
+		else
+			Bar_Skill3->SetPercent(1.f);
+	}
+}
+
 void UPlayerUI::IsPlayerDead(bool isDaed)
 {
 	if (isDaed)

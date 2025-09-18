@@ -33,17 +33,21 @@ private:
 	UPROPERTY(EditAnywhere)
 	ANomPlayer* Owner;
 	
+    UPROPERTY(EditAnywhere, Instanced) USkillBase* ThrowSkill;
     UPROPERTY(EditAnywhere, Instanced) USkillBase* DodgeSkill;
     UPROPERTY(EditAnywhere, Instanced) USkillBase* UltimateSkill;
 
+	float ThrowCoolDown;
     float DodgeCooldown = 0.f;
     float UltimateCooldown = 0.f;
 	
 public:
+    FOnSkillCoolDownDelegate ThrowSkillCoolDownDelegate;
     FOnSkillCoolDownDelegate DodgeSkillCoolDownDelegate;
     FOnSkillCoolDownDelegate UltimateSkillCoolDownDelegate;
 
     // 스킬 사용 시도: 시작되면 true, 쿨중이면 false
+    bool UseThrowSkill();
     bool UseDodgeSkill();
     bool UseUltimateSkill();
 };
