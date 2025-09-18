@@ -5,8 +5,9 @@
  #include "Components/BoxComponent.h"
  #include "Map/TwoButtonDoor.h"
  #include "Core/NomPlayer.h"
+#include "Nom3/Nom3.h"
 
- AInteractiveButton::AInteractiveButton()
+AInteractiveButton::AInteractiveButton()
  {
  	PrimaryActorTick.bCanEverTick = false;
 
@@ -29,6 +30,7 @@ OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
  	if (PlayerCharacter && TargetDoor)
  	{
  		TargetDoor->ActivateButton(this);
+ 		PRINTLOG(TEXT("활성화"))
  	}
  }
 
