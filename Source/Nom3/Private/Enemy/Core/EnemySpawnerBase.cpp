@@ -3,7 +3,7 @@
 #include "Enemy/Core/EnemySpawnerBase.h"
 
 #include "Components/ArrowComponent.h"
-#include "Enemy/Core/EnemyBase.h"
+#include "Enemy/Core/EnemyActorBase.h"
 #include "Enemy/Core/PlayerDetectVolume.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Nom3/Nom3.h"
@@ -35,7 +35,7 @@ void AEnemySpawnerBase::BeginPlay()
 	//비어 있는 만큼 채워 넣기
 	for (int32 i = StockList.Num(); i < NumOfStock; i++)
 	{
-		TSubclassOf<AEnemyBase> Selected = nullptr;
+		TSubclassOf<AEnemyActorBase> Selected = nullptr;
 
 		//메뉴가 1개라도 있다면
 		if (EnemyList.Num() > 0)

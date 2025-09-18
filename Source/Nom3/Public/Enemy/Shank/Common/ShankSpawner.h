@@ -8,7 +8,7 @@
 #include "ShankSpawner.generated.h"
 
 //전방 선언
-class AEnemyBase;
+class AEnemyActorBase;
 class APlayerDetectVolume;
 class USphereComponent;
 class UArrowComponent;

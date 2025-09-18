@@ -44,10 +44,10 @@ void AShankSpawner::SpawnSpecific(const FTransform& SpawnTransform)
 	Super::SpawnSpecific(SpawnTransform);
 
 	//이번 에너미 클래스 획득
-	const TSubclassOf<AEnemyBase> ThisOrder = StockList[SpawnCounter++];
+	const TSubclassOf<AEnemyActorBase> ThisOrder = StockList[SpawnCounter++];
 	
 	//생크 스폰
-	if (AEnemyBase* Spawned = GetWorld()->SpawnActor<AEnemyBase>(ThisOrder, SpawnTransform))
+	if (AEnemyActorBase* Spawned = GetWorld()->SpawnActor<AEnemyActorBase>(ThisOrder, SpawnTransform))
 	{
 		if (const AShankBase* SpawnedShank = Cast<AShankBase>(Spawned))
 		{

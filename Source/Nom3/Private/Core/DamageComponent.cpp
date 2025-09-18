@@ -3,7 +3,7 @@
 #include "Core/DamageComponent.h"
 
 #include "Core/NomPlayer.h"
-#include "Enemy/Core/EnemyBase.h"
+#include "Enemy/Core/EnemyActorBase.h"
 #include "Enemy/Core/ProjectileBase.h"
 #include "Interfaces/Damagable.h"
 

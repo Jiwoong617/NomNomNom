@@ -1,6 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy/Shank/SelfDestructShank/SelfDestructFinalAssaultStateMachine.h"
+#include "Enemy/Core/EnemyHealthComponent.h"
 #include "Enemy/Shank/Common/ShankBase.h"
 
 USelfDestructFinalAssaultStateMachine::USelfDestructFinalAssaultStateMachine()
@@ -39,7 +40,7 @@ void USelfDestructFinalAssaultStateMachine::ExecuteState()
 		TargetDiff.Length() < 750)
 	{
 		//체력이 0이되면 자연스럽게 자폭하며 아무런 상태 머신도 실행되지 않는다
-		OwnerShank->HP = 0;
+		OwnerShank->HealthComp->HP = 0;
 	}
 	else if (TargetDiff.Length() >= 1500)
 	{
