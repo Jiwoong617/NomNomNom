@@ -32,7 +32,7 @@ void USkillComponent::BeginPlay()
             ThrowSkill = NewObject<UThrowSkill>(this);
             ThrowSkill->SetOwner(Owner);
             ThrowCoolDown = ThrowSkill->GetCoolTime();
-        }        
+        }
         if (!DodgeSkill)
         {
             DodgeSkill = NewObject<UDodgeSkill>(this);

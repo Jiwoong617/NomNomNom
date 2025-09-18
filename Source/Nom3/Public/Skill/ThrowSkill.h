@@ -15,5 +15,6 @@ class NOM3_API UThrowSkill : public USkillBase
 	GENERATED_BODY()
 
 public:
+	UThrowSkill();
 	virtual void UseSkill() override;
 };

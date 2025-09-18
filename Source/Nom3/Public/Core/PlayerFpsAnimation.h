@@ -45,5 +45,5 @@ public:
 
 public:
 	UFUNCTION()
-	void PlayGunshotAnim(UAnimMontage* Montage);
+	void PlayFpsAnim(UAnimMontage* Montage);
 };

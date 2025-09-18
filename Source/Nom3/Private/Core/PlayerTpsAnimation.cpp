@@ -18,5 +18,5 @@ void UPlayerTpsAnimation::NativeInitializeAnimation()
 
 void UPlayerTpsAnimation::PlaySkillAnim(UAnimMontage* montage)
 {
-	
+	Montage_Play(montage);
 }

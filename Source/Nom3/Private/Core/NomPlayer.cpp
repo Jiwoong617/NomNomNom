@@ -20,6 +20,7 @@
 #include "Weapon/WeaponData.h"
 #include "Core/PlayerDamageComponent.h"
 #include "Core/PlayerFpsAnimation.h"
+#include "Core/PlayerTpsAnimation.h"
 #include "Core/PlayerUI.h"
 #include "Core/SkillComponent.h"
 #include "Enemy/Core/EnemyBase.h"
@@ -43,15 +44,11 @@ ANomPlayer::ANomPlayer()
 		GetMesh()->SetOnlyOwnerSee(true);
 		GetMesh()->SetupAttachment(RootComponent);
 	}
-	ConstructorHelpers::FClassFinder<UPlayerFpsAnimation> TempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Fps.ABP_Fps_C'"));
-	if (TempAnim.Succeeded())
-		GetMesh()->SetAnimInstanceClass(TempAnim.Class);
-
 
 	//TPS Mesh
 	TpsMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("TPS Mesh"));
 	TpsMeshComp->SetupAttachment(GetRootComponent());
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempTpsMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempTpsMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Character/NomPlayer.NomPlayer'"));
 	if (TempTpsMesh.Succeeded())
 	{
 		TpsMeshComp->SetSkeletalMesh(TempTpsMesh.Object);
@@ -60,6 +57,14 @@ ANomPlayer::ANomPlayer()
 	
 		TpsMeshComp->SetOwnerNoSee(true);
 	}
+
+
+	ConstructorHelpers::FClassFinder<UPlayerFpsAnimation> TempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Fps.ABP_Fps_C'"));
+	if (TempAnim.Succeeded())
+		GetMesh()->SetAnimInstanceClass(TempAnim.Class);
+	ConstructorHelpers::FClassFinder<UPlayerFpsAnimation> TempTpsAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Tps.ABP_Tps_C'"));
+	if (TempTpsAnim.Succeeded())
+		TpsMeshComp->SetAnimInstanceClass(TempTpsAnim.Class);
 
 	
 	//FPS Cam Settings
@@ -188,6 +193,7 @@ void ANomPlayer::BeginPlay()
 
 	//Anim
 	FpsAnimation = Cast<UPlayerFpsAnimation>(GetMesh()->GetAnimInstance());
+	TpsAnimation = Cast<UPlayerTpsAnimation>(TpsMeshComp->GetAnimInstance());
 	
 	
     PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
@@ -553,10 +559,11 @@ void ANomPlayer::Melee()
 	}
 	
 	//TODO : 몽타쥬로 바꿀 것
+	FTimerHandle LeftHandHandle;
 	PRINTINFO();
 	GetWorldTimerManager().SetTimer(LeftHandHandle, [this]()
 	{
-		LeftHandEnd();
+		LeftHandEnd(nullptr, false);
 	}, 1.f, false);
 }
 
@@ -582,19 +589,11 @@ void ANomPlayer::Throw()
 		MovingState = EMovingState::Idle;
 
 	ActionState = EActionState::LeftHand;
-	//TODO : 몽타쥬로 바꿀 것
-	GetWorld()->SpawnActor<AGrenade>(AGrenade::StaticClass()
-		, GetFpsCam()->GetComponentLocation() + GetFpsCam()->GetRightVector() * -30
-		, FRotator(0))
-		->Init(GetFpsCam()->GetForwardVector(), 1000 + GetVelocity().X);
-	PRINTINFO();
-	GetWorldTimerManager().SetTimer(LeftHandHandle, [this]()
-	{
-		LeftHandEnd();
-	}, 1.f, false);
+	
+	SkillComp->UseThrowSkill();
 }
 
-void ANomPlayer::LeftHandEnd()
+void ANomPlayer::LeftHandEnd(UAnimMontage* Montage, bool bInterrupted)
 {
 	ActionState = EActionState::Idle;
 	if (bIsHoldFire)
@@ -641,31 +640,7 @@ void ANomPlayer::Skill()
         return;
 
     ChangeToTps();
-	
-	//TODO : 몽타쥬로 바꿀 것
-	PRINTINFO();
-	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
-	{
-		SkillEnd();
-	}, 1.f, false);
-}
-
-void ANomPlayer::SkillEnd()
-{
-	ActionState = EActionState::Idle;
-	ChangeToFps();
-	if (bIsHoldFire)
-	{
-		ActionState = EActionState::Firing;
-		bIsHoldFire = false;
-		WeaponComp->FireStart();
-	}
-	if (bIsHoldAim)
-	{
-		bIsAiming = true;
-		bIsHoldAim = false;
-		WeaponComp->AimStart();
-	}
+	SkillComp->UseDodgeSkill();
 }
 
 void ANomPlayer::UltimateSkill()
@@ -700,14 +675,15 @@ void ANomPlayer::UltimateSkill()
     ChangeToTps();
 	
 	PRINTINFO();
+	FTimerHandle SkillHandle;
 	//TODO : 몽타쥬로 바꿀 것
 	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
 	{
-		UltimateSkillEnd();
+		SkillEnd(nullptr, false);
 	}, 1.f, false);
 }
 
-void ANomPlayer::UltimateSkillEnd()
+void ANomPlayer::SkillEnd(UAnimMontage* Montage, bool bInterrupted)
 {
 	ActionState = EActionState::Idle;
 	ChangeToFps();
@@ -984,5 +960,29 @@ const EMovingState& ANomPlayer::GetMovingState() const
 
 void ANomPlayer::PlayGunshotAnim(UAnimMontage* Montage)
 {
-	FpsAnimation->PlayGunshotAnim(Montage);
+	FpsAnimation->PlayFpsAnim(Montage);
+}
+
+void ANomPlayer::PlayFPSAnim(UAnimMontage* Montage)
+{
+	if (FpsAnimation)
+	{
+		FOnMontageEnded MontageEndedDelegate;
+		MontageEndedDelegate.BindUObject(this, &ANomPlayer::LeftHandEnd);
+
+		FpsAnimation->PlayFpsAnim(Montage);
+		FpsAnimation->Montage_SetEndDelegate(MontageEndedDelegate, Montage);
+	}
+}
+
+void ANomPlayer::PlayTPSAnim(UAnimMontage* Montage)
+{
+	if (TpsAnimation)
+	{
+		FOnMontageEnded MontageEndedDelegate;
+		MontageEndedDelegate.BindUObject(this, &ANomPlayer::SkillEnd);
+
+		TpsAnimation->PlaySkillAnim(Montage);
+		TpsAnimation->Montage_SetEndDelegate(MontageEndedDelegate, Montage);
+	}
 }

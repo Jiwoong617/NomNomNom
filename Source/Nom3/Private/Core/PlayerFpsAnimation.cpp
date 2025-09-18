@@ -33,7 +33,7 @@ void UPlayerFpsAnimation::NativeUpdateAnimation(float DeltaSeconds)
 	}
 }
 
-void UPlayerFpsAnimation::PlayGunshotAnim(UAnimMontage* Montage)
+void UPlayerFpsAnimation::PlayFpsAnim(UAnimMontage* Montage)
 {
 	Montage_Play(Montage);
 }
