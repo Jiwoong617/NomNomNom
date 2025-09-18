@@ -77,7 +77,7 @@ void AGrenade::OnExplode()
 	TArray<AActor*> ActorsToIgnore;
 	
 	if (UKismetSystemLibrary::SphereOverlapComponents(GetWorld(), GetActorLocation(), ExplodeRadius,
-		TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType}, nullptr, ActorsToIgnore, OutActors))
+		TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType }, nullptr, ActorsToIgnore, OutActors))
 	{
 		for (UPrimitiveComponent* comp : OutActors)
 		{

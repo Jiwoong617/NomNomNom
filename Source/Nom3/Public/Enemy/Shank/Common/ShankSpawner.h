@@ -8,6 +8,7 @@
 #include "ShankSpawner.generated.h"
 
 //전방 선언
+class AEnemyActorBase;
 class APlayerDetectVolume;
 class USphereComponent;
 class UArrowComponent;
@@ -23,44 +24,6 @@ public:
 
 	virtual void OnDetectPlayerPawn() override;
 
-	virtual void OnConstruction(const FTransform& Transform) override;
-
 protected:
-	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditAnywhere)
-	int32 NumOfStock;
-
-	UPROPERTY(VisibleAnywhere, Category="Spawning")
-	TObjectPtr<UArrowComponent> LaunchDirection;
-
-	UPROPERTY(EditAnywhere, Category="Spawning")
-	TSubclassOf<AShankBase> ScoutShankClass;
-
-	UPROPERTY(EditAnywhere, Category="Spawning")
-	TSubclassOf<AShankBase> SelfDestructShankClass;
-
-	UPROPERTY(EditAnywhere, Category="Spawning")
-	TObjectPtr<APlayerDetectVolume> BindPlayerDetectVolume;
-	
-	UPROPERTY()
-	FTimerHandle SpawnTimerHandle;
-
-	UPROPERTY(EditAnywhere, Category="Spawning")
-	float SpawnRate;
-
-	UPROPERTY(EditAnywhere, Category="Spawning")
-	int32 SpawnMin;
-
-	UPROPERTY(EditAnywhere, Category="Spawning")
-	int32 SpawnMax;
-
-	UFUNCTION()
-	void SpawnShank();
-
-	UPROPERTY(EditAnywhere, Category="Spawning")
-	float LaunchConeAngle;
-
-	UFUNCTION()
-	void LaunchShanks(int32 Count);
+	virtual void SpawnSpecific(const FTransform& SpawnTransform) override;
 };

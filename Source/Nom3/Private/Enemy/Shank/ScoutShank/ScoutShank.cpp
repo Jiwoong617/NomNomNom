@@ -41,7 +41,7 @@ void AScoutShank::BeginPlay()
 	ShooterComp->ActiveAutoFire();
 
 	//데미지 컴포넌트 초기화
-	DamageComp->Init(ECC_EngineTraceChannel1, FName("Body"), EBodyType::Body);
+	DamageComp->Init(ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
 }
 
 void AScoutShank::OnAimByPlayerSight()
@@ -130,10 +130,10 @@ void AScoutShank::OnAimByPlayerSight()
 	DroneMoveComp->VectorThrust(RandDir);
 
 	//목표 지점 변경
-	TargetLocation = GetActorLocation() + RandDir * 800;
+	Destination = GetActorLocation() + RandDir * 800;
 
 	//디버그 라인
-	DrawDebugLine(GetWorld(), GetActorLocation(), TargetLocation, FColor::Magenta, false, 3, 0, 0);
+	DrawDebugLine(GetWorld(), GetActorLocation(), Destination, FColor::Magenta, false, 3, 0, 0);
 
 	//타이밍
 	const float Timing = FMath::RandRange(4, 6);

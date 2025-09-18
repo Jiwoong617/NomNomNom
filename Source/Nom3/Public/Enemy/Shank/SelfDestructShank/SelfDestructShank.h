@@ -12,14 +12,16 @@ class NOM3_API ASelfDestructShank : public AShankBase
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	ASelfDestructShank();
 
-protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void OnShotDown(const FVector ShotDir) override;
+
+protected:
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UShankStateMachineBase> FinalAssaultStateMachine;
+	
 };
