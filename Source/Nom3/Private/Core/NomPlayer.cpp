@@ -110,6 +110,10 @@ ANomPlayer::ANomPlayer()
 	BodyBox = CreateDefaultSubobject<UPlayerDamageComponent>("BodyBox");
 	BodyBox->SetupAttachment(GetMesh(), TEXT("BodySocket"));
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> tempPunch(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/Skill/punching_Anim_Montage.punching_Anim_Montage'"));
+	if (tempPunch.Succeeded())
+		PunchMontage = tempPunch.Object;
+
 	//UI
 	ConstructorHelpers::FClassFinder<UPlayerUI> playerui(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/BluePrints/WBP/WBP_PlayerUI.WBP_PlayerUI_C'"));
 	if (playerui.Succeeded())
@@ -559,13 +563,7 @@ void ANomPlayer::Melee()
 		}
 	}
 	
-	//TODO : 몽타쥬로 바꿀 것
-	FTimerHandle LeftHandHandle;
-	PRINTINFO();
-	GetWorldTimerManager().SetTimer(LeftHandHandle, [this]()
-	{
-		LeftHandEnd(nullptr, false);
-	}, 1.f, false);
+	PlayFPSAnim(PunchMontage);
 }
 
 void ANomPlayer::Throw()

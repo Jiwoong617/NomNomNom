@@ -152,6 +152,7 @@ protected:
 	int32 MaxHp = 50;
 	int32 Hp = 50;
 	float FistDamage = 100.f;
+	UPROPERTY(EditAnywhere) UAnimMontage* PunchMontage;
 	UPROPERTY(EditAnywhere) UPlayerDamageComponent* HeadBox;
 	UPROPERTY(EditAnywhere) UPlayerDamageComponent* BodyBox;
 
