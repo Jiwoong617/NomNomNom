@@ -83,7 +83,7 @@ void AServitor::HandleDeath()
 	{
 		GM->OnServitorDied(this);
 	}
-	Destroy();
+	
 }
 
 
