@@ -3,6 +3,7 @@
 #include "Enemy/Shank/Common/DroneBase.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
 #include "Enemy/Shank/Common/DroneFollowPathStateMachine.h"
@@ -19,6 +20,10 @@ ADroneBase::ADroneBase()
 	SphereComp->SetCollisionProfileName(FName("BlockAllDynamic"));
 	SetRootComponent(SphereComp);
 
+	//스테이터스 위젯 컴포넌트
+	StatusWidgetComp->SetRelativeLocation(FVector(0, 0, 150));
+	StatusWidgetComp->SetupAttachment(SphereComp);
+	
 	//메시 씬 컴포넌트
 	MeshSceneComp = CreateDefaultSubobject<USceneComponent>(FName("MeshSceneComp"));
 	MeshSceneComp->SetupAttachment(RootComponent);

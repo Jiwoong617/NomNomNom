@@ -27,6 +27,11 @@ UScoutShankShooterComponent::UScoutShankShooterComponent()
 	{
 		ScoutFireSound = Finder.Object;
 	}
+
+	//자동 사격
+	AutoFireRate = 4;
+	AutoFireMin = 2;
+	AutoFireMax = 4;
 }
 
 void UScoutShankShooterComponent::BeginPlay()

@@ -11,6 +11,7 @@ AScoutShankProjectile::AScoutShankProjectile()
 
 	//스태틱 메시 컴포넌트 부착
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(FName("MeshComp"));
+	MeshComp->SetCollisionProfileName(FName("NoCollision"));
 	MeshComp->SetupAttachment(GetRootComponent());
 	
 	//발사체 속도 설정
