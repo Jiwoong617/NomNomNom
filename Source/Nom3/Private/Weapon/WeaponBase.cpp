@@ -32,6 +32,14 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 	{
 		FireSound = Finder.Object;
 	}
+		
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> reloadMontage(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/gun/HandCannonReload.HandCannonReload'"));
+	if (reloadMontage.Succeeded())
+		ReloadMontage = reloadMontage.Object;
+	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> changeMontage(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/gun/HandCannonEquip.HandCannonEquip'"));
+	if (changeMontage.Succeeded())
+		ChangeWeaponMontage = changeMontage.Object;
 }
 
 // Called when the game starts or when spawned

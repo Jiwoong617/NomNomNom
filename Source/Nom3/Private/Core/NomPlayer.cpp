@@ -488,16 +488,15 @@ void ANomPlayer::ReloadStart()
 
 
 	ActionState = EActionState::Reloading;
-	
-	//TODO : 시간이 지나면 리로딩 성공 이벤트 설정 (몽타쥬)- 현재는 타임라인으로
-	GetWorldTimerManager().SetTimer(ReloadHandle, [this]()
-	{
-		ReloadEnd();
-	}, WeaponComp->GetCurrentWeapon()->GetData()->ReloadDuration, false);
+
+	PlayFPSAnim(WeaponComp->GetCurrentWeapon()->ReloadMontage, EActionState::Reloading);
 }
 
-void ANomPlayer::ReloadEnd()
+void ANomPlayer::ReloadEnd(UAnimMontage* Montage, bool bInterrupted)
 {
+	if (bInterrupted == true)
+		return;
+	
 	WeaponComp->Reload();
 	if (ActionState == EActionState::Reloading)
 		ActionState = EActionState::Idle;
@@ -730,12 +729,10 @@ void ANomPlayer::ChangeWeapon(const FInputActionValue& Value)
 	}, WeaponComp->GetCurrentWeapon()->GetData()->AimDuration, false);
 	
 	//TODO : 몽타쥬로 바꿀것
-	GetWorldTimerManager().SetTimer(ChangeWeaponHandle, [this, WeaponIndex]()
-	{
-		OnWeaponChanged(WeaponIndex - 1);
-	}, WeaponComp->GetCurrentWeapon()->GetData()->EquipDuration, false);
-
-	
+	// GetWorldTimerManager().SetTimer(ChangeWeaponHandle, [this, WeaponIndex]()
+	// {
+	// 	OnWeaponChanged(WeaponIndex - 1);
+	// }, WeaponComp->GetCurrentWeapon()->GetData()->EquipDuration, false);
 }
 
 void ANomPlayer::OnWeaponChanged(float Idx)
@@ -758,9 +755,9 @@ void ANomPlayer::OnWeaponChanged(float Idx)
 
 void ANomPlayer::OnReloadCanceled()
 {
+	FpsAnimation->Montage_Stop(0.1f);
+	
 	ActionState = EActionState::Idle;
-	if (GetWorldTimerManager().IsTimerActive(ReloadHandle))
-		GetWorldTimerManager().ClearTimer(ReloadHandle);
 }
 
 void ANomPlayer::OnFireCanceled()
@@ -777,6 +774,7 @@ void ANomPlayer::OnAimCanceled()
 
 void ANomPlayer::ChangeToFps()
 {
+	WeaponComp->GetCurrentWeapon()->SetActorHiddenInGame(false);
 	TpsMeshComp->SetOwnerNoSee(true);
 	GetMesh()->SetOwnerNoSee(false);
 	FpsCameraComp->SetActive(true);
@@ -785,6 +783,7 @@ void ANomPlayer::ChangeToFps()
 
 void ANomPlayer::ChangeToTps()
 {
+	WeaponComp->GetCurrentWeapon()->SetActorHiddenInGame(true);
 	ActionState = EActionState::Skill;
 	
 	TpsMeshComp->SetOwnerNoSee(false);
@@ -962,12 +961,20 @@ void ANomPlayer::PlayGunshotAnim(UAnimMontage* Montage)
 	FpsAnimation->PlayFpsAnim(Montage);
 }
 
-void ANomPlayer::PlayFPSAnim(UAnimMontage* Montage)
+void ANomPlayer::PlayFPSAnim(UAnimMontage* Montage, EActionState action, int32 Idx)
 {
 	if (FpsAnimation)
 	{
 		FOnMontageEnded MontageEndedDelegate;
-		MontageEndedDelegate.BindUObject(this, &ANomPlayer::LeftHandEnd);
+		if (action == EActionState::LeftHand)
+			MontageEndedDelegate.BindUObject(this, &ANomPlayer::LeftHandEnd);
+		else if (action == EActionState::Reloading)
+			MontageEndedDelegate.BindUObject(this, &ANomPlayer::ReloadEnd);
+		else if (action == EActionState::ChangeWeapon)
+			MontageEndedDelegate.BindLambda([this, Idx](UAnimMontage* Montage, bool bInterrupted)
+			{
+				this->OnWeaponChanged(Idx);
+			});
 
 		FpsAnimation->PlayFpsAnim(Montage);
 		FpsAnimation->Montage_SetEndDelegate(MontageEndedDelegate, Montage);

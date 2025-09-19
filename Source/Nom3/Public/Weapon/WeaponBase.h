@@ -47,10 +47,6 @@ protected:
 	FRotator TargetRecoil; //목표 반동
 	UPROPERTY(EditAnywhere)
 	FRotator LastAppliedRecoil; // 직전 프레임에 적용한 반동
-
-	//Anim
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* GunShotMontage;
 	
 	//Test
 	UPROPERTY(EditAnywhere)
@@ -61,6 +57,14 @@ public:
 	int32 CurrentAmmo;
 	UPROPERTY(EditAnywhere)
 	int32 MaxAmmo;
+	
+	//Anim
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* GunShotMontage;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* ReloadMontage;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* ChangeWeaponMontage;
 
 protected:
 	UFUNCTION() void ApplyRecoil();

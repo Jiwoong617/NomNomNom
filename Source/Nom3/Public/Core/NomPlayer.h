@@ -144,7 +144,6 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UInputAction* IA_ChangeWeapon;
 
-	FTimerHandle ReloadHandle;
 	FTimerHandle PutWeaponHandle;
 	FTimerHandle ChangeWeaponHandle;
 
@@ -197,7 +196,7 @@ protected:
 	UFUNCTION()
 	void ReloadStart();
 	UFUNCTION()
-	void ReloadEnd();
+	void ReloadEnd(UAnimMontage* Montage, bool bInterrupted);
 	UFUNCTION()
 	virtual void Melee(); //lefthand
 	UFUNCTION()
@@ -243,7 +242,7 @@ public:
 	UFUNCTION()
 	void PlayGunshotAnim(UAnimMontage* Montage);
 	UFUNCTION()
-	void PlayFPSAnim(UAnimMontage* Montage);
+	void PlayFPSAnim(UAnimMontage* Montage, EActionState action = EActionState::LeftHand, int32 Idx = 0);
 	UFUNCTION()
 	void PlayTPSAnim(UAnimMontage* Montage);
 };
