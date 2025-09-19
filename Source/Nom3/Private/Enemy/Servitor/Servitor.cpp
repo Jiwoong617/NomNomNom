@@ -2,12 +2,14 @@
 
 #include "Enemy/Servitor/Servitor.h"
 
+#include "NiagaraFunctionLibrary.h"
 #include "Nom3/Public/Core/DestinyGameMode.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
 
 #include "Enemy/Servitor/ServitorPathFindStateMachine.h"
 #include "Enemy/Servitor/ServitorShooterComponent.h"
 #include "Enemy/Shank/Common/DroneDamageComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AServitor::AServitor()
 {
@@ -43,6 +45,14 @@ AServitor::AServitor()
 	ShooterComp = CreateDefaultSubobject<UServitorShooterComponent>(FName("ShooterComp"));
 	ShooterComp->SetupAttachment(SkeletalMeshComp);
 	ShooterComp->SetRelativeLocation(FVector(0, 250, 140));
+
+	//나이아가라 이펙트 로드
+	if (static ConstructorHelpers::FObjectFinder<UNiagaraSystem>
+		Finder(TEXT("/Game/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Sparks_Explosion_01.Niagara_Sparks_Explosion_01"));
+		Finder.Succeeded())
+	{
+		SparkNiagara = Finder.Object;	
+	}
 }
 
 void AServitor::BeginPlay()
@@ -74,6 +84,18 @@ void AServitor::OnShotDown(const FVector ShotDir)
 
 	//사격 비활성화
 	ShooterComp->InactiveAutoFire();
+}
+
+void AServitor::OnDamaged(const FFireInfo Info)
+{
+	Super::OnDamaged(Info);
+
+	if (HealthComp->GetHPPercent() < 0.5)
+	{
+		const FVector Dir = (Info.FireLocation - GetActorLocation()).GetSafeNormal();
+		const FRotator Rot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), GetActorLocation() + Dir);
+		UNiagaraFunctionLibrary::SpawnSystemAttached(SparkNiagara, SkeletalMeshComp, FName(), FVector(0), Rot, EAttachLocation::Type::KeepRelativeOffset, true);
+	}
 }
 
 void AServitor::HandleDeath()
