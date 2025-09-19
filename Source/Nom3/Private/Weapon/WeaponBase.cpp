@@ -25,6 +25,21 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 	ConstructorHelpers::FObjectFinder<UNiagaraSystem> eff(TEXT("/Script/Niagara.NiagaraSystem'/Game/Effect/NS_FireEffect.NS_FireEffect'"));
 	if (eff.Succeeded())
 		fireEffect = eff.Object;
+
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+		TEXT("/Game/Asset/Weapon/Sound/SC_MachineGunFire.SC_MachineGunFire"));
+		Finder.Succeeded())
+	{
+		FireSound = Finder.Object;
+	}
+		
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> reloadMontage(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/gun/HandCannonReload.HandCannonReload'"));
+	if (reloadMontage.Succeeded())
+		ReloadMontage = reloadMontage.Object;
+	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> changeMontage(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/gun/HandCannonEquip.HandCannonEquip'"));
+	if (changeMontage.Succeeded())
+		ChangeWeaponMontage = changeMontage.Object;
 }
 
 // Called when the game starts or when spawned
@@ -80,13 +95,6 @@ void AWeaponBase::AimFire()
 		//사격 사운드 재생
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
 
-		//탄피 사운드 재생
-		FTimerHandle ShellTimerHandle;
-		GetWorldTimerManager().SetTimer(ShellTimerHandle, [this]()
-		{
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShellSound, GetActorLocation());
-		}, 1, false);
-
 		//탄약 소모
 		CurrentAmmo--;
 
@@ -130,16 +138,9 @@ void AWeaponBase::NoAimFire()
 		//애니메이션 재생
 		if (GunShotMontage &&WeaponOwner)
 			WeaponOwner->PlayGunshotAnim(GunShotMontage);
-
+		
 		//사격 사운드 재생
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
-		
-		//탄피 사운드 재생
-		FTimerHandle ShellTimerHandle;
-		GetWorldTimerManager().SetTimer(ShellTimerHandle, [this]()
-		{
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShellSound, GetActorLocation());
-		}, 1, false);
 
 		//탄약 소모
 		CurrentAmmo--;
@@ -188,14 +189,11 @@ void AWeaponBase::NoAimFire()
 
 void AWeaponBase::Reload()
 {
-	//사격 사운드 재생
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ReloadSound, GetActorLocation());
-
-	//부족한 총알 만큼 채워넣기
-	const int32 NeededAmmo = FMath::Min(MaxAmmo, WeaponData->AmmoCount - CurrentAmmo);
+	int32 NeededAmmo = FMath::Min(MaxAmmo, WeaponData->AmmoCount - CurrentAmmo);
 	CurrentAmmo += NeededAmmo;
 	MaxAmmo -= NeededAmmo;
 }
+
 
 void AWeaponBase::SetOwner(ANomPlayer* NewOwner)
 {

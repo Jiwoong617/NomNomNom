@@ -8,6 +8,7 @@
 #include "Interfaces/Damagable.h"
 #include "NomPlayer.generated.h"
 
+class UPlayerTpsAnimation;
 class UPlayerFpsAnimation;
 class UPlayerUI;
 class UPlayerDamageComponent;
@@ -143,16 +144,14 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UInputAction* IA_ChangeWeapon;
 
-	FTimerHandle ReloadHandle;
 	FTimerHandle PutWeaponHandle;
 	FTimerHandle ChangeWeaponHandle;
-	FTimerHandle LeftHandHandle;
-	FTimerHandle SkillHandle;
 
 	//Damage, Hp
 	int32 MaxHp = 50;
 	int32 Hp = 50;
 	float FistDamage = 100.f;
+	UPROPERTY(EditAnywhere) UAnimMontage* PunchMontage;
 	UPROPERTY(EditAnywhere) UPlayerDamageComponent* HeadBox;
 	UPROPERTY(EditAnywhere) UPlayerDamageComponent* BodyBox;
 
@@ -162,6 +161,7 @@ protected:
 
 	//Animation
 	UPlayerFpsAnimation* FpsAnimation;
+	UPlayerTpsAnimation* TpsAnimation;
 	
 public:
 
@@ -196,22 +196,20 @@ protected:
 	UFUNCTION()
 	void ReloadStart();
 	UFUNCTION()
-	void ReloadEnd();
+	void ReloadEnd(UAnimMontage* Montage, bool bInterrupted);
 	UFUNCTION()
 	virtual void Melee(); //lefthand
 	UFUNCTION()
 	virtual void Throw(); //lefthand
 	UFUNCTION()
-	virtual void LeftHandEnd();
+	virtual void LeftHandEnd(UAnimMontage* Montage, bool bInterrupted);
 	UFUNCTION()
 	virtual void Skill();
 	UFUNCTION()
-	virtual void SkillEnd();
-	UFUNCTION()
 	virtual void UltimateSkill();
 	UFUNCTION()
-	virtual void UltimateSkillEnd();
-
+	virtual void SkillEnd(UAnimMontage* Montage, bool bInterrupted);
+	
 	UFUNCTION()
 	void ChangeWeapon(const FInputActionValue& Value);
 	UFUNCTION()
@@ -243,4 +241,8 @@ public:
 	//Anim
 	UFUNCTION()
 	void PlayGunshotAnim(UAnimMontage* Montage);
+	UFUNCTION()
+	void PlayFPSAnim(UAnimMontage* Montage, EActionState action = EActionState::LeftHand, int32 Idx = 0);
+	UFUNCTION()
+	void PlayTPSAnim(UAnimMontage* Montage);
 };

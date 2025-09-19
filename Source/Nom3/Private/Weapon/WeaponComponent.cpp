@@ -56,8 +56,11 @@ void UWeaponComponent::Init()
 		if (AWeaponBase* wb = Cast<AWeaponBase>(child->GetChildActor()))
 		{
 			child->AttachToComponent( Owner->GetMesh(),
-				FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld,
-				  EAttachmentRule::SnapToTarget, false),TEXT("WeaponSocket"));
+				FAttachmentTransformRules(
+					EAttachmentRule::SnapToTarget,
+					EAttachmentRule::KeepWorld,
+				  EAttachmentRule::SnapToTarget,
+				  false),TEXT("WeaponSocket"));
 			wb->SetOwner(Owner);
 			wb->SetActorHiddenInGame(true);
 			WeaponList.Add(wb);
@@ -142,6 +145,7 @@ void UWeaponComponent::Fire()
 void UWeaponComponent::Reload()
 {
 	CurrentWeapon->Reload();
+	FireTime = CurrentWeapon->GetData()->FireRate;
 
 	OnBulletChangeDelegate.Broadcast(CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 }
@@ -217,6 +221,8 @@ void UWeaponComponent::ChangeWeapon(int32 idx)
 	WeaponList[idx]->SetActorHiddenInGame(false);
 	OnChangeWeaponDelegate.Broadcast(0, CurrentWeapon->GetData()->WeaponImg, CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
 
+	Owner->PlayFPSAnim(CurrentWeapon->ChangeWeaponMontage, EActionState::ChangeWeapon, idx);
+	
 	// UI 슬롯 매핑
 	if (WeaponIndexToSlot.IsValidIndex(oldCurrentIdx) && WeaponIndexToSlot.IsValidIndex(idx))
 	{
@@ -242,10 +248,9 @@ void UWeaponComponent::OnWeaponChanged(int32 idx)
 		}
 	}
 	const FVector AimSocketLocLocal = ParentFrame.InverseTransformPosition(AimSocketLoc);
-	//AimCamLoc = FVector(CamOffset.X, AimSocketLocLocal.Y, AimSocketLocLocal.Z);		
 	AimCamLoc = AimSocketLocLocal;
 
-	//OnBulletChangeDelegate.Broadcast(CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
+	FireTime = CurrentWeapon->GetData()->FireRate;
 }
 
 AWeaponBase* UWeaponComponent::GetCurrentWeapon()

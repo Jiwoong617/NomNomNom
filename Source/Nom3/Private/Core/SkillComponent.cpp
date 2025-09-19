@@ -5,6 +5,7 @@
 #include "Core/NomPlayer.h"
 #include "Skill/DodgeSkill.h"
 #include "Skill/SkillBase.h"
+#include "Skill/ThrowSkill.h"
 #include "Skill/UltimateSkill.h"
 
 
@@ -26,6 +27,12 @@ void USkillComponent::BeginPlay()
     {
         Owner = OwnerPlayer;
         
+        if (!ThrowSkill)
+        {
+            ThrowSkill = NewObject<UThrowSkill>(this);
+            ThrowSkill->SetOwner(Owner);
+            ThrowCoolDown = ThrowSkill->GetCoolTime();
+        }
         if (!DodgeSkill)
         {
             DodgeSkill = NewObject<UDodgeSkill>(this);
@@ -47,6 +54,12 @@ void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+    if (ThrowCoolDown <= ThrowSkill->GetCoolTime())
+    {
+        ThrowCoolDown = FMath::Min(ThrowCoolDown + DeltaTime, ThrowSkill->GetCoolTime());
+        ThrowSkillCoolDownDelegate.Broadcast(ThrowCoolDown, ThrowSkill->GetCoolTime());
+    }
+
     if (DodgeCooldown <= DodgeSkill->GetCoolTime())
     {
         DodgeCooldown = FMath::Min(DodgeCooldown + DeltaTime, DodgeSkill->GetCoolTime());
@@ -58,6 +71,16 @@ void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
         UltimateCooldown = FMath::Min(UltimateCooldown + DeltaTime, UltimateSkill->GetCoolTime());
         UltimateSkillCoolDownDelegate.Broadcast(UltimateCooldown, UltimateSkill->GetCoolTime());
     }
+}
+
+bool USkillComponent::UseThrowSkill()
+{
+    if (ThrowCoolDown < ThrowSkill->GetCoolTime())
+        return false;
+
+    ThrowSkill->UseSkill();
+    ThrowCoolDown = 0.f;
+    return true;
 }
 
 bool USkillComponent::UseDodgeSkill()

@@ -20,6 +20,7 @@
 #include "Weapon/WeaponData.h"
 #include "Core/PlayerDamageComponent.h"
 #include "Core/PlayerFpsAnimation.h"
+#include "Core/PlayerTpsAnimation.h"
 #include "Core/PlayerUI.h"
 #include "Core/SkillComponent.h"
 #include "Enemy/Core/EnemyActorBase.h"
@@ -43,15 +44,11 @@ ANomPlayer::ANomPlayer()
 		GetMesh()->SetOnlyOwnerSee(true);
 		GetMesh()->SetupAttachment(RootComponent);
 	}
-	ConstructorHelpers::FClassFinder<UPlayerFpsAnimation> TempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Fps.ABP_Fps_C'"));
-	if (TempAnim.Succeeded())
-		GetMesh()->SetAnimInstanceClass(TempAnim.Class);
-
 
 	//TPS Mesh
 	TpsMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("TPS Mesh"));
 	TpsMeshComp->SetupAttachment(GetRootComponent());
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempTpsMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempTpsMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/Character/Character/NomPlayer.NomPlayer'"));
 	if (TempTpsMesh.Succeeded())
 	{
 		TpsMeshComp->SetSkeletalMesh(TempTpsMesh.Object);
@@ -60,6 +57,14 @@ ANomPlayer::ANomPlayer()
 	
 		TpsMeshComp->SetOwnerNoSee(true);
 	}
+
+
+	ConstructorHelpers::FClassFinder<UPlayerFpsAnimation> TempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Fps.ABP_Fps_C'"));
+	if (TempAnim.Succeeded())
+		GetMesh()->SetAnimInstanceClass(TempAnim.Class);
+	ConstructorHelpers::FClassFinder<UPlayerTpsAnimation> TempTpsAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/BluePrints/Player/ABP_Tps.ABP_Tps_C'"));
+	if (TempTpsAnim.Succeeded())
+		TpsMeshComp->SetAnimInstanceClass(TempTpsAnim.Class);
 
 	
 	//FPS Cam Settings
@@ -76,6 +81,7 @@ ANomPlayer::ANomPlayer()
 	//TPS Cam Settings
 	TpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("TPS Spring Arm");
 	TpsSpringArmComp->SetupAttachment(RootComponent);
+	TpsSpringArmComp->TargetArmLength = 600.f;
 	TpsSpringArmComp->bUsePawnControlRotation = true;
 	TpsSpringArmComp->SetRelativeLocation(FVector(0, 0, 50));
 	TpsSpringArmComp->SetRelativeRotation(FRotator(-45, 0, 0));
@@ -103,6 +109,10 @@ ANomPlayer::ANomPlayer()
 	
 	BodyBox = CreateDefaultSubobject<UPlayerDamageComponent>("BodyBox");
 	BodyBox->SetupAttachment(GetMesh(), TEXT("BodySocket"));
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> tempPunch(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/Skill/punching_Anim_Montage.punching_Anim_Montage'"));
+	if (tempPunch.Succeeded())
+		PunchMontage = tempPunch.Object;
 
 	//UI
 	ConstructorHelpers::FClassFinder<UPlayerUI> playerui(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/BluePrints/WBP/WBP_PlayerUI.WBP_PlayerUI_C'"));
@@ -188,6 +198,7 @@ void ANomPlayer::BeginPlay()
 
 	//Anim
 	FpsAnimation = Cast<UPlayerFpsAnimation>(GetMesh()->GetAnimInstance());
+	TpsAnimation = Cast<UPlayerTpsAnimation>(TpsMeshComp->GetAnimInstance());
 	
 	
     PlayerUI = CreateWidget<UPlayerUI>(GetWorld(), PlayerUIClass);
@@ -195,8 +206,9 @@ void ANomPlayer::BeginPlay()
     WeaponComp->OnChangeWeaponDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateEquipedWeaponUI);
     if (SkillComp && PlayerUI)
     {
-        SkillComp->DodgeSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill1Cooldown);
-        SkillComp->UltimateSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill2Cooldown);
+        SkillComp->ThrowSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill1Cooldown);
+        SkillComp->DodgeSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill2Cooldown);
+        SkillComp->UltimateSkillCoolDownDelegate.AddDynamic(PlayerUI, &UPlayerUI::UpdateSkill3Cooldown);
     }
     PlayerUI->AddToViewport();
     PlayerUI->UpdateHealthUI(Hp, MaxHp);
@@ -476,16 +488,15 @@ void ANomPlayer::ReloadStart()
 
 
 	ActionState = EActionState::Reloading;
-	
-	//TODO : 시간이 지나면 리로딩 성공 이벤트 설정 (몽타쥬)- 현재는 타임라인으로
-	GetWorldTimerManager().SetTimer(ReloadHandle, [this]()
-	{
-		ReloadEnd();
-	}, WeaponComp->GetCurrentWeapon()->GetData()->ReloadDuration, false);
+
+	PlayFPSAnim(WeaponComp->GetCurrentWeapon()->ReloadMontage, EActionState::Reloading);
 }
 
-void ANomPlayer::ReloadEnd()
+void ANomPlayer::ReloadEnd(UAnimMontage* Montage, bool bInterrupted)
 {
+	if (bInterrupted == true)
+		return;
+	
 	WeaponComp->Reload();
 	if (ActionState == EActionState::Reloading)
 		ActionState = EActionState::Idle;
@@ -551,12 +562,7 @@ void ANomPlayer::Melee()
 		}
 	}
 	
-	//TODO : 몽타쥬로 바꿀 것
-	PRINTINFO();
-	GetWorldTimerManager().SetTimer(LeftHandHandle, [this]()
-	{
-		LeftHandEnd();
-	}, 1.f, false);
+	PlayFPSAnim(PunchMontage);
 }
 
 void ANomPlayer::Throw()
@@ -581,19 +587,11 @@ void ANomPlayer::Throw()
 		MovingState = EMovingState::Idle;
 
 	ActionState = EActionState::LeftHand;
-	//TODO : 몽타쥬로 바꿀 것
-	GetWorld()->SpawnActor<AGrenade>(AGrenade::StaticClass()
-		, GetFpsCam()->GetComponentLocation() + GetFpsCam()->GetRightVector() * -30
-		, FRotator(0))
-		->Init(GetFpsCam()->GetForwardVector(), 1000 + GetVelocity().X);
-	PRINTINFO();
-	GetWorldTimerManager().SetTimer(LeftHandHandle, [this]()
-	{
-		LeftHandEnd();
-	}, 1.f, false);
+	
+	SkillComp->UseThrowSkill();
 }
 
-void ANomPlayer::LeftHandEnd()
+void ANomPlayer::LeftHandEnd(UAnimMontage* Montage, bool bInterrupted)
 {
 	ActionState = EActionState::Idle;
 	if (bIsHoldFire)
@@ -640,31 +638,7 @@ void ANomPlayer::Skill()
         return;
 
     ChangeToTps();
-	
-	//TODO : 몽타쥬로 바꿀 것
-	PRINTINFO();
-	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
-	{
-		SkillEnd();
-	}, 1.f, false);
-}
-
-void ANomPlayer::SkillEnd()
-{
-	ActionState = EActionState::Idle;
-	ChangeToFps();
-	if (bIsHoldFire)
-	{
-		ActionState = EActionState::Firing;
-		bIsHoldFire = false;
-		WeaponComp->FireStart();
-	}
-	if (bIsHoldAim)
-	{
-		bIsAiming = true;
-		bIsHoldAim = false;
-		WeaponComp->AimStart();
-	}
+	SkillComp->UseDodgeSkill();
 }
 
 void ANomPlayer::UltimateSkill()
@@ -699,14 +673,15 @@ void ANomPlayer::UltimateSkill()
     ChangeToTps();
 	
 	PRINTINFO();
+	FTimerHandle SkillHandle;
 	//TODO : 몽타쥬로 바꿀 것
 	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
 	{
-		UltimateSkillEnd();
+		SkillEnd(nullptr, false);
 	}, 1.f, false);
 }
 
-void ANomPlayer::UltimateSkillEnd()
+void ANomPlayer::SkillEnd(UAnimMontage* Montage, bool bInterrupted)
 {
 	ActionState = EActionState::Idle;
 	ChangeToFps();
@@ -754,12 +729,10 @@ void ANomPlayer::ChangeWeapon(const FInputActionValue& Value)
 	}, WeaponComp->GetCurrentWeapon()->GetData()->AimDuration, false);
 	
 	//TODO : 몽타쥬로 바꿀것
-	GetWorldTimerManager().SetTimer(ChangeWeaponHandle, [this, WeaponIndex]()
-	{
-		OnWeaponChanged(WeaponIndex - 1);
-	}, WeaponComp->GetCurrentWeapon()->GetData()->EquipDuration, false);
-
-	
+	// GetWorldTimerManager().SetTimer(ChangeWeaponHandle, [this, WeaponIndex]()
+	// {
+	// 	OnWeaponChanged(WeaponIndex - 1);
+	// }, WeaponComp->GetCurrentWeapon()->GetData()->EquipDuration, false);
 }
 
 void ANomPlayer::OnWeaponChanged(float Idx)
@@ -782,9 +755,9 @@ void ANomPlayer::OnWeaponChanged(float Idx)
 
 void ANomPlayer::OnReloadCanceled()
 {
+	FpsAnimation->Montage_Stop(0.1f);
+	
 	ActionState = EActionState::Idle;
-	if (GetWorldTimerManager().IsTimerActive(ReloadHandle))
-		GetWorldTimerManager().ClearTimer(ReloadHandle);
 }
 
 void ANomPlayer::OnFireCanceled()
@@ -801,6 +774,7 @@ void ANomPlayer::OnAimCanceled()
 
 void ANomPlayer::ChangeToFps()
 {
+	WeaponComp->GetCurrentWeapon()->SetActorHiddenInGame(false);
 	TpsMeshComp->SetOwnerNoSee(true);
 	GetMesh()->SetOwnerNoSee(false);
 	FpsCameraComp->SetActive(true);
@@ -809,6 +783,7 @@ void ANomPlayer::ChangeToFps()
 
 void ANomPlayer::ChangeToTps()
 {
+	WeaponComp->GetCurrentWeapon()->SetActorHiddenInGame(true);
 	ActionState = EActionState::Skill;
 	
 	TpsMeshComp->SetOwnerNoSee(false);
@@ -983,5 +958,37 @@ const EMovingState& ANomPlayer::GetMovingState() const
 
 void ANomPlayer::PlayGunshotAnim(UAnimMontage* Montage)
 {
-	FpsAnimation->PlayGunshotAnim(Montage);
+	FpsAnimation->PlayFpsAnim(Montage);
+}
+
+void ANomPlayer::PlayFPSAnim(UAnimMontage* Montage, EActionState action, int32 Idx)
+{
+	if (FpsAnimation)
+	{
+		FOnMontageEnded MontageEndedDelegate;
+		if (action == EActionState::LeftHand)
+			MontageEndedDelegate.BindUObject(this, &ANomPlayer::LeftHandEnd);
+		else if (action == EActionState::Reloading)
+			MontageEndedDelegate.BindUObject(this, &ANomPlayer::ReloadEnd);
+		else if (action == EActionState::ChangeWeapon)
+			MontageEndedDelegate.BindLambda([this, Idx](UAnimMontage* Montage, bool bInterrupted)
+			{
+				this->OnWeaponChanged(Idx);
+			});
+
+		FpsAnimation->PlayFpsAnim(Montage);
+		FpsAnimation->Montage_SetEndDelegate(MontageEndedDelegate, Montage);
+	}
+}
+
+void ANomPlayer::PlayTPSAnim(UAnimMontage* Montage)
+{
+	if (TpsAnimation)
+	{
+		FOnMontageEnded MontageEndedDelegate;
+		MontageEndedDelegate.BindUObject(this, &ANomPlayer::SkillEnd);
+
+		TpsAnimation->PlaySkillAnim(Montage);
+		TpsAnimation->Montage_SetEndDelegate(MontageEndedDelegate, Montage);
+	}
 }

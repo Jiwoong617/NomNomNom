@@ -38,7 +38,6 @@ void UPlayerUI::UpdateEquipedWeaponUI(int32 idx, UTexture2D* img, int32 ammo, in
 	if (maxammo)
 		UpdateAmmoUI(ammo, maxammo);
 
-	//TODO : 버그 있음 고쳐야됨
 	WeaponImgs[idx]->SetBrushFromTexture(img, false);
     AmmoTexts[idx]->SetText(FText::AsNumber(ammo));
 }
@@ -62,6 +61,17 @@ void UPlayerUI::UpdateSkill2Cooldown(float cool, float coolTime)
 			Bar_Skill2->SetPercent(FMath::Clamp(cool / coolTime, 0.f, 1.f));
 		else
 			Bar_Skill2->SetPercent(1.f);
+	}
+}
+
+void UPlayerUI::UpdateSkill3Cooldown(float cool, float coolTime)
+{
+	if (Bar_Skill3)
+	{
+		if (cool < coolTime)
+			Bar_Skill3->SetPercent(FMath::Clamp(cool / coolTime, 0.f, 1.f));
+		else
+			Bar_Skill3->SetPercent(1.f);
 	}
 }
 
