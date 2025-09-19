@@ -78,6 +78,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	float AimTime;
 
+	//트리거 사운드
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USoundBase> TriggerSound;
+
 public:
 	FOnBulletChangeDelegate OnBulletChangeDelegate;
 	FOnChangeWeaponDelegate OnChangeWeaponDelegate;

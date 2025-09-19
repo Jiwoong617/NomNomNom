@@ -31,6 +31,30 @@ AHandCannon::AHandCannon()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ShotMontage(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/gun/HandGunShot_Montage.HandGunShot_Montage'"));
 	if (ShotMontage.Succeeded())
 		GunShotMontage = ShotMontage.Object;
+
+	//발사 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+	TEXT("/Game/Asset/Weapon/Sound/SC_RevolverGunFire.SC_RevolverGunFire"));
+	Finder.Succeeded())
+	{
+		FireSound = Finder.Object;
+	}
+
+	//탄피 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+		TEXT("/Game/Asset/Weapon/Sound/SC_ShellHittingGround.SC_ShellHittingGround"));
+		Finder.Succeeded())
+	{
+		ShellSound = Finder.Object;
+	}
+
+	//재장전 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+		TEXT("/Game/Asset/Weapon/Sound/SC_RevolverGunReload.SC_RevolverGunReload"));
+		Finder.Succeeded())
+	{
+		ReloadSound = Finder.Object;
+	}
 }
 
 // Called when the game starts or when spawned

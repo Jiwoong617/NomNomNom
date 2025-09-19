@@ -96,9 +96,6 @@ void ADroneBase::OnShotDown(const FVector ShotDir)
 
 	//랜덤 방향 충격 적용
 	DroneMoveComp->Splash(ShotDir);
-
-	//스폰
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionNiagara, GetActorLocation(), GetActorRotation(), FVector(1), true);
 	
 	//10초 뒤에 소멸
 	FTimerHandle DestroyHandle;

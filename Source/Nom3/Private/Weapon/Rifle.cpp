@@ -25,6 +25,14 @@ ARifle::ARifle()
 		CurrentAmmo = WeaponData->AmmoCount;
 		MaxAmmo = WeaponData->MaxAmmo;
 	}
+
+	//발사 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+	TEXT("/Game/Asset/Weapon/Sound/SC_MachineGunFire.SC_MachineGunFire"));
+	Finder.Succeeded())
+	{
+		FireSound = Finder.Object;
+	}
 }
 
 // Called when the game starts or when spawned

@@ -7,29 +7,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="692169cb-3691-4fb2-9e43-fcda6bcb21cf" name="변경" comment="">
+    <list default="true" id="532de4e7-274d-4093-a28b-053fc68ab423" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/dictionaries/project.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Enemies/Drone/Servitor/BP_Servitor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Enemies/Drone/Servitor/BP_Servitor.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Enemies/Shank/BP_ScoutShankBullet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Enemies/Shank/BP_ScoutShankBullet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Enemies/Shank/MT_TestRed.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Enemies/Shank/MT_TestRed.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Maps/EnemyMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/EnemyMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Components/FireProjectileComponentBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Components/FireProjectileComponentBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyActorBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyActorBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyHealthComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyHealthComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/indexLayout.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/projectSettingsUpdater.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SC_MachineGunFire.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SC_MachineGunFire.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/Servitor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/Servitor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorProjectile.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorProjectile.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorShooterComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorShooterComponent.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/Common/DroneBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/Common/DroneBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/ScoutShank/ScoutShankProjectile.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/ScoutShank/ScoutShankProjectile.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/ScoutShank/ScoutShankShooterComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/ScoutShank/ScoutShankShooterComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/ScoutShank/ScoutShank.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/ScoutShank/ScoutShank.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/SelfDestructShank/SelfDestructShank.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/SelfDestructShank/SelfDestructShank.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Core/DamageComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Core/DamageComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Components/FireProjectileComponentBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Components/FireProjectileComponentBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyActorBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyActorBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyHealthComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyHealthComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/ServitorProjectile.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/ServitorProjectile.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/HandCannon.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/HandCannon.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/Rifle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/Rifle.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Weapon/WeaponBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Weapon/WeaponBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Weapon/WeaponComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Weapon/WeaponComponent.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,38 +39,11 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Private/Math/UnrealMath.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/Math/Vector.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/Components/ActorComponent.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/Engine/GameInstance.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Public/Materials/MaterialExpressionTime.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Public/Subsystems/SubsystemCollection.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Nom3.Build.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyStatus.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/ProjectileBase.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Interfaces/OnAimByPlayerSight.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/Servitor.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorPathFindStateMachine.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorProjectile.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorShooterComponent.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/SelfDestructShank/SelfDestructShank.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyStatus.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/ProjectileBase.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Interfaces/OnAimByPlayerSight.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/Servitor.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/ServitorPathFindStateMachine.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/ServitorProjectile.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/ServitorShooterComponent.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Shank/SelfDestructShank/SelfDestructShank.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Interfaces/CriticalDamagable.h" root0="FORCE_HIGHLIGHTING" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 6
-}</component>
-  <component name="ProjectId" id="32sJRdmmCqUWMewBU8U9YhRE0D7" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="32tgKwpFVAawGaCNXVa98UGSWsj" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -83,10 +53,11 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "Uproject.이름이 지정되지 않았습니다.executor": "Run",
-    "git-widget-placeholder": "Serviter",
+    "Uproject.Nom3.executor": "Run",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -94,13 +65,13 @@
   }
 }]]></component>
   <component name="RunManager">
-    <configuration name="이름이 지정되지 않았습니다" type="Uproject" factoryName="rider.uproject" nameIsGenerated="true">
+    <configuration name="Nom3" type="Uproject" factoryName="rider.uproject">
       <configuration_1 setup="1">
         <option name="CONFIGURATION" value="DebugGame Editor" />
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor-Win64-DebugGame.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\prays\Documents\Unreal Projects\NomNomNom\Nom3.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\Unreal Projects\NomNomNom\Nom3.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -126,7 +97,7 @@
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\prays\Documents\Unreal Projects\NomNomNom\Nom3.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\Unreal Projects\NomNomNom\Nom3.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -170,13 +141,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
-      <changelist id="692169cb-3691-4fb2-9e43-fcda6bcb21cf" name="변경" comment="" />
-      <created>1758203344742</created>
+      <changelist id="532de4e7-274d-4093-a28b-053fc68ab423" name="변경" comment="" />
+      <created>1758245223776</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1758203344742</updated>
-      <workItem from="1758203346361" duration="7215000" />
-      <workItem from="1758210637577" duration="2073000" />
+      <updated>1758245223776</updated>
+      <workItem from="1758245226030" duration="1333000" />
     </task>
     <servers />
   </component>

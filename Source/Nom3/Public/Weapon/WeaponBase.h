@@ -66,9 +66,18 @@ protected:
 	UFUNCTION() void ApplyRecoil();
 	UFUNCTION() void ApplyingRecoil();
 
+	//발사 사운드
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USoundBase> FireSound;
-	
+
+	//재장전 사운드
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USoundBase> ReloadSound;
+
+	//탄피 사운드
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USoundBase> ShellSound;
+	 
 public:
 	UFUNCTION() virtual void AimFire();
 	UFUNCTION() virtual void NoAimFire();

@@ -2,6 +2,7 @@
 
 #include "Enemy/Servitor/Servitor.h"
 
+#include "NiagaraFunctionLibrary.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
 #include "Enemy/Servitor/ServitorPathFindStateMachine.h"
 #include "Enemy/Servitor/ServitorShooterComponent.h"
@@ -63,6 +64,9 @@ void AServitor::BeginPlay()
 void AServitor::OnShotDown(const FVector ShotDir)
 {
 	Super::OnShotDown(ShotDir);
+
+	//스폰
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionNiagara, GetActorLocation(), GetActorRotation(), FVector(3), true);
 
 	//사격 비활성화
 	ShooterComp->InactiveAutoFire();

@@ -8,6 +8,7 @@
 #include "Core/NomPlayer.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Nom3/Nom3.h"
 #include "Weapon/WeaponBase.h"
 #include "Weapon/WeaponData.h"
@@ -18,19 +19,22 @@ UWeaponComponent::UWeaponComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+
+	//트리거 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase>
+		Finder(TEXT("/Game/Asset/Weapon/Sound/SC_Trigger.SC_Trigger"));
+		Finder.Succeeded())
+	{
+		TriggerSound = Finder.Object;
+	}
 }
 
-
-// Called when the game starts
 void UWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-
-// Called every frame
-void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                     FActorComponentTickFunction* ThisTickFunction)
+void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -122,6 +126,9 @@ void UWeaponComponent::Fire()
 	
 	if (FireTime > CurrentWeapon->GetData()->FireRate && bIsFiring)
 	{
+		//사격 사운드 재생
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), TriggerSound, GetOwner()->GetActorLocation());
+		
 		FireTime = 0.0f;
 		if (bIsAiming)
 			CurrentWeapon->AimFire();

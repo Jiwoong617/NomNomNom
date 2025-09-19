@@ -2,6 +2,7 @@
 
 #include "Enemy/Shank/SelfDestructShank/SelfDestructShank.h"
 #include "KismetTraceUtils.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Core/DamageComponent.h"
 #include "Enemy/Shank/Common/DroneDamageComponent.h"
 #include "Enemy/Shank/SelfDestructShank/SelfDestructFinalAssaultStateMachine.h"
@@ -72,6 +73,9 @@ void ASelfDestructShank::OnShotDown(const FVector ShotDir)
 
 	//다이나믹 머터리얼 인스턴스
 	DamageDynamicInstance->SetScalarParameterValue(FName("Opacity"), 0);
+
+	//스폰
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionNiagara, GetActorLocation(), GetActorRotation(), FVector(2), true);
 
 	//패러미터
 	const EObjectTypeQuery ObjType1 = UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel1);

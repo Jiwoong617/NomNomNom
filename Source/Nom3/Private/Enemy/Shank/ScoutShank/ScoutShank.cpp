@@ -1,6 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy/Shank/ScoutShank/ScoutShank.h"
+
+#include "NiagaraFunctionLibrary.h"
 #include "Core/DamageComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
 #include "Enemy/Shank/Common/DroneDamageComponent.h"
@@ -166,6 +168,9 @@ void AScoutShank::Tick(float DeltaTime)
 void AScoutShank::OnShotDown(const FVector ShotDir)
 {
 	Super::OnShotDown(ShotDir);
+
+	//스폰
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionNiagara, GetActorLocation(), GetActorRotation(), FVector(1), true);
 
 	//데미지 파트 가시화
 	DamageDynamicInstance->SetScalarParameterValue(FName("opacity"), 1.0f);
