@@ -675,14 +675,7 @@ void ANomPlayer::UltimateSkill()
         return;
 
     ChangeToTps();
-	
-	PRINTINFO();
-	FTimerHandle SkillHandle;
-	//TODO : 몽타쥬로 바꿀 것
-	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
-	{
-		SkillEnd(nullptr, false);
-	}, 1.f, false);
+	SkillComp->UseUltimateSkill();
 }
 
 void ANomPlayer::SkillEnd(UAnimMontage* Montage, bool bInterrupted)
