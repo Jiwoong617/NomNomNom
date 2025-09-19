@@ -33,6 +33,22 @@ ARifle::ARifle()
 	{
 		FireSound = Finder.Object;
 	}
+
+	//탄피 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+		TEXT("/Game/Asset/Weapon/Sound/SC_ShellHittingGround.SC_ShellHittingGround"));
+		Finder.Succeeded())
+	{
+		ShellSound = Finder.Object;
+	}
+
+	//탄피 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
+		TEXT("/Game/Asset/Weapon/Sound/SC_MachineGunReload.SC_MachineGunReload"));
+		Finder.Succeeded())
+	{
+		ReloadSound = Finder.Object;
+	}
 }
 
 // Called when the game starts or when spawned

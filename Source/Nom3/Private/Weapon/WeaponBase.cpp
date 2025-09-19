@@ -25,13 +25,6 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 	ConstructorHelpers::FObjectFinder<UNiagaraSystem> eff(TEXT("/Script/Niagara.NiagaraSystem'/Game/Effect/NS_FireEffect.NS_FireEffect'"));
 	if (eff.Succeeded())
 		fireEffect = eff.Object;
-
-	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
-		TEXT("/Game/Asset/Weapon/Sound/SC_MachineGunFire.SC_MachineGunFire"));
-		Finder.Succeeded())
-	{
-		FireSound = Finder.Object;
-	}
 		
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> reloadMontage(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/gun/HandCannonReload.HandCannonReload'"));
 	if (reloadMontage.Succeeded())
@@ -91,9 +84,12 @@ void AWeaponBase::AimFire()
 		//애니메이션 재생
 		if (GunShotMontage)
 			WeaponOwner->PlayGunshotAnim(GunShotMontage);
-		
-		//사격 사운드 재생
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
+
+		if (FireSound)
+		{
+			//사격 사운드 재생
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());	
+		}
 
 		//탄약 소모
 		CurrentAmmo--;
@@ -138,9 +134,12 @@ void AWeaponBase::NoAimFire()
 		//애니메이션 재생
 		if (GunShotMontage &&WeaponOwner)
 			WeaponOwner->PlayGunshotAnim(GunShotMontage);
-		
-		//사격 사운드 재생
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
+
+		if (FireSound)
+		{
+			//사격 사운드 재생
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());	
+		}
 
 		//탄약 소모
 		CurrentAmmo--;
@@ -187,13 +186,28 @@ void AWeaponBase::NoAimFire()
 	}
 }
 
+void AWeaponBase::FireEnd()
+{
+	if (ShellSound)
+	{
+		//탄피 사운드 재생
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShellSound, GetActorLocation());
+	}
+}
+
 void AWeaponBase::Reload()
 {
-	int32 NeededAmmo = FMath::Min(MaxAmmo, WeaponData->AmmoCount - CurrentAmmo);
+	//부족한 탄약 만큼 탄창에 채운다
+	const int32 NeededAmmo = FMath::Min(MaxAmmo, WeaponData->AmmoCount - CurrentAmmo);
 	CurrentAmmo += NeededAmmo;
 	MaxAmmo -= NeededAmmo;
 }
 
+void AWeaponBase::ReloadStart()
+{
+	//재장전 사운드 재생
+	UGameplayStatics::PlaySoundAtLocation(this, ReloadSound, GetActorLocation());
+}
 
 void AWeaponBase::SetOwner(ANomPlayer* NewOwner)
 {

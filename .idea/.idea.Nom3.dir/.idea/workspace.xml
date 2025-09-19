@@ -8,20 +8,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="532de4e7-274d-4093-a28b-053fc68ab423" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/dictionaries/project.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/projectSettingsUpdater.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SC_MachineGunFire.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SC_MachineGunFire.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/Servitor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/Servitor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/Common/DroneBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/Common/DroneBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/ScoutShank/ScoutShank.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/ScoutShank/ScoutShank.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/SelfDestructShank/SelfDestructShank.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/SelfDestructShank/SelfDestructShank.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/HandCannon.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/HandCannon.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SC_ShellHittingGround.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SC_ShellHittingGround.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload0.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload0.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload2.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_0.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_0.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_2.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_0.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_0.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_2.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Data/Rifle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Data/Rifle.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Core/NomPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Core/NomPlayer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/Rifle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/Rifle.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponBase.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponComponent.cpp" afterDir="false" />
@@ -38,6 +38,10 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock://C:/Users/user/Documents/Unreal Projects/NomNomNom/Source/Nom3/Private/Weapon/WeaponBase.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/user/Documents/Unreal Projects/NomNomNom/Source/Nom3/Private/Weapon/WeaponBase.cpp" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
   "customColor": "",
@@ -146,7 +150,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1758245223776</updated>
-      <workItem from="1758245226030" duration="1333000" />
+      <workItem from="1758245226030" duration="4349000" />
     </task>
     <servers />
   </component>

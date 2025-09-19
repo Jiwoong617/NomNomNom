@@ -85,8 +85,10 @@ protected:
 public:
 	UFUNCTION() virtual void AimFire();
 	UFUNCTION() virtual void NoAimFire();
+	UFUNCTION() virtual void FireEnd();
 	
 	UFUNCTION() virtual void Reload();
+	UFUNCTION() virtual void ReloadStart();
 
 	void SetOwner(ANomPlayer* NewOwner);
 	const UWeaponData* GetData() const;

@@ -486,6 +486,8 @@ void ANomPlayer::ReloadStart()
 		OnAimCanceled();
 	}
 
+	//웨폰 컴포넌트와 현재 웨폰에 재장전 사실 전파
+	WeaponComp->ReloadStart();
 
 	ActionState = EActionState::Reloading;
 
@@ -497,7 +499,7 @@ void ANomPlayer::ReloadEnd(UAnimMontage* Montage, bool bInterrupted)
 	if (bInterrupted == true)
 		return;
 	
-	WeaponComp->Reload();
+	WeaponComp->ReloadEnd();
 	if (ActionState == EActionState::Reloading)
 		ActionState = EActionState::Idle;
 
