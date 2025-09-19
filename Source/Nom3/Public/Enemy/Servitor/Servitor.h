@@ -19,7 +19,11 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void OnShotDown(const FVector ShotDir) override;
-	
+
+	// clear Ui 관련 함수
+	UFUNCTION()
+	void HandleDeath();
+
 protected:
 	//일반적인 데미지 컴포넌트
 	UPROPERTY(VisibleAnywhere)
