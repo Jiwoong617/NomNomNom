@@ -13,6 +13,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2050a9b8-cdea-4699-9a8b-9fe929825009" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Source/Nom3/Private/Core/ClearUI.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/Nom3/Private/Core/DestinyGameMode.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/Nom3/Private/Core/DestinyPlayerController.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/Nom3/Public/Core/ClearUI.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/Nom3/Public/Core/DestinyGameMode.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/Nom3/Public/Core/DestinyPlayerController.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../.idea/.idea.Nom3.dir/.idea/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../.idea/.idea.Nom3.dir/.idea/.name" beforeDir="false" />
@@ -409,6 +415,7 @@
       <change beforePath="$PROJECT_DIR$/../Nom3.uproject" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Maps/LEVELnONE.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/LEVELnONE.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/Servitor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/Servitor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Source/Nom3.Target.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Source/Nom3/Nom3.Build.cs" beforeDir="false" />
@@ -465,6 +472,17 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://C:/Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/CoreUObject/Public/Templates/SubclassOf.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://C:/Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/GameFramework/PlayerController.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://C:/Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/UMG/Public/Blueprint/UserWidget.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Core/ClearUI.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Core/DestinyGameMode.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Core/DestinyPlayerController.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Core/ClearUI.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Core/DestinyGameMode.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Core/DestinyPlayerController.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -610,6 +628,7 @@
       <workItem from="1758178499348" duration="9068000" />
       <workItem from="1758213220197" duration="2793000" />
       <workItem from="1758240090980" duration="426000" />
+      <workItem from="1758240615401" duration="4347000" />
     </task>
     <servers />
   </component>

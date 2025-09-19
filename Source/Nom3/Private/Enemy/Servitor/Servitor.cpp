@@ -2,6 +2,8 @@
 
 #include "Enemy/Servitor/Servitor.h"
 
+
+
 #include "Enemy/Core/EnemyHealthComponent.h"
 #include "Enemy/Servitor/ServitorPathFindStateMachine.h"
 #include "Enemy/Servitor/ServitorShooterComponent.h"
@@ -67,4 +69,7 @@ void AServitor::OnShotDown(const FVector ShotDir)
 	//사격 비활성화
 	ShooterComp->InactiveAutoFire();
 }
+
+// 여기서 죽었나 안죽었나를 알아볼수 있나?
+// ㄴ 상속되어있는 곳에서 확인해야함
 
