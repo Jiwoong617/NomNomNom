@@ -66,8 +66,9 @@ void AHomingMissile::SetHoming()
 		if (!Enemy) continue;
 		if (Enemy->GetComponentByClass<UEnemyHealthComponent>()->GetHP() <= 0)
 			continue;
-		
-		EnemyList.Add(Enemy);
+
+		if (FVector::Dist(GetActorLocation(), Actor->GetActorLocation()) < 15000)
+			EnemyList.Add(Enemy);
 	}
 
 

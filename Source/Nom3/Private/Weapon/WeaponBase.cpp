@@ -108,7 +108,8 @@ void AWeaponBase::AimFire()
 			if (auto dmg = Cast<UDamageComponent>(Hit.GetComponent()))
 			{
 				PRINTLOG(TEXT("Damagable"));
-				dmg->OnDamaged(FFireInfo(WeaponData->Damage,
+				int32 damage = FMath::RandRange(WeaponData->Damage-50, WeaponData->Damage + 50);
+				dmg->OnDamaged(FFireInfo(damage,
 					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
 			
@@ -165,7 +166,8 @@ void AWeaponBase::NoAimFire()
 			if (auto dmg = Cast<UDamageComponent>(Hit.GetComponent()))
 			{
 				PRINTLOG(TEXT("Damagable"));
-				dmg->OnDamaged(FFireInfo(WeaponData->Damage,
+				int32 damage = FMath::RandRange(WeaponData->Damage-50, WeaponData->Damage + 50);
+				dmg->OnDamaged(FFireInfo(damage,
 					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
 			
