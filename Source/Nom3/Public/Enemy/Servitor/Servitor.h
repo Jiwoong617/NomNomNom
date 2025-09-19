@@ -20,6 +20,8 @@ public:
 
 	virtual void OnShotDown(const FVector ShotDir) override;
 
+	virtual void OnDamaged(FFireInfo Info) override;
+
 	// clear Ui 관련 함수
 	UFUNCTION()
 	void HandleDeath();
@@ -36,4 +38,8 @@ protected:
 	//사격 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UServitorShooterComponent> ShooterComp;
+
+	//스파크 나이아가라 컴포넌트
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UNiagaraSystem> SparkNiagara;
 };

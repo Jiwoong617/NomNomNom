@@ -32,9 +32,7 @@ void USelfDestructFinalAssaultStateMachine::ExecuteState()
 
 	//목표를 향해 돌진한다
 	OwnerDrone->Destination = OwnerDrone->TargetPawn->GetActorLocation();
-
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("What the Fuck!?"));
-
+	
 	//목표와의 거리에 따라
 	if (const FVector TargetDiff = OwnerDrone->TargetPawn->GetActorLocation() - OwnerDrone->GetActorLocation();
 		TargetDiff.Length() < 750)
