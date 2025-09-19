@@ -7,8 +7,9 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Enemy/Core/EnemyBase.h"
 #include "Core/DamageComponent.h"
+#include "Enemy/Core/EnemyActorBase.h"
+#include "Enemy/Core/EnemyHealthComponent.h"
 
 
 // Sets default values
@@ -58,14 +59,14 @@ void AHomingMissile::SetHoming()
 	float ClosestSq = TNumericLimits<float>::Max();
 
 	TArray<AActor*> Candidates;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyBase::StaticClass(), Candidates);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyActorBase::StaticClass(), Candidates);
 	const FVector MyLoc = GetActorLocation();
 	for (AActor* Actor : Candidates)
 	{
 		if (!IsValid(Actor)) continue;
-		const AEnemyBase* Enemy = Cast<AEnemyBase>(Actor);
+		const AEnemyActorBase* Enemy = Cast<AEnemyActorBase>(Actor);
 		if (!Enemy) continue;
-		if (Enemy->GetHP() <= 0) continue;
+		if (Enemy->GetComponentByClass<UEnemyHealthComponent>()->GetHP() <= 0) continue;
 
 		const float DistSq = FVector::DistSquared(MyLoc, Actor->GetActorLocation());
 		if (DistSq < ClosestSq)
