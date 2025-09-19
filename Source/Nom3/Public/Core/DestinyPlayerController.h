@@ -18,6 +18,6 @@ class NOM3_API ADestinyPlayerController : public APlayerController
 	public:
 	void ShowClearUI();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,Category="UI")
 	TSubclassOf<UUserWidget> ClearUI;
 };

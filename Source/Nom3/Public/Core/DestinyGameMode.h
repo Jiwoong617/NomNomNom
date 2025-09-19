@@ -15,5 +15,6 @@ UCLASS()
 class NOM3_API ADestinyGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-	void OnServitorDied(AServitor* Killed);
+public:
+	void OnServitorDied(AServitor* KilledServitor);
 };

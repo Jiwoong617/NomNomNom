@@ -2,9 +2,9 @@
 
 #include "Enemy/Servitor/Servitor.h"
 
-
-
+#include "Nom3/Public/Core/DestinyGameMode.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
+
 #include "Enemy/Servitor/ServitorPathFindStateMachine.h"
 #include "Enemy/Servitor/ServitorShooterComponent.h"
 #include "Enemy/Shank/Common/DroneDamageComponent.h"
@@ -13,7 +13,7 @@ AServitor::AServitor()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 	//스켈레탈 메시 로드
 	if (static ConstructorHelpers::FObjectFinder<USkeletalMesh> Finder(
 		TEXT("/Game/Asset/Boss_Servitor/SKM_Servitor.SKM_Servitor"));
@@ -49,6 +49,11 @@ void AServitor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (HealthComp)
+	{
+		HealthComp->OnDeath.AddUObject(this, &AServitor::HandleDeath);
+	}
+	
 	//초기화
 	HealthComp->Init(75000);
 
@@ -60,6 +65,7 @@ void AServitor::BeginPlay()
 
 	//자동 사격
 	ShooterComp->ActiveAutoFire();
+	
 }
 
 void AServitor::OnShotDown(const FVector ShotDir)
@@ -70,6 +76,15 @@ void AServitor::OnShotDown(const FVector ShotDir)
 	ShooterComp->InactiveAutoFire();
 }
 
-// 여기서 죽었나 안죽었나를 알아볼수 있나?
-// ㄴ 상속되어있는 곳에서 확인해야함
+void AServitor::HandleDeath()
+{
+	ADestinyGameMode* GM = GetWorld()->GetAuthGameMode<ADestinyGameMode>();
+	if (GM)
+	{
+		GM->OnServitorDied(this);
+	}
+	Destroy();
+}
+
+
 

@@ -6,7 +6,7 @@
 #include "Nom3/Public/Core/DestinyPlayerController.h"
 #include "Servitor.generated.h"
 
-void ADestinyGameMode::OnServitorDied(AServitor* Killed)
+void ADestinyGameMode::OnServitorDied(AServitor* KilledServitor)
 {
 	ADestinyPlayerController* PC = Cast<ADestinyPlayerController>( UGameplayStatics::GetPlayerController(this, 0));
 	if (PC)
