@@ -112,7 +112,7 @@ ANomPlayer::ANomPlayer()
 	BodyBox = CreateDefaultSubobject<UPlayerDamageComponent>("BodyBox");
 	BodyBox->SetupAttachment(GetMesh(), TEXT("BodySocket"));
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> tempPunch(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/Skill/punching_Anim_Montage.punching_Anim_Montage'"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> tempPunch(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/Skill/punch_Anim_Montage.punch_Anim_Montage'"));
 	if (tempPunch.Succeeded())
 		PunchMontage = tempPunch.Object;
 

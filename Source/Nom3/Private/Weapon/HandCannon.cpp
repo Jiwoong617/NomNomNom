@@ -28,7 +28,7 @@ AHandCannon::AHandCannon()
 		MaxAmmo = WeaponData->MaxAmmo;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ShotMontage(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/gun/HandCannonShot.HandCannonShot'"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ShotMontage(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/ani/handCanonShot_Anim_Montage.handCanonShot_Anim_Montage'"));
 	if (ShotMontage.Succeeded())
 		GunShotMontage = ShotMontage.Object;
 
