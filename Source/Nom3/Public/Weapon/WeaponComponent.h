@@ -82,6 +82,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USoundBase> TriggerSound;
 
+	
+
 public:
 	FOnBulletChangeDelegate OnBulletChangeDelegate;
 	FOnChangeWeaponDelegate OnChangeWeaponDelegate;
@@ -98,7 +100,8 @@ public:
 	UFUNCTION() void FireStart();
 	UFUNCTION() void FireEnd();
 	
-	UFUNCTION() void Reload();
+	UFUNCTION() void ReloadEnd();
+	UFUNCTION() void ReloadStart() const;
 	
 	UFUNCTION() void AimStart();
 	UFUNCTION() void AimEnd();

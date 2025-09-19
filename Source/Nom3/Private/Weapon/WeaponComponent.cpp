@@ -116,11 +116,17 @@ void UWeaponComponent::Init()
 void UWeaponComponent::FireStart()
 {
 	bIsFiring = true;
+
+	//트리거 사운드 재생
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), TriggerSound, GetOwner()->GetActorLocation());
 }
 
 void UWeaponComponent::FireEnd()
 {
 	bIsFiring = false;
+
+	//사격 종료 사실을 웨폰 컴포넌트와 웨폰에 전파
+	CurrentWeapon->FireEnd();
 }
 
 void UWeaponComponent::Fire()
@@ -129,9 +135,6 @@ void UWeaponComponent::Fire()
 	
 	if (FireTime > CurrentWeapon->GetData()->FireRate && bIsFiring)
 	{
-		//사격 사운드 재생
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), TriggerSound, GetOwner()->GetActorLocation());
-		
 		FireTime = 0.0f;
 		if (bIsAiming)
 			CurrentWeapon->AimFire();
@@ -142,12 +145,17 @@ void UWeaponComponent::Fire()
 	}
 }
 
-void UWeaponComponent::Reload()
+void UWeaponComponent::ReloadEnd()
 {
 	CurrentWeapon->Reload();
 	FireTime = CurrentWeapon->GetData()->FireRate;
 
 	OnBulletChangeDelegate.Broadcast(CurrentWeapon->CurrentAmmo, CurrentWeapon->MaxAmmo);
+}
+
+void UWeaponComponent::ReloadStart() const
+{
+	CurrentWeapon->ReloadStart();
 }
 
 void UWeaponComponent::AimStart()
