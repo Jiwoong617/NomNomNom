@@ -43,6 +43,7 @@ ANomPlayer::ANomPlayer()
 		//내 카메라에만 보이게
 		GetMesh()->SetOnlyOwnerSee(true);
 		GetMesh()->SetupAttachment(RootComponent);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 	//TPS Mesh
@@ -56,6 +57,7 @@ ANomPlayer::ANomPlayer()
 		TpsMeshComp->SetRelativeRotation(FRotator(0, -90, 0));
 	
 		TpsMeshComp->SetOwnerNoSee(true);
+		TpsMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 

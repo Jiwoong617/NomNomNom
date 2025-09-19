@@ -55,30 +55,27 @@ void AHomingMissile::Tick(float DeltaTime)
 
 void AHomingMissile::SetHoming()
 {
-	AActor* ClosestEnemy = nullptr;
-	float ClosestSq = TNumericLimits<float>::Max();
-
+	TArray<AActor*> EnemyList;
+	
 	TArray<AActor*> Candidates;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyActorBase::StaticClass(), Candidates);
-	const FVector MyLoc = GetActorLocation();
 	for (AActor* Actor : Candidates)
 	{
 		if (!IsValid(Actor)) continue;
-		const AEnemyActorBase* Enemy = Cast<AEnemyActorBase>(Actor);
+		AEnemyActorBase* Enemy = Cast<AEnemyActorBase>(Actor);
 		if (!Enemy) continue;
-		if (Enemy->GetComponentByClass<UEnemyHealthComponent>()->GetHP() <= 0) continue;
-
-		const float DistSq = FVector::DistSquared(MyLoc, Actor->GetActorLocation());
-		if (DistSq < ClosestSq)
-		{
-			ClosestSq = DistSq;
-			ClosestEnemy = Actor;
-		}
+		if (Enemy->GetComponentByClass<UEnemyHealthComponent>()->GetHP() <= 0)
+			continue;
+		
+		EnemyList.Add(Enemy);
 	}
 
-	if (ClosestEnemy)
+
+	if (EnemyList.Num() > 0)
 	{
-		if (UPrimitiveComponent* TargetComp = Cast<UPrimitiveComponent>(ClosestEnemy->GetRootComponent()))
+		AActor* randEnemy= EnemyList[FMath::RandRange(0, EnemyList.Num() - 1)];
+			
+		if (UPrimitiveComponent* TargetComp = Cast<UPrimitiveComponent>(randEnemy->GetRootComponent()))
 		{
 			ProjectileMoveComp->HomingTargetComponent = TargetComp;
 			ProjectileMoveComp->HomingAccelerationMagnitude = HomingStrength;
