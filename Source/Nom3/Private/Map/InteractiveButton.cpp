@@ -5,8 +5,9 @@
  #include "Components/BoxComponent.h"
  #include "Map/TwoButtonDoor.h"
  #include "Core/NomPlayer.h"
+#include "Nom3/Nom3.h"
 
- AInteractiveButton::AInteractiveButton()
+AInteractiveButton::AInteractiveButton()
  {
  	PrimaryActorTick.bCanEverTick = false;
 
@@ -14,12 +15,15 @@
  	RootComponent = TriggerBox;
 
  	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AInteractiveButton::OnOverlapBegin);
- 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AInteractiveButton::OnOverlapEnd);
  }
 
 void AInteractiveButton::BeginPlay()
  {
- 	Super::BeginPlay();
+    Super::BeginPlay();
+    if (TargetDoor == nullptr)
+    {
+       PRINTLOG(TEXT("InteractiveButton: TargetDoor is not set for %s!"), *GetName());
+    }
  }
 
 void AInteractiveButton::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32
@@ -29,14 +33,7 @@ OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
  	if (PlayerCharacter && TargetDoor)
  	{
  		TargetDoor->ActivateButton(this);
+ 		PRINTLOG(TEXT("활성화"))
  	}
  }
 
-void AInteractiveButton::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
- {
- 	ANomPlayer* PlayerCharacter = Cast<ANomPlayer>(OtherActor);
- 	if (PlayerCharacter && TargetDoor)
- 	{
- 		TargetDoor->DeactivateButton(this);
- 	}
- }

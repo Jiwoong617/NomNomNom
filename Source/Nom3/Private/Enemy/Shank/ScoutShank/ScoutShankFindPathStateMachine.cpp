@@ -2,7 +2,7 @@
 
 #include "Enemy/Shank/ScoutShank/ScoutShankFindPathStateMachine.h"
 
-#include "Enemy/Shank/Common/ShankBase.h"
+#include "Enemy/Shank/Common/DroneBase.h"
 
 UScoutShankFindPathStateMachine::UScoutShankFindPathStateMachine()
 {
@@ -11,17 +11,11 @@ UScoutShankFindPathStateMachine::UScoutShankFindPathStateMachine()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UScoutShankFindPathStateMachine::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
 void UScoutShankFindPathStateMachine::EnterState()
 {
 	Super::EnterState();
 	
-	if (OwnerShank == false)
+	if (OwnerDrone == false)
 	{
 		return;
 	}
@@ -40,7 +34,7 @@ void UScoutShankFindPathStateMachine::ExecuteState()
 {
 	Super::ExecuteState();
 
-	if (OwnerShank == false)
+	if (OwnerDrone == false)
 	{
 		return;
 	}
@@ -48,7 +42,7 @@ void UScoutShankFindPathStateMachine::ExecuteState()
 	//제한 시간 초과
 	if (ElapsedTimeInState > LimitTimeInState)
 	{
-		OwnerShank->ChangeCurrentStateMachine(OwnerShank->FollowPathStateMachine);
+		OwnerDrone->ChangeCurrentStateMachine(OwnerDrone->FollowPathStateMachine);
 	}
 }
 
@@ -56,7 +50,7 @@ void UScoutShankFindPathStateMachine::ExitState()
 {
 	Super::ExitState();
 
-	if (OwnerShank == false)
+	if (OwnerDrone == false)
 	{
 		return;
 	}
@@ -65,8 +59,8 @@ void UScoutShankFindPathStateMachine::ExitState()
 void UScoutShankFindPathStateMachine::DecideTargetLocation() const
 {
 	//목표의 방향 요소 벡터
-	const FVector UpDir = OwnerShank->TargetPawn->GetActorUpVector();
-	const FVector RightDir = OwnerShank->TargetPawn->GetActorRightVector();
+	const FVector UpDir = OwnerDrone->TargetPawn->GetActorUpVector();
+	const FVector RightDir = OwnerDrone->TargetPawn->GetActorRightVector();
 	
 	//북극에서 적도를 향해 랜덤 범위만큼
 	FVector RandDir = UpDir.RotateAngleAxis(FMath::RandRange(70, 85), RightDir);
@@ -78,22 +72,17 @@ void UScoutShankFindPathStateMachine::DecideTargetLocation() const
 	constexpr float Distance = 1500;
 
 	//적당한 거리에 적당한 눈높이에 있는 360도 범위 내 좌표를 가지게 된다
-	OwnerShank->TargetLocation = OwnerShank->TargetPawn->GetActorLocation() + RandDir * FMath::FRandRange(Distance - 50, Distance + 50);
+	OwnerDrone->Destination = OwnerDrone->TargetPawn->GetActorLocation() + RandDir * FMath::FRandRange(Distance - 50, Distance + 50);
 }
 
 void UScoutShankFindPathStateMachine::CalculatePaths() const
 {
-	if (OwnerShank == false)
-	{
-		return;
-	}
-
 	//경로 배열을 비운다
-	OwnerShank->PathQueue.Empty();
+	OwnerDrone->PathQueue.Empty();
 
 	//시작 위치와 목표 위치
-	const FVector StartLocation = OwnerShank->GetActorLocation();
-	const FVector TargetLocation = OwnerShank->TargetLocation;
+	const FVector StartLocation = OwnerDrone->GetActorLocation();
+	const FVector TargetLocation = OwnerDrone->Destination;
 
 	//세그먼트 개수
 	constexpr int32 NumSegments = 3;
@@ -105,7 +94,7 @@ void UScoutShankFindPathStateMachine::CalculatePaths() const
 	for (int32 i = 1; i < NumSegments; ++i)
 	{
 		//지그재그 규모
-		const float RandomOffset = FMath::RandRange(200, 400);
+		const float RandomOffset = FMath::RandRange(100, 200);
 
 		//세그먼트 중간점
 		const float Alpha = static_cast<float>(i) / NumSegments;
@@ -115,12 +104,12 @@ void UScoutShankFindPathStateMachine::CalculatePaths() const
 		IntermediatePoint += FVector::UpVector * RandomOffset;
 
 		//중간 경로 삽입
-		OwnerShank->PathQueue.Enqueue(IntermediatePoint);
+		OwnerDrone->PathQueue.Enqueue(IntermediatePoint);
 		DebugDrawPointArray.Add(IntermediatePoint);
 	}
 
 	//최종 목표 삽입
-	OwnerShank->PathQueue.Enqueue(TargetLocation);
+	OwnerDrone->PathQueue.Enqueue(TargetLocation);
 	DebugDrawPointArray.Add(TargetLocation);
 
 	//목표까지 가는 경로 디버그 드로우

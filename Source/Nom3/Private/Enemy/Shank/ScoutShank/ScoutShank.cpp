@@ -3,8 +3,8 @@
 #include "Enemy/Shank/ScoutShank/ScoutShank.h"
 #include "Core/DamageComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
-#include "Enemy/Shank/Common/ShankDamageComponent.h"
-#include "Enemy/Shank/Common/ShankFollowPathStateMachine.h"
+#include "Enemy/Shank/Common/DroneDamageComponent.h"
+#include "Enemy/Shank/Common/DroneFollowPathStateMachine.h"
 #include "Enemy/Shank/ScoutShank/ScoutShankFindPathStateMachine.h"
 #include "Enemy/Shank/ScoutShank/ScoutShankShooterComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -24,6 +24,12 @@ AScoutShank::AScoutShank()
 		SkeletalMeshComp->SetRelativeRotation(FRotator(0, -90, 0));
 	}
 
+	//일반 데미지 컴포넌트
+	DamageComp = CreateDefaultSubobject<UDroneDamageComponent>(FName("DamageComp"));
+	DamageComp->SetRelativeLocation(FVector(0, 0, 110));
+	DamageComp->SetBoxExtent(FVector(120, 90, 90));
+	DamageComp->SetupAttachment(SkeletalMeshComp);
+
 	//정찰 생크 전용의 경로 탐색 스테이트 머신 부착
 	FindPathStateMachine = CreateDefaultSubobject<UScoutShankFindPathStateMachine>(FName("FindPathStateMachine"));
 
@@ -41,7 +47,10 @@ void AScoutShank::BeginPlay()
 	ShooterComp->ActiveAutoFire();
 
 	//데미지 컴포넌트 초기화
-	DamageComp->Init(ECC_EngineTraceChannel1, FName("Body"), EBodyType::Body);
+	DamageComp->Init(ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
+
+	//머터리얼 다이나믹 인스턴스 적용 
+	DamageDynamicInstance = SkeletalMeshComp->CreateDynamicMaterialInstance(5);
 }
 
 void AScoutShank::OnAimByPlayerSight()
@@ -130,10 +139,10 @@ void AScoutShank::OnAimByPlayerSight()
 	DroneMoveComp->VectorThrust(RandDir);
 
 	//목표 지점 변경
-	TargetLocation = GetActorLocation() + RandDir * 800;
+	Destination = GetActorLocation() + RandDir * 800;
 
 	//디버그 라인
-	DrawDebugLine(GetWorld(), GetActorLocation(), TargetLocation, FColor::Magenta, false, 3, 0, 0);
+	DrawDebugLine(GetWorld(), GetActorLocation(), Destination, FColor::Magenta, false, 3, 0, 0);
 
 	//타이밍
 	const float Timing = FMath::RandRange(4, 6);
@@ -157,6 +166,9 @@ void AScoutShank::Tick(float DeltaTime)
 void AScoutShank::OnShotDown(const FVector ShotDir)
 {
 	Super::OnShotDown(ShotDir);
+
+	//데미지 파트 가시화
+	DamageDynamicInstance->SetScalarParameterValue(FName("opacity"), 1.0f);
 
 	//사격 바활성화
 	ShooterComp->InactiveAutoFire();

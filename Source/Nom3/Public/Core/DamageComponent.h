@@ -26,18 +26,15 @@ public:
 	// Sets default values for this component's properties
 	UDamageComponent();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
 	EBodyType BodyType = EBodyType::None;
+
+protected:
+	virtual void BeginPlay() override;
 	
 	virtual void OnHitBody(FFireInfo& Info);
 	
 	virtual void OnHitHead(FFireInfo& Info);
-
-	//FOnDamagedDelegate OnDamagedDelegate;
-
+	
 public:
 	//충돌 델리게이트 함수
 	UFUNCTION()
@@ -51,7 +48,8 @@ public:
 	virtual void Init(ECollisionChannel Channel,
 	FName CollisionPresetName, EBodyType BodyType);
 
-	
+	//데미지를 입히기 위해 외부에서 호출하는 메서드
+	UFUNCTION()
 	void OnDamaged(FFireInfo Info);
 	
 	//소유자 사망 시 비활성화하기 위한 메서드
