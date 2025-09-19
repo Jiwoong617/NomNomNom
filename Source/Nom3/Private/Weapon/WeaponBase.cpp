@@ -22,7 +22,7 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 	RootComponent = WeaponMeshComp;
 	WeaponMeshComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 
-	ConstructorHelpers::FObjectFinder<UNiagaraSystem> eff(TEXT("/Script/Niagara.NiagaraSystem'/Game/Effect/NS_FireEffect.NS_FireEffect'"));
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> eff(TEXT("/Script/Niagara.NiagaraSystem'/Game/Asset/FX/muzzle/N_MuzzleFalsh.N_MuzzleFalsh'"));
 	if (eff.Succeeded())
 		fireEffect = eff.Object;
 
