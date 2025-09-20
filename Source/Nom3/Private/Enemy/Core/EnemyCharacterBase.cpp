@@ -1,10 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy/Core/EnemyCharacterBase.h"
-
 #include "AITypes.h"
 #include "NavigationSystem.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
+#include "Enemy/Core/StateMachineBase.h"
 #include "Enemy/Damage/DamageActorPoolWorldSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Navigation/PathFollowingComponent.h"
@@ -22,14 +22,17 @@ void AEnemyCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//원하는 AI 컨트롤러 스폰
+	SpawnDefaultController();
+
 	//AI 컨트롤러 획득
 	AIController = Cast<AAIController>(GetController());
 
+	//네비게이션 시스템 획득
+	NavigationSystem = UNavigationSystemV1::GetCurrent(GetWorld());
+
 	//플레이어 폰 획득
 	TargetPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-
-	
-	FTimerHandle TimerHandle;
 }
 
 void AEnemyCharacterBase::Tick(float DeltaTime)
@@ -40,6 +43,26 @@ void AEnemyCharacterBase::Tick(float DeltaTime)
 void AEnemyCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+UStateMachineBase* AEnemyCharacterBase::GetCurrentStateMachine() const
+{
+	return CurrentStateMachine;
+}
+
+void AEnemyCharacterBase::ChangeCurrentStateMachine(UStateMachineBase* StateMachineToChange)
+{
+	//임시 저장
+	const auto Before = CurrentStateMachine;
+
+	//스테이트 머신 변경
+	CurrentStateMachine = StateMachineToChange;
+
+	//탈출
+	if (Before)
+	{
+		Before->ExitState();	
+	}
 }
 
 void AEnemyCharacterBase::OnAimByPlayerSight()
@@ -99,51 +122,4 @@ FVector AEnemyCharacterBase::GetPlayerGazeRightDir() const
 {
 	const FVector PlayerGazeDir = GetPlayerGazeDir();
 	return FVector::CrossProduct(TargetPawn->GetActorUpVector(), PlayerGazeDir).GetSafeNormal();
-}
-
-void AEnemyCharacterBase::MoveToTargetLocation(const FVector& TargetLocation) const
-{
-	//네비게이션 시스템 획득
-	auto NS = UNavigationSystemV1::GetCurrent(GetWorld());
-
-	//요청 생성
-	FAIMoveRequest Request;
-	Request.SetAcceptanceRadius(3);
-	Request.SetGoalLocation(TargetLocation);
-
-	//AI가 요청을 이용해 쿼리 구축
-	FPathFindingQuery Query;
-	AIController->BuildPathfindingQuery(Request, Query);
-
-	//쿼리를 통해 네비게이션 시스템에서 검색
-	if (FPathFindingResult FindPathResult = NS->FindPathSync(Query); FindPathResult.Result == ENavigationQueryResult::Type::Success)
-	{
-		//목표에 도달하는 경로가 있으므로 이동
-		AIController->MoveToLocation(TargetPawn->GetActorLocation());
-	}
-	
-	// else
-	// {
-	// 	//목표에 도달하는 경로가 없으므로 랜덤 위치로 이동할 건데, 이 랜덤에도 문제가 있다면
-	// 	if (auto PathFollowResult = AIController->MoveToLocation(RandomLocation);
-	// 		PathFollowResult == EPathFollowingRequestResult::AlreadyAtGoal ||
-	// 		PathFollowResult == EPathFollowingRequestResult::Failed)
-	// 	{
-	// 		GetRandomLocationInNavMesh(TargetPawn->GetActorLocation(), 500, RandomLocation);
-	// 	}
-	// }
-}
-
-bool AEnemyCharacterBase::GetRandomLocationInNavMesh(const FVector& CenterLocation, const float Radius, FVector& Destination) const
-{
-	//네비게이션 시스템 획득
-	const auto NS = UNavigationSystemV1::GetCurrent(GetWorld());
-
-	//네비게이션 시스템을 통해서 도달 가능한 랜덤 위치 획득
-	FNavLocation RandomReachableLocation;
-	const bool bResult = NS->GetRandomReachablePointInRadius(CenterLocation, Radius, RandomReachableLocation);
-	Destination = RandomReachableLocation.Location;
-
-	//성공 결과
-	return bResult;
 }

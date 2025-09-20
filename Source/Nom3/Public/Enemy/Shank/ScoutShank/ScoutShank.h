@@ -20,8 +20,6 @@ public:
 
 	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaTime) override;
-
 	virtual void OnShotDown(const FVector ShotDir) override;
 	
 	//플레이어 시선 노출 인터페이스 구현

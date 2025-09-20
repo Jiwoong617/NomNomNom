@@ -4,18 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Enemy/Core/EnemyCharacterBase.h"
-#include "Dreg.generated.h"
+#include "HumanBase.generated.h"
 
 //전방 선언
+class UHumanStateMachineBase;
+class UNavigationSystemV1;
 class UDamageComponent;
 
 UCLASS()
-class NOM3_API ADreg : public AEnemyCharacterBase
+class NOM3_API AHumanBase : public AEnemyCharacterBase
 {
 	GENERATED_BODY()
 
 public:
-	ADreg();
+	AHumanBase();
 
 	//데미지 컴포넌트
 	UPROPERTY(VisibleAnywhere)
@@ -25,6 +27,18 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDamageComponent> CriticalDamageComp;
 
+	//대기 상태 머신
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UHumanStateMachineBase> IdleStateMachine;
+
+	//이동 상태 머신
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UHumanStateMachineBase> MoveStateMachine;
+
+	//회피 상태 머신
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UHumanStateMachineBase> EvadeStateMachine;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -32,4 +46,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	bool FindReachableLocation(FVector& TargetLocation) const;
 };

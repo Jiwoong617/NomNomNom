@@ -1,20 +1,17 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Enemy/Dreg/DregDamageComponent.h"
-
+#include "Enemy/Human/Common/HumanDamageComponent.h"
 #include "Enemy/Core/EnemyCharacterBase.h"
 #include "Kismet/GameplayStatics.h"
 
-UDregDamageComponent::UDregDamageComponent()
+UHumanDamageComponent::UHumanDamageComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
-void UDregDamageComponent::OnHitBody(FFireInfo& Info)
+void UHumanDamageComponent::OnHitBody(FFireInfo& Info)
 {
 	//총알 명중 사운드 재생
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, GetOwner()->GetActorLocation());
@@ -29,7 +26,7 @@ void UDregDamageComponent::OnHitBody(FFireInfo& Info)
 	}
 }
 
-void UDregDamageComponent::OnHitHead(FFireInfo& Info)
+void UHumanDamageComponent::OnHitHead(FFireInfo& Info)
 {
 	Super::OnHitHead(Info);
 

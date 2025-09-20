@@ -160,11 +160,6 @@ void AScoutShank::OnAimByPlayerSight()
 	}, Timing, false);
 }
 
-void AScoutShank::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void AScoutShank::OnShotDown(const FVector ShotDir)
 {
 	Super::OnShotDown(ShotDir);

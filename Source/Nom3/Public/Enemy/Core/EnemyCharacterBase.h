@@ -10,6 +10,7 @@
 #include "Interfaces/Damagable.h"
 #include "EnemyCharacterBase.generated.h"
 
+class UNavigationSystemV1;
 //전방 선언
 class AAIController;
 class UStateMachineBase;
@@ -33,6 +34,10 @@ public:
 	//AI 컨트롤러
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<AAIController> AIController;
+
+	//네비게이션 시스템
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UNavigationSystemV1> NavigationSystem;
 	
 	//현재 목표로 하는 폰
 	UPROPERTY(VisibleAnywhere)
@@ -41,6 +46,10 @@ public:
 	//체력 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UEnemyHealthComponent> HealthComp;
+
+	//생크 스테이트 머신
+	UStateMachineBase* GetCurrentStateMachine() const;
+	void ChangeCurrentStateMachine(UStateMachineBase* StateMachineToChange);
 
 	//피조준 인터페이스
 	UFUNCTION(BlueprintCallable)
@@ -75,11 +84,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UDamageActorPoolWorldSubsystem> DamageActorPool;
 
-	
-	UFUNCTION()
-	void MoveToTargetLocation(const FVector& TargetLocation) const;
-	
-	//접근 가능한 랜덤 위치를 네비게이션 시스템을 통해 획득
-	UFUNCTION()
-	bool GetRandomLocationInNavMesh(const FVector& CenterLocation, const float Radius, FVector& Destination) const;
+	//AI 컨트롤러 클래스
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AAIController> DefaultAIControllerClass;
 };

@@ -4,16 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Core/DamageComponent.h"
-#include "DregDamageComponent.generated.h"
-
+#include "HumanDamageComponent.generated.h"
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class NOM3_API UDregDamageComponent : public UDamageComponent
+class NOM3_API UHumanDamageComponent : public UDamageComponent
 {
 	GENERATED_BODY()
 
 public:
-	UDregDamageComponent();
+	UHumanDamageComponent();
 
 	virtual void OnHitBody(FFireInfo& Info) override;
 
