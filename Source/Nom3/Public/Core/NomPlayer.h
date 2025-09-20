@@ -236,6 +236,7 @@ public:
 	USpringArmComponent* GetFpsCamArm();
 	USpringArmComponent* GetTpsCamArm();
 	UCameraComponent* GetFpsCam();
+	UCameraComponent* GetTpsCam();
 	USkeletalMeshComponent* GetTpsComp();
 	const EActionState& GetActionState() const;
 	const EMovingState& GetMovingState() const;

@@ -16,13 +16,16 @@ AThrowingDagger::AThrowingDagger()
 
 	SphereComp = CreateDefaultSubobject<USphereComponent>(FName("SphereComp"));
 	SphereComp->SetCollisionProfileName(FName("Projectile"), true);
+	SphereComp->SetGenerateOverlapEvents(true);
 	SetRootComponent(SphereComp);
 
 	PrimaryActorTick.bCanEverTick = true;
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(RootComponent);
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-	SphereComp->SetGenerateOverlapEvents(true);
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tempmesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
+	if (tempmesh.Succeeded())
+		MeshComp->SetStaticMesh(tempmesh.Object);
 
 	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMoveComp"));
 	ProjectileMoveComp->ProjectileGravityScale = 0.0f;
@@ -33,7 +36,8 @@ AThrowingDagger::AThrowingDagger()
 void AThrowingDagger::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &AThrowingDagger::OnOverlap);
 }
 
 // Called every frame

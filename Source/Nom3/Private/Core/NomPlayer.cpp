@@ -590,9 +590,11 @@ void ANomPlayer::Throw()
 	if (MovingState == EMovingState::Running)
 		MovingState = EMovingState::Idle;
 
-	ActionState = EActionState::LeftHand;
 	
-	SkillComp->UseThrowSkill();
+	if (!SkillComp->UseThrowSkill())
+		return;
+	
+	ActionState = EActionState::LeftHand;
 }
 
 void ANomPlayer::LeftHandEnd(UAnimMontage* Montage, bool bInterrupted)
@@ -642,7 +644,6 @@ void ANomPlayer::Skill()
         return;
 
     ChangeToTps();
-	SkillComp->UseDodgeSkill();
 }
 
 void ANomPlayer::UltimateSkill()
@@ -675,7 +676,6 @@ void ANomPlayer::UltimateSkill()
         return;
 
     ChangeToTps();
-	SkillComp->UseUltimateSkill();
 }
 
 void ANomPlayer::SkillEnd(UAnimMontage* Montage, bool bInterrupted)
@@ -952,6 +952,11 @@ USpringArmComponent* ANomPlayer::GetTpsCamArm()
 UCameraComponent* ANomPlayer::GetFpsCam()
 {
 	return FpsCameraComp;
+}
+
+UCameraComponent* ANomPlayer::GetTpsCam()
+{
+	return TpsCameraComp;
 }
 
 USkeletalMeshComponent* ANomPlayer::GetTpsComp()
