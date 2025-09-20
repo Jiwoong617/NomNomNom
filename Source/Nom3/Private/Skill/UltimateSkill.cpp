@@ -4,6 +4,8 @@
 #include "Skill/UltimateSkill.h"
 
 #include "Core/NomPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 UUltimateSkill::UUltimateSkill()
 {
@@ -18,5 +20,22 @@ UUltimateSkill::UUltimateSkill()
 void UUltimateSkill::UseSkill()
 {
 	if (SkillMontage)
+	{
+		FVector LeftDir = -Owner->GetActorRightVector();
+		FVector NewLocation = Owner->GetTpsComp()->GetComponentLocation() + LeftDir * 150.f;
+		Owner->GetTpsComp()->SetWorldLocation(NewLocation);
+		//Owner->GetTpsComp()->AddWorldRotation(FRotator(0, 0, -20));
+		Owner->GetTpsCamArm()->TargetArmLength = 450;
+		
+		Owner->GetCharacterMovement()->GravityScale = 0.7f;
+		Owner->LaunchCharacter(Owner->GetActorUpVector() * 1000, true, true);
+		
 		Owner->PlayTPSAnim(SkillMontage);
+	}
+}
+
+void UUltimateSkillNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
+	const FAnimNotifyEventReference& EventReference)
+{
+	Super::Notify(MeshComp, Animation, EventReference);
 }

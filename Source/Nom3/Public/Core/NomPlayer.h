@@ -91,7 +91,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FVector TpsCamOffset = FVector(0.f, 0.f, 50.f);
 	UPROPERTY(EditAnywhere)
-	float TpsSpringArmLength = 300.f;
+	float TpsSpringArmLength = 600.f;
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* TpsSpringArmComp;
 	UPROPERTY(EditAnywhere)
@@ -234,7 +234,9 @@ public:
 	UFUNCTION() virtual void OnDamaged(FFireInfo Info) override;
 	UFUNCTION() virtual void OnCriticalDamaged(FFireInfo Info) override;
 	USpringArmComponent* GetFpsCamArm();
+	USpringArmComponent* GetTpsCamArm();
 	UCameraComponent* GetFpsCam();
+	USkeletalMeshComponent* GetTpsComp();
 	const EActionState& GetActionState() const;
 	const EMovingState& GetMovingState() const;
 

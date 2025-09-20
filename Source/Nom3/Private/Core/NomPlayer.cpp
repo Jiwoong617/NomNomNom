@@ -83,7 +83,7 @@ ANomPlayer::ANomPlayer()
 	//TPS Cam Settings
 	TpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("TPS Spring Arm");
 	TpsSpringArmComp->SetupAttachment(RootComponent);
-	TpsSpringArmComp->TargetArmLength = 600.f;
+	TpsSpringArmComp->TargetArmLength = TpsSpringArmLength;
 	TpsSpringArmComp->bUsePawnControlRotation = true;
 	TpsSpringArmComp->SetRelativeLocation(FVector(0, 0, 50));
 	TpsSpringArmComp->SetRelativeRotation(FRotator(-45, 0, 0));
@@ -682,6 +682,12 @@ void ANomPlayer::SkillEnd(UAnimMontage* Montage, bool bInterrupted)
 {
 	ActionState = EActionState::Idle;
 	ChangeToFps();
+	TpsSpringArmComp->TargetArmLength = TpsSpringArmLength;
+	TpsMeshComp->SetWorldLocation(GetMesh()->GetComponentLocation());
+	//TpsMeshComp->AddWorldRotation(FRotator(0, 0, 20));
+	
+	GetCharacterMovement()->GravityScale = GravityMultiplier;
+		
 	if (bIsHoldFire)
 	{
 		ActionState = EActionState::Firing;
@@ -938,9 +944,19 @@ USpringArmComponent* ANomPlayer::GetFpsCamArm()
 	return FpsSpringArmComp;
 }
 
+USpringArmComponent* ANomPlayer::GetTpsCamArm()
+{
+	return TpsSpringArmComp;
+}
+
 UCameraComponent* ANomPlayer::GetFpsCam()
 {
 	return FpsCameraComp;
+}
+
+USkeletalMeshComponent* ANomPlayer::GetTpsComp()
+{
+	return TpsMeshComp;
 }
 
 const EActionState& ANomPlayer::GetActionState() const
