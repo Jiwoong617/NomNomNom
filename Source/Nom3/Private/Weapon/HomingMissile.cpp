@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Core/DamageComponent.h"
+#include "Core/NomPlayer.h"
 #include "Enemy/Core/EnemyActorBase.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
 
@@ -93,20 +94,30 @@ void AHomingMissile::SetHoming()
 
 void AHomingMissile::Explode()
 {
-	EObjectTypeQuery ObjType = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2);
+	EObjectTypeQuery ObjType1 = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+	EObjectTypeQuery ObjType2 = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2);
 	TArray<UPrimitiveComponent*> OutComponents;
 	TArray<AActor*> ActorsToIgnore = {Player};
-
+	
+	TMap<AActor*, bool> Map;
 	if (UKismetSystemLibrary::SphereOverlapComponents(GetWorld(), GetActorLocation(), ExplosionRadius,
-		TArray<TEnumAsByte<EObjectTypeQuery>>{ ObjType }, nullptr, ActorsToIgnore, OutComponents))
+		TArray<TEnumAsByte<EObjectTypeQuery>>{ ObjType1, ObjType2 }, nullptr, ActorsToIgnore, OutComponents))
 	{
 		for (UPrimitiveComponent* Comp : OutComponents)
 		{
 			if (UDamageComponent* DamageComp = Cast<UDamageComponent>(Comp))
 			{
+				if (Map.Find(DamageComp->GetOwner()) != nullptr)
+					continue;
+
+				if (DamageComp->GetOwner() == Player)
+					continue;
+				
 				float Alpha = FVector::Dist(GetActorLocation(), Comp->GetComponentLocation()) / ExplosionRadius;
-				float dmg = FMath::Lerp(Damage, Damage/2, Alpha);
+				float dmg = FMath::Clamp(FMath::Lerp(Damage, Damage/2, Alpha), Damage/2, Damage);
 				DamageComp->OnDamaged(FFireInfo(dmg, GetActorLocation(), ETeamInfo::Player, false));
+				
+				Map.Add(DamageComp->GetOwner());
 			}
 		}
 	}
@@ -124,7 +135,7 @@ void AHomingMissile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	Explode();
 }
 
-void AHomingMissile::InitFire(int32 Dmg, AActor* player)
+void AHomingMissile::InitFire(int32 Dmg, ANomPlayer* player)
 {
 	Damage = Dmg;
 	Player = player;

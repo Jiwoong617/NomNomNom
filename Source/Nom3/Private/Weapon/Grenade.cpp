@@ -5,6 +5,7 @@
 
 #include "Components/SphereComponent.h"
 #include "Core/DamageComponent.h"
+#include "Core/NomPlayer.h"
 #include "Interfaces/Damagable.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Nom3/Nom3.h"
@@ -19,11 +20,9 @@ AGrenade::AGrenade()
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
 	SetRootComponent(CollisionComponent);
 	CollisionComponent->SetSphereRadius(20.f);
-	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
-	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Block);
-	CollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	CollisionComponent->SetCollisionProfileName(FName("Projectile"), true);
+	CollisionComponent->SetGenerateOverlapEvents(true);
 	CollisionComponent->SetSimulatePhysics(true);
-	CollisionComponent->SetNotifyRigidBodyCollision(true);
 	CollisionComponent->SetLinearDamping(0.01f);
 	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
@@ -44,7 +43,7 @@ void AGrenade::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CollisionComponent->OnComponentHit.AddDynamic(this, &AGrenade::OnHit);
+	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AGrenade::OnOverlap);
 }
 
 // Called every frame
@@ -53,39 +52,38 @@ void AGrenade::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AGrenade::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+void AGrenade::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (IsHit) return;
-	CollisionComponent->SetLinearDamping(2.f);
-	
-	if (IDamagable* enemy = Cast<IDamagable>(OtherActor))
-	{
-		OnExplode();
+	if (Cast<ANomPlayer>(OtherActor) == Player)
 		return;
-	}
 
-	GetWorldTimerManager().SetTimer(TimerHandle,this, &AGrenade::OnExplode, 2.f, false);
-	
-	IsHit = true;
+	OnExplode();
 }
 
 void AGrenade::OnExplode()
 {
-	EObjectTypeQuery ObjType = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2);
+	EObjectTypeQuery ObjType1 = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+	EObjectTypeQuery ObjType2 = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2);
 	TArray<UPrimitiveComponent*> OutActors;
 	TArray<AActor*> ActorsToIgnore;
-	
+
+	TMap<AActor*, bool> Map;
 	if (UKismetSystemLibrary::SphereOverlapComponents(GetWorld(), GetActorLocation(), ExplodeRadius,
-		TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType }, nullptr, ActorsToIgnore, OutActors))
+		TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType1, ObjType2 }, nullptr, ActorsToIgnore, OutActors))
 	{
 		for (UPrimitiveComponent* comp : OutActors)
 		{
 			if (UDamageComponent* act = Cast<UDamageComponent>(comp))
 			{
+				if (Map.Find(act->GetOwner()) != nullptr)
+					continue;
+				
 				float alpha = FVector::Dist(GetActorLocation(), comp->GetComponentLocation()) / ExplodeRadius;
-				float damage = FMath::Lerp(MaxDamage, MinDamage, alpha);
+				float damage = FMath::Clamp(FMath::Lerp(MaxDamage, MinDamage, alpha), MinDamage, MaxDamage);
 				act->OnDamaged(FFireInfo(damage, GetActorLocation(), ETeamInfo::Player, false));
+
+				Map.Add(act->GetOwner());
 			}
 		}
 	}
@@ -98,7 +96,8 @@ void AGrenade::OnExplode()
 	Destroy();
 }
 
-void AGrenade::Init(FVector Direction, float Speed)
+void AGrenade::Init(FVector Direction, float Speed, ANomPlayer* NomPlayer)
 {
+	Player = NomPlayer;
 	CollisionComponent->AddImpulse(Direction * Speed * CollisionComponent->GetMass());
 }

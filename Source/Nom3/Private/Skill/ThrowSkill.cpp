@@ -23,7 +23,7 @@ void UThrowSkill::UseSkill()
 	GetWorld()->SpawnActor<AGrenade>(AGrenade::StaticClass()
 		, Owner->GetFpsCam()->GetComponentLocation() + Owner->GetFpsCam()->GetRightVector() * -30
 		, FRotator(0))
-		->Init(Owner->GetFpsCam()->GetForwardVector(), 1000 + Owner->GetVelocity().X);
+		->Init(Owner->GetFpsCam()->GetForwardVector(), 1000 + Owner->GetVelocity().X, Owner);
 
 	if (SkillMontage)
 		Owner->PlayFPSAnim(SkillMontage);
