@@ -7,6 +7,7 @@
 #include "Core/DamageComponent.h"
 #include "Core/NomPlayer.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "NiagaraComponent.h"
 
 
 // Sets default values
@@ -17,19 +18,31 @@ AThrowingDagger::AThrowingDagger()
 	SphereComp = CreateDefaultSubobject<USphereComponent>(FName("SphereComp"));
 	SphereComp->SetCollisionProfileName(FName("Projectile"), true);
 	SphereComp->SetGenerateOverlapEvents(true);
+	SphereComp->SetSphereRadius(12.f);
 	SetRootComponent(SphereComp);
 
 	PrimaryActorTick.bCanEverTick = true;
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(RootComponent);
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-	ConstructorHelpers::FObjectFinder<UStaticMesh> tempmesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tempmesh(TEXT("/Script/Engine.StaticMesh'/Game/Asset/Weapon/Dagger/StaticMeshes/pisau_belati_2_dagger_2.pisau_belati_2_dagger_2'"));
 	if (tempmesh.Succeeded())
+	{
 		MeshComp->SetStaticMesh(tempmesh.Object);
+		MeshComp->SetRelativeLocation(FVector(-10, 0, -10));
+		MeshComp->SetRelativeRotation(FRotator(0, 180, 0));
+		MeshComp->SetRelativeScale3D(FVector(0.005f));;
+	}
 
 	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMoveComp"));
 	ProjectileMoveComp->ProjectileGravityScale = 0.0f;
 	ProjectileMoveComp->bRotationFollowsVelocity = true;
+
+	Trail = CreateDefaultSubobject<UNiagaraComponent>(FName("Niagara"));
+	Trail->SetupAttachment(MeshComp);
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> temptrail(TEXT("/Script/Niagara.NiagaraSystem'/Game/Effect/ArrowTrail/FX/NS_ArrowTrail_Fire.NS_ArrowTrail_Fire'"));
+	if (temptrail.Succeeded())
+		Trail->SetAsset(temptrail.Object);
 }
 
 // Called when the game starts or when spawned

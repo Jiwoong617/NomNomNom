@@ -7,6 +7,7 @@
 #include "Interfaces/Damagable.h"
 #include "ThrowingDagger.generated.h"
 
+class UNiagaraComponent;
 class UStaticMeshComponent;
 class USphereComponent;
 class UProjectileMovementComponent;
@@ -32,6 +33,7 @@ private:
 	UPROPERTY(EditAnywhere) UStaticMeshComponent* MeshComp;
 	UPROPERTY(EditAnywhere) USphereComponent* SphereComp;
 	UPROPERTY(EditAnywhere) UProjectileMovementComponent* ProjectileMoveComp;
+	UPROPERTY(EditAnywhere) UNiagaraComponent* Trail;
 
 	UPROPERTY()
 	FFireInfo FireInfo;

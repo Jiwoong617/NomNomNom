@@ -50,7 +50,7 @@ void UUltimateSkillNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	UCameraComponent* TpsCam = Player->GetTpsCam();
 	FVector Loc = Player->GetActorLocation();
 	FVector CamFwd = TpsCam->GetForwardVector();
-	FVector SpawnLocation = MeshComp->GetComponentLocation();
+	FVector SpawnLocation = MeshComp->GetSocketLocation(TEXT("WeaponSocket"));
 	
 	float MaxRange = 15000.f;
 	float HalfFovDeg = TpsCam->FieldOfView * 0.5f;
