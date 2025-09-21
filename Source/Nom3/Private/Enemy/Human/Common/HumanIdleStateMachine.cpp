@@ -27,8 +27,6 @@ void UHumanIdleStateMachine::ExecuteState()
 		//이동 상태 머신으로 전환
 		OwnerHuman->ChangeCurrentStateMachine(OwnerHuman->MoveStateMachine);
 	}
-	
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("UHumanIdleStateMachine::ExecuteState"));
 }
 
 void UHumanIdleStateMachine::ExitState()

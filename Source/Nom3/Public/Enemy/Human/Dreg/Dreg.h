@@ -9,18 +9,20 @@
 class UDregShooterComponent;
 
 UCLASS()
-class NOM3_API ADreg : public AHumanBase
+class NOM3_API ANormalDreg : public AHumanBase
 {
 	GENERATED_BODY()
 
 public:
-	ADreg();
+	ANormalDreg();
 
 	//플레이어 시선 노출 인터페이스 구현
 	virtual void OnAimByPlayerSight() override;
 
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void OnDie() override;
 
 	//사격 컴포넌트
 	UPROPERTY(VisibleAnywhere)

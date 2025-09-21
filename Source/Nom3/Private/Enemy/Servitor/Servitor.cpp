@@ -66,7 +66,7 @@ void AServitor::BeginPlay()
 	
 	//초기화
 	HealthComp->Init(75000);
-
+	
 	//초기화
 	CriticalDamageComp->Init(ECC_GameTraceChannel1, FName("Head"), EBodyType::Head);
 

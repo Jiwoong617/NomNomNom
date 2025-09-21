@@ -18,6 +18,10 @@ class NOM3_API AHumanBase : public AEnemyCharacterBase
 
 public:
 	AHumanBase();
+	
+	//씬 컴포넌트
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USceneComponent> MeshSceneComp;
 
 	//데미지 컴포넌트
 	UPROPERTY(VisibleAnywhere)
@@ -42,10 +46,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	virtual void OnDie();
+
 public:
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	bool FindReachableLocation(FVector& TargetLocation) const;
 };

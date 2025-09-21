@@ -22,8 +22,11 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-	FVector Destination;
+	FVector EvadeLocation;
 
 	UPROPERTY(VisibleAnywhere)
 	float InitWalkSpeed;
+
+	UFUNCTION()
+	bool FindEvadeLocation(FVector& OutLocation);
 };

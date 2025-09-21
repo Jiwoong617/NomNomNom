@@ -17,8 +17,8 @@ AScoutShank::AScoutShank()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//스켈레탈 메시 로드
-	if (static ConstructorHelpers::FObjectFinder<USkeletalMesh> Finder(
-		TEXT("/Game/Asset/ScoutShank/SKM_ScoutShank.SKM_ScoutShank"));
+	if (static ConstructorHelpers::FObjectFinder<USkeletalMesh>
+		Finder(TEXT("/Game/Asset/ScoutShank/SKM_ScoutShank.SKM_ScoutShank"));
 		Finder.Succeeded())
 	{
 		SkeletalMeshComp->SetSkeletalMesh(Finder.Object);

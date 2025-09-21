@@ -21,7 +21,7 @@ void UHumanMoveStateMachine::EnterState()
 	const FVector Forward = OwnerHuman->TargetPawn->GetActorForwardVector();
 	const FVector Up = OwnerHuman->TargetPawn->GetActorUpVector();
 	const FVector RandDir = Forward.RotateAngleAxis(FMath::FRandRange(-180.0, 180.0), Up);
-	Destination = OwnerHuman->TargetPawn->GetActorLocation() + RandDir * 1000;
+	Destination = OwnerHuman->TargetPawn->GetActorLocation() + RandDir * 2000;
 
 	//목표 지점 위치의 도달 가능한 위치
 	OwnerHuman->FindReachableLocation(Destination);
@@ -41,7 +41,6 @@ void UHumanMoveStateMachine::ExecuteState()
 {
 	Super::ExecuteState();
 
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("UHumanMoveStateMachine::ExecuteState"));
 }
 
 void UHumanMoveStateMachine::ExitState()

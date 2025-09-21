@@ -33,6 +33,12 @@ void AEnemyCharacterBase::BeginPlay()
 
 	//플레이어 폰 획득
 	TargetPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+
+	//데미지 액터 풀링 서브시스템 획득
+	if (auto Temp = GetWorld()->GetSubsystem<UDamageActorPoolWorldSubsystem>())
+	{
+		DamageActorPool = Temp;
+	}
 }
 
 void AEnemyCharacterBase::Tick(float DeltaTime)
