@@ -689,6 +689,7 @@ void ANomPlayer::SkillEnd(UAnimMontage* Montage, bool bInterrupted)
 {
 	ActionState = EActionState::Idle;
 	ChangeToFps();
+	RemoveEffect();
 	TpsSpringArmComp->TargetArmLength = TpsSpringArmLength;
 	TpsMeshComp->SetWorldLocation(GetMesh()->GetComponentLocation());
 	//TpsMeshComp->AddWorldRotation(FRotator(0, 0, 20));

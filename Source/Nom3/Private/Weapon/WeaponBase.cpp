@@ -26,6 +26,10 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 	if (eff.Succeeded())
 		fireEffect = eff.Object;
 		
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> impacteff(TEXT("/Script/Niagara.NiagaraSystem'/Game/Asset/FX/NS_BulletEffect.NS_BulletEffect'"));
+	if (impacteff.Succeeded())
+		BulletImpactEffect = impacteff.Object;
+		
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> reloadMontage(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/gun/HandCannonReload.HandCannonReload'"));
 	if (reloadMontage.Succeeded())
 		ReloadMontage = reloadMontage.Object;
@@ -112,8 +116,10 @@ void AWeaponBase::AimFire()
 				dmg->OnDamaged(FFireInfo(damage,
 					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
-			
-			DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
+
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BulletImpactEffect,
+				Hit.Location, Hit.Normal.Rotation());
+			//DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
 		}
 
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), fireEffect,
@@ -171,7 +177,9 @@ void AWeaponBase::NoAimFire()
 					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
 			
-			DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BulletImpactEffect,
+				Hit.Location, Hit.Normal.Rotation());
+			//DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
 		}
 
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), fireEffect,

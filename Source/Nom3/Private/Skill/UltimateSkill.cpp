@@ -18,7 +18,7 @@ UUltimateSkill::UUltimateSkill()
 	if (anim.Succeeded())
 		SkillMontage = anim.Object;
 	
-	ConstructorHelpers::FObjectFinder<UNiagaraSystem> niagara(TEXT("/Script/Niagara.NiagaraSystem'/Game/Asset/FX/fireroad/NS_UlT.NS_UlT'"));
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> niagara(TEXT("/Script/Niagara.NiagaraSystem'/Game/Asset/FX/NS_ULTJansang.NS_ULTJansang'"));
 	if (niagara.Succeeded())
 		NiagaraEffect = niagara.Object;
 	

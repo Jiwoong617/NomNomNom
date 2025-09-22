@@ -6,6 +6,7 @@
 #include "SkillBase.h"
 #include "DodgeSkill.generated.h"
 
+class UNiagaraSystem;
 /**
  * 
  */
@@ -13,7 +14,9 @@ UCLASS()
 class NOM3_API UDodgeSkill : public USkillBase
 {
 	GENERATED_BODY()
-
+protected:
+	UPROPERTY(EditAnywhere) UNiagaraSystem* NiagaraEffect;
+	
 public:
 	UDodgeSkill();
 	virtual void UseSkill() override;
