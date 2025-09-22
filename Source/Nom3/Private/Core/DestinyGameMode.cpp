@@ -4,7 +4,6 @@
 #include "Core/DestinyGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Nom3/Public/Core/DestinyPlayerController.h"
-#include "Servitor.generated.h"
 
 void ADestinyGameMode::OnServitorDied(AServitor* KilledServitor)
 {
