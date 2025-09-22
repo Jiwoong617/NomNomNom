@@ -477,10 +477,10 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://C:/Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/Delegates/Delegate.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://C:/Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/Components/PrimitiveComponent.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://C:/Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/GameFramework/PlayerController.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://C:/Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/UMG/Public/Blueprint/UserWidget.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/Delegates/Delegate.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/Components/PrimitiveComponent.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/GameFramework/PlayerController.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/UMG/Public/Blueprint/UserWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Core/ClearUI.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Core/DestinyGameMode.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Core/DestinyPlayerController.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -504,7 +504,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "git-widget-placeholder": "MAP__JM",
+    "git-widget-placeholder": "Alpha&&Beta-Player",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",

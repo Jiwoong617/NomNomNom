@@ -8,6 +8,8 @@
 #include "Interfaces/Damagable.h"
 #include "NomPlayer.generated.h"
 
+class UNiagaraSystem;
+class UNiagaraComponent;
 class UPlayerTpsAnimation;
 class UPlayerFpsAnimation;
 class UPlayerUI;
@@ -162,6 +164,8 @@ protected:
 	//Animation
 	UPlayerFpsAnimation* FpsAnimation;
 	UPlayerTpsAnimation* TpsAnimation;
+
+	UNiagaraComponent* NiagaraComponent;
 	
 public:
 
@@ -248,4 +252,8 @@ public:
 	void PlayFPSAnim(UAnimMontage* Montage, EActionState action = EActionState::LeftHand, int32 Idx = 0);
 	UFUNCTION()
 	void PlayTPSAnim(UAnimMontage* Montage);
+
+	//effect
+	UFUNCTION() void SetEffect(UNiagaraSystem* Effect);
+	UFUNCTION() void RemoveEffect();
 };

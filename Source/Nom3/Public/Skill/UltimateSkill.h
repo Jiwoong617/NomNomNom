@@ -13,6 +13,9 @@ UCLASS()
 class NOM3_API UUltimateSkill : public USkillBase
 {
 	GENERATED_BODY()
+
+protected:
+	UPROPERTY(EditAnywhere) UNiagaraSystem* NiagaraEffect;
 	
 public:
 	UUltimateSkill();

@@ -3,6 +3,7 @@
 
 #include "Weapon/RocketLauncher.h"
 
+#include "Nom3/Nom3.h"
 #include "Weapon/HomingMissile.h"
 #include "Weapon/WeaponData.h"
 
@@ -13,7 +14,7 @@ ARocketLauncher::ARocketLauncher()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Weapons/GrenadeLauncher/Meshes/SKM_GrenadeLauncher.SKM_GrenadeLauncher'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/gun/roket/Roket.Roket'"));
 	if (TempMesh.Succeeded())
 	{
 		WeaponMeshComp->SetSkeletalMesh(TempMesh.Object);
@@ -59,6 +60,7 @@ void ARocketLauncher::NoAimFire()
 	{
 		FTransform trans = WeaponMeshComp->GetSocketTransform(FireSocketName);
 		AHomingMissile* mis = GetWorld()->SpawnActor<AHomingMissile>(Missile, trans);
+		
 		mis->InitFire(WeaponData->Damage, WeaponOwner);
 		
 		FireCounter++;

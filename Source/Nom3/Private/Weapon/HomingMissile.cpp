@@ -135,9 +135,9 @@ void AHomingMissile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	Explode();
 }
 
-void AHomingMissile::InitFire(int32 Dmg, ANomPlayer* player)
+void AHomingMissile::InitFire(int32 Dmg, ANomPlayer* NomPlayer)
 {
 	Damage = Dmg;
-	Player = player;
+	Player = NomPlayer;
 	ProjectileMoveComp->Velocity = Speed * GetActorForwardVector();
 }

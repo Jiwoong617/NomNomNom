@@ -6,6 +6,7 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "KismetTraceUtils.h"
+#include "NiagaraComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -124,6 +125,12 @@ ANomPlayer::ANomPlayer()
     //Add Component
     WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
     SkillComp = CreateDefaultSubobject<USkillComponent>("SkillComp");
+
+	//effect
+	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("NiagaraComp");
+	NiagaraComponent->SetupAttachment(TpsMeshComp);
+	NiagaraComponent->SetRelativeLocation(FVector(0, 0, 90));
+	NiagaraComponent->SetAutoActivate(false);
 	
 	//////////////////////////////Input/////////////////////////////////
 	{
@@ -1008,5 +1015,23 @@ void ANomPlayer::PlayTPSAnim(UAnimMontage* Montage)
 
 		TpsAnimation->PlaySkillAnim(Montage);
 		TpsAnimation->Montage_SetEndDelegate(MontageEndedDelegate, Montage);
+	}
+}
+
+void ANomPlayer::SetEffect(UNiagaraSystem* Effect)
+{
+	if (Effect)
+	{
+		NiagaraComponent->SetAsset(Effect);
+		NiagaraComponent->Activate(true);
+	}
+}
+
+void ANomPlayer::RemoveEffect()
+{
+	if (NiagaraComponent->GetAsset())
+	{
+		NiagaraComponent->Deactivate();
+		NiagaraComponent->SetAsset(nullptr);
 	}
 }

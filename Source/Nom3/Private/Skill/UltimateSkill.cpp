@@ -18,6 +18,10 @@ UUltimateSkill::UUltimateSkill()
 	if (anim.Succeeded())
 		SkillMontage = anim.Object;
 	
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> niagara(TEXT("/Script/Niagara.NiagaraSystem'/Game/Asset/FX/fireroad/NS_UlT.NS_UlT'"));
+	if (niagara.Succeeded())
+		NiagaraEffect = niagara.Object;
+	
 	Damage = 3000;
 	CoolTime = 90.f;
 }
@@ -26,6 +30,8 @@ void UUltimateSkill::UseSkill()
 {
 	if (SkillMontage)
 	{
+		Owner->SetEffect(NiagaraEffect);
+		
 		FVector LeftDir = -Owner->GetActorRightVector();
 		FVector NewLocation = Owner->GetTpsComp()->GetComponentLocation() + LeftDir * 150.f;
 		Owner->GetTpsComp()->SetWorldLocation(NewLocation);
