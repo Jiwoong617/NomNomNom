@@ -412,13 +412,41 @@
       <change beforePath="$PROJECT_DIR$/../Nom3.sln.DotSettings.user" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Nom3.uproject" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/4/0L/AKGQ4L72X7H9XMGJ4ESRLJ.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/4/H6/44C3Y41GESTG6XTA8TOPF9.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/4/H6/44C3Y41GESTG6XTA8TOPF9.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/8/GP/3IVS57DQ42A8NKPMQILPEA.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/8/GP/3IVS57DQ42A8NKPMQILPEA.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/E/0R/2Z78GK712UHYAZYW7JL7ZA.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Map/InteractiveButton.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Map/InteractiveButton.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Map/TwoButtonDoor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Map/TwoButtonDoor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Maps/LEVELnONE.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/LEVELnONE.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/0/AW/CW9OCSVNGV2XZJOBZV2VYU.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/0/AW/CW9OCSVNGV2XZJOBZV2VYU.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/0/SD/MACXACDRMO86TMR5WTUQVS.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/0/SD/MACXACDRMO86TMR5WTUQVS.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/0/TH/VX0HOSAPWB5YLDB6ROEZ6C.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/0/TH/VX0HOSAPWB5YLDB6ROEZ6C.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/1/JA/7IXPNZFPA9FUSO3YLJF8RH.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/1/JA/7IXPNZFPA9FUSO3YLJF8RH.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/2/0M/9S23YH42C5URTP45XRICW8.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/2/0M/9S23YH42C5URTP45XRICW8.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/2/IS/6CWQ1RSX1V9JLPLERP4ZJA.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/2/IS/6CWQ1RSX1V9JLPLERP4ZJA.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/2/KU/9IKX4TGLRACILNY8QS7T2D.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/2/KU/9IKX4TGLRACILNY8QS7T2D.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/3/4N/98TTUKC1WDCKN7GILGUOFG.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/3/4N/98TTUKC1WDCKN7GILGUOFG.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/3/7N/5M9LRILVBTERMMY5UX30G0.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/3/7N/5M9LRILVBTERMMY5UX30G0.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/3/8V/I5Q9TT4PVAU2BI5O3C9HWL.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/3/8V/I5Q9TT4PVAU2BI5O3C9HWL.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/3/NN/QWL9RSMO9H7MUC1V33WXY3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/3/NN/QWL9RSMO9H7MUC1V33WXY3.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/4/JM/X05BQ4A816TPV0ODYMO6IX.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/4/JM/X05BQ4A816TPV0ODYMO6IX.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/18/SBJB4T9FO398G6CCGROA85.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/18/SBJB4T9FO398G6CCGROA85.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/9S/ZHJ6W5FMZGINO6AG3VNU9Z.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/9S/ZHJ6W5FMZGINO6AG3VNU9Z.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/A9/3YFZHCUTOXHG9X0WTWX94H.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/A9/3YFZHCUTOXHG9X0WTWX94H.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/HH/G2TTTNJEPIAU8PJPOYP63O.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/HH/G2TTTNJEPIAU8PJPOYP63O.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/HN/Q5BIMC2Q0LZWRZN79OTALC.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/HN/Q5BIMC2Q0LZWRZN79OTALC.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/TQ/EQLJU03KWOM3MMGHYTVPTZ.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/TQ/EQLJU03KWOM3MMGHYTVPTZ.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/6/0P/ZH3SZQKEMHBXX3ZIEOEUG3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/6/0P/ZH3SZQKEMHBXX3ZIEOEUG3.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/7/O1/MUID2AQO0RG239YG59PSX7.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/7/O1/MUID2AQO0RG239YG59PSX7.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/7/WS/YSAZIP28F1VSO0E0TUWVG9.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/7/WS/YSAZIP28F1VSO0E0TUWVG9.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/9/0I/UJ2L7DHG7U495KA6DQG3YP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/9/0I/UJ2L7DHG7U495KA6DQG3YP.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/9/7N/N84JUAZ1MSYHQ5NDHMA5D3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/9/7N/N84JUAZ1MSYHQ5NDHMA5D3.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/9/8A/65KR0R7E7QW095T5MTCEJ3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/9/8A/65KR0R7E7QW095T5MTCEJ3.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/A/AI/JX5NKUME3ID3LIONL2QLDC.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/A/AI/JX5NKUME3ID3LIONL2QLDC.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/A/CB/LUYYC4WMIUO6OV0AYKNR67.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/A/CB/LUYYC4WMIUO6OV0AYKNR67.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/B/84/JJQLFMDSG66ULQ03PL7W6C.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/B/84/JJQLFMDSG66ULQ03PL7W6C.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/B/D1/C1GXX51HRMCRHWUI6VLHZ7.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/B/D1/C1GXX51HRMCRHWUI6VLHZ7.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/B/IH/BPDI062B1ENAA4RJW7VCM5.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/B/IH/BPDI062B1ENAA4RJW7VCM5.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/B/R1/IE8EZTTK74UCYVLATXK073.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/B/R1/IE8EZTTK74UCYVLATXK073.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/B/TD/JGQJWP92PM67R4AZ1QJPS6.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/B/TD/JGQJWP92PM67R4AZ1QJPS6.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/C/X9/0XORF85B0B10N3ZI9EQ4LC.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/C/X9/0XORF85B0B10N3ZI9EQ4LC.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/C/Z8/DX094SK313YUZP1492KP1A.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/C/Z8/DX094SK313YUZP1492KP1A.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/F/11/28T7ICF625WV9WOZOKWA79.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/F/11/28T7ICF625WV9WOZOKWA79.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Source/Nom3.Target.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Source/Nom3/Nom3.Build.cs" beforeDir="false" />
@@ -497,21 +525,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C/C++ Project.Nom3.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "git-widget-placeholder": "MAP__JM",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;C/C++ Project.Nom3.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;MAP__JM&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="C/C++ Project.Nom3">
     <configuration name="Nom3" type="CppProject" factoryName="C++ Project">
       <configuration_1 setup="1">
@@ -650,6 +678,7 @@
       <workItem from="1758421214690" duration="2887000" />
       <workItem from="1758432641749" duration="1469000" />
       <workItem from="1758434533579" duration="897000" />
+      <workItem from="1758498708121" duration="1037000" />
     </task>
     <servers />
   </component>
