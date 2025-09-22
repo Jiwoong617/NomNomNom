@@ -21,6 +21,7 @@ ACleanMachine::ACleanMachine()
 	PathSpline = CreateDefaultSubobject<USplineComponent>(TEXT("PathSpline"));
 	PathSpline->SetupAttachment(RootComponent);
 
+	
 	normalstate = ECleanMState::FollowingSpline;
 
 	HitPoint->SetGenerateOverlapEvents(true);
