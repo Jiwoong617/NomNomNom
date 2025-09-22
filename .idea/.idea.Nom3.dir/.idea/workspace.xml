@@ -7,26 +7,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="532de4e7-274d-4093-a28b-053fc68ab423" name="변경" comment="">
+    <list default="true" id="f60a556e-a36a-4820-a62e-207335a1ae03" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SC_ShellHittingGround.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SC_ShellHittingGround.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload0.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload0.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_RevolverGunReload2.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_0.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_0.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_ShellHittingGround_2.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_0.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_0.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Weapon/Sound/SW_Trigger_2.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Data/Rifle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Data/Rifle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Core/NomPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Core/NomPlayer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/Rifle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/Rifle.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Weapon/WeaponBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Weapon/WeaponBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Weapon/WeaponComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Weapon/WeaponComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Air_Explosion_03.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Air_Explosion_03.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Dust_Explosion_01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Dust_Explosion_01.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanEvadeStateMachine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanEvadeStateMachine.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Common/HumanBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Common/HumanBase.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,14 +27,15 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock://C:/Users/user/Documents/Unreal Projects/NomNomNom/Source/Nom3/Private/Weapon/WeaponBase.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/Unreal Projects/NomNomNom/Source/Nom3/Private/Weapon/WeaponBase.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyData.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyData.h" root0="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 6
-}]]></component>
-  <component name="ProjectId" id="32tgKwpFVAawGaCNXVa98UGSWsj" />
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="332obDgCxqbsSoi7O77Vt0zVTTF" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -145,12 +133,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
-      <changelist id="532de4e7-274d-4093-a28b-053fc68ab423" name="변경" comment="" />
-      <created>1758245223776</created>
+      <changelist id="f60a556e-a36a-4820-a62e-207335a1ae03" name="변경" comment="" />
+      <created>1758524597077</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1758245223776</updated>
-      <workItem from="1758245226030" duration="4349000" />
+      <updated>1758524597077</updated>
+      <workItem from="1758524599889" duration="4923000" />
     </task>
     <servers />
   </component>

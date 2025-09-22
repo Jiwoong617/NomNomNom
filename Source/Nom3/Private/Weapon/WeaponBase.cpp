@@ -105,7 +105,7 @@ void AWeaponBase::AimFire()
 		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
 		Params.AddIgnoredActor(WeaponOwner);
 		
-		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + Dir * 10000,ECC_Visibility,Params))
+		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + Dir * 10000, ECC_Visibility, Params))
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, Hit.GetComponent()->GetName());
 			
@@ -166,9 +166,11 @@ void AWeaponBase::NoAimFire()
 		FHitResult Hit;
 		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
 		Params.AddIgnoredActor(WeaponOwner);
-		
-		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + FinalDir * 10000,ECC_Visibility, Params))
+
+		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + Dir * 10000, ECC_Visibility, Params))
 		{
+			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, Hit.GetComponent()->GetName());
+			
 			if (auto dmg = Cast<UDamageComponent>(Hit.GetComponent()))
 			{
 				PRINTLOG(TEXT("Damagable"));

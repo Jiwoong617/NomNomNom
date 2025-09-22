@@ -1,11 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy/Servitor/Servitor.h"
-
+#include "Enemy/Core/EnemyData.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Nom3/Public/Core/DestinyGameMode.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
-
 #include "Enemy/Servitor/ServitorPathFindStateMachine.h"
 #include "Enemy/Servitor/ServitorShooterComponent.h"
 #include "Enemy/Shank/Common/DroneDamageComponent.h"
@@ -15,6 +14,14 @@ AServitor::AServitor()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	//데이터 로드
+	if (static ConstructorHelpers::FObjectFinder<UEnemyData>
+		Finder(TEXT("/Game/Data/DA_Servitor.DA_Servitor"));
+		Finder.Succeeded())
+	{
+		EnemyData = Finder.Object;
+	}
 	
 	//스켈레탈 메시 로드
 	if (static ConstructorHelpers::FObjectFinder<USkeletalMesh> Finder(
@@ -58,15 +65,7 @@ AServitor::AServitor()
 void AServitor::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (HealthComp)
-	{
-		HealthComp->OnDeath.AddUObject(this, &AServitor::HandleDeath);
-	}
 	
-	//초기화
-	HealthComp->Init(75000);
-
 	//초기화
 	CriticalDamageComp->Init(ECC_GameTraceChannel1, FName("Head"), EBodyType::Head);
 
@@ -75,15 +74,20 @@ void AServitor::BeginPlay()
 
 	//자동 사격
 	ShooterComp->ActiveAutoFire();
-	
 }
 
-void AServitor::OnShotDown(const FVector ShotDir)
+void AServitor::OnDie()
 {
-	Super::OnShotDown(ShotDir);
+	Super::OnDie();
 
 	//사격 비활성화
 	ShooterComp->InactiveAutoFire();
+
+	//UI 활성화
+	if (ADestinyGameMode* GameMode = GetWorld()->GetAuthGameMode<ADestinyGameMode>())
+	{
+		GameMode->OnServitorDied(this);
+	}
 }
 
 void AServitor::OnDamaged(const FFireInfo Info)
@@ -97,16 +101,3 @@ void AServitor::OnDamaged(const FFireInfo Info)
 		UNiagaraFunctionLibrary::SpawnSystemAttached(SparkNiagara, SkeletalMeshComp, FName(), FVector(0), Rot, EAttachLocation::Type::KeepRelativeOffset, true);
 	}
 }
-
-void AServitor::HandleDeath()
-{
-	ADestinyGameMode* GM = GetWorld()->GetAuthGameMode<ADestinyGameMode>();
-	if (GM)
-	{
-		GM->OnServitorDied(this);
-	}
-	
-}
-
-
-

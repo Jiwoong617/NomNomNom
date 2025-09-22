@@ -2,8 +2,10 @@
 
 #include "Enemy/Shank/SelfDestructShank/SelfDestructShank.h"
 #include "KismetTraceUtils.h"
+#include "Enemy/Core/EnemyData.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Core/DamageComponent.h"
+#include "Enemy/Core/EnemyStatus.h"
 #include "Enemy/Shank/Common/DroneDamageComponent.h"
 #include "Enemy/Shank/SelfDestructShank/SelfDestructFinalAssaultStateMachine.h"
 #include "Enemy/Shank/SelfDestructShank/SelfDestructFindPathStateMachine.h"
@@ -12,6 +14,14 @@ ASelfDestructShank::ASelfDestructShank()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	//데이터 로드
+	if (static ConstructorHelpers::FObjectFinder<UEnemyData>
+		Finder(TEXT("/Game/Data/DA_SelfDestructShank.DA_SelfDestructShank"));
+		Finder.Succeeded())
+	{
+		EnemyData = Finder.Object;
+	}
 
 	//스켈레탈 메시 로드
 	if (static ConstructorHelpers::FObjectFinder<USkeletalMesh> Finder(
@@ -67,9 +77,9 @@ void ASelfDestructShank::Tick(float DeltaSeconds)
 	}
 }
 
-void ASelfDestructShank::OnShotDown(const FVector ShotDir)
+void ASelfDestructShank::OnDie()
 {
-	Super::OnShotDown(ShotDir);
+	Super::OnDie();
 
 	//다이나믹 머터리얼 인스턴스
 	DamageDynamicInstance->SetScalarParameterValue(FName("Opacity"), 0);

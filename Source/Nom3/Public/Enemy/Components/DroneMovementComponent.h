@@ -110,4 +110,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Fall();
+
+	UFUNCTION(BlueprintCallable)
+	void Simulate();
 };

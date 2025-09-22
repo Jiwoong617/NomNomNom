@@ -194,3 +194,8 @@ void UDroneMovementComponent::Fall()
 	//폭발 사운드 재생
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetOwner()->GetActorLocation());
 }
+
+void UDroneMovementComponent::Simulate()
+{
+	bSimulate = true;
+}
