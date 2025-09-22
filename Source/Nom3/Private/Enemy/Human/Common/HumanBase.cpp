@@ -2,6 +2,7 @@
 
 #include "Enemy/Human/Common/HumanBase.h"
 #include "NavigationSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
@@ -35,6 +36,14 @@ AHumanBase::AHumanBase()
 
 	//회피 상태 머신
 	EvadeStateMachine = CreateDefaultSubobject<UHumanEvadeStateMachine>(FName("EvadeStateMachine"));
+
+	//사망 나이아가라 시스템 로드
+	if (static ConstructorHelpers::FObjectFinder<UNiagaraSystem>
+		Finder(TEXT("/Game/MsvFx_Niagara_Explosion_Pack_01/Prefabs/NS_Die.NS_Die"));
+		Finder.Succeeded())
+	{
+		DieNiagara = Finder.Object;	
+	}
 }
 
 void AHumanBase::BeginPlay()
@@ -58,6 +67,9 @@ void AHumanBase::OnDie()
 	
 	//상태 전환
 	ChangeCurrentStateMachine(nullptr);
+
+	//스폰
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), DieNiagara, GetActorLocation(), GetActorRotation(), FVector(1), true);
 
 	//이동 명령 정지
 	AIController->StopMovement();

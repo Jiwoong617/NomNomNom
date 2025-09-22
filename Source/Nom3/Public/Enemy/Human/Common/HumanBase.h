@@ -6,6 +6,7 @@
 #include "Enemy/Core/EnemyCharacterBase.h"
 #include "HumanBase.generated.h"
 
+class UNiagaraSystem;
 //전방 선언
 class UHumanStateMachineBase;
 class UNavigationSystemV1;
@@ -47,6 +48,9 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void OnDie() override;
+
+	UPROPERTY()
+	TObjectPtr<UNiagaraSystem> DieNiagara;
 
 public:
 	virtual void Tick(float DeltaTime) override;

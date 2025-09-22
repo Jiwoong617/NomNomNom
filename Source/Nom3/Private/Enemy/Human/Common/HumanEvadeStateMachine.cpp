@@ -75,7 +75,7 @@ bool UHumanEvadeStateMachine::FindEvadeLocation(FVector& OutLocation)
 	const FVector RightDir = OwnerHuman->GetPlayerGazeRightDir();
 
 	//우측 확인
-	for (int i = 15; i >= 10; i--)
+	for (int i = 13; i >= 10; i--)
 	{
 		FVector Find = Start + RightDir * i * 100;
 		DrawDebugLine(GetWorld(), Start, Find, FColor::Red, false, 5);
@@ -87,7 +87,7 @@ bool UHumanEvadeStateMachine::FindEvadeLocation(FVector& OutLocation)
 	}
 
 	//좌측 확인
-	for (int i = 15; i >= 10; i--)
+	for (int i = 13; i >= 10; i--)
 	{
 		FVector Find = Start - RightDir * i * 100;
 		

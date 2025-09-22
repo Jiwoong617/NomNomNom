@@ -9,47 +9,11 @@
   <component name="ChangeListManager">
     <list default="true" id="f60a556e-a36a-4820-a62e-207335a1ae03" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/AS_Evade.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/AS_FastRun.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/AS_RifleRunBack.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/AS_RifleRunForward.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/AS_RifleRunLeft.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/AS_RifleRunRight.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/PA_Dreg.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Dreg/Model/PA_Dreg.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/SKM_Dreg.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Dreg/Model/SKM_Dreg.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/SK_Dreg.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Dreg/Model/SK_Dreg.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Enemies/ABP_NormalDreg.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Enemies/ABP_NormalDreg.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Enemies/BP_NormalDreg.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Enemies/BP_NormalDreg.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Enemies/Default/WBP_EnemyStatus.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Enemies/Default/WBP_EnemyStatus.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Enemies/Shank/BP_SelfDestructShank.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Enemies/Shank/BP_SelfDestructShank.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Maps/EnemyMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/EnemyMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Components/DroneMovementComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Components/DroneMovementComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyActorBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyActorBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyCharacterBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyStatus.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyStatus.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Air_Explosion_03.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Air_Explosion_03.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Dust_Explosion_01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Dust_Explosion_01.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanBase.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanEvadeStateMachine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanEvadeStateMachine.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanIdleStateMachine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanIdleStateMachine.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanMoveStateMachine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanMoveStateMachine.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/Dreg.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/NormalDreg.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/DregShooterComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/DregShooterComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/Servitor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/Servitor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/Common/DroneBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/Common/DroneBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/ScoutShank/ScoutShank.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/ScoutShank/ScoutShank.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/SelfDestructShank/SelfDestructShank.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/SelfDestructShank/SelfDestructShank.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Components/DroneMovementComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Components/DroneMovementComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyActorBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyActorBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyCharacterBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyStatus.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyStatus.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Common/HumanBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Common/HumanBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Common/HumanEvadeStateMachine.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Common/HumanEvadeStateMachine.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Dreg/Dreg.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Dreg/NormalDreg.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Dreg/DregShooterComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Dreg/DregShooterComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/Servitor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Servitor/Servitor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Shank/Common/DroneBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Shank/Common/DroneBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Shank/ScoutShank/ScoutShank.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Shank/ScoutShank/ScoutShank.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Shank/SelfDestructShank/SelfDestructShank.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Shank/SelfDestructShank/SelfDestructShank.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Interfaces/CriticalDamagable.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Interfaces/CriticalDamagable.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,10 +31,10 @@
     <setting file="file://$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyData.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyData.h" root0="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="332obDgCxqbsSoi7O77Vt0zVTTF" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -82,7 +46,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Uproject.Nom3.executor": "Run",
-    "git-widget-placeholder": "Dreg",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
