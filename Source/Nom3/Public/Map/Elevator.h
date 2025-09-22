@@ -1,47 +1,74 @@
-#pragma once
 
-#include "CoreMinimal.h"
-#include "MovingObject.h"
-#include "Elevator.generated.h"
+ #pragma once
 
-UCLASS()
-class NOM3_API AElevator : public AMovingObject
-{
-	GENERATED_BODY()
+  #include "CoreMinimal.h"
+  #include "GameFramework/Actor.h"
+  #include "Elevator.generated.h"
 
-public:
-	AElevator();
+  class UBoxComponent;
+  class ANomPlayer;
 
-protected:
-	virtual void BeginPlay() override;
 
-public:
-	virtual void Tick(float DeltaTime) override;
+  UENUM(BlueprintType)
+  enum class EElevatorState : uint8
+  {
+      IdleAtStart,        
+      MovingToMidpoint,    
+      WaitingAtMidpoint,   
+      MovingToFinalTarget, 
+      IdleAtFinalTarget,   
+      ReturningToStart     
+  };
 
-	// 플레이어 감지를 위한 트리거 볼륨
-	UPROPERTY(VisibleAnywhere, Category = "Elevator")
-	class UBoxComponent* TriggerBox;
+  UCLASS()
+  class NOM3_API AElevator : public AActor
+  {
+      GENERATED_BODY()
 
-	// 최소 속도 
-	UPROPERTY(EditAnywhere, Category = "Elevator")
-	float MinSpeed = 50.0f;
+  public:
+      AElevator();
 
-	// 최대 속도
-	UPROPERTY(EditAnywhere, Category = "Elevator")
-	float MaxSpeed = 200.0f;
+  protected:
+      virtual void BeginPlay() override;
+      virtual void Tick(float DeltaTime) override;
 
-	// 가속도 
-	UPROPERTY(EditAnywhere, Category = "Elevator")
-	float Acceleration = 2.0f;
+      UFUNCTION()
+      void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+  const FHitResult& SweepResult);
 
-	// 현재 속도
-	float CurrentSpeed = 0.0f;
+   
+      void ResumeMovementToFinalTarget();
 
-	// 트리거 여부
-	bool bIsTriggered = false;
+  private:
+      // 컴포넌트
+      UPROPERTY(VisibleAnywhere)
+      UBoxComponent* TriggerBox;
 
-	// 충돌 처리
-	UFUNCTION()
-	void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-};
+      // 이동 관련 변수
+      UPROPERTY(EditAnywhere, Category = "Elevator Movement", meta = (MakeEditWidget = "true"))
+      FVector StartLocation;
+
+      UPROPERTY(EditAnywhere, Category = "Elevator Movement", meta = (MakeEditWidget = "true"))
+      FVector MidpointLocation; 
+
+      UPROPERTY(EditAnywhere, Category = "Elevator Movement", meta = (MakeEditWidget = "true"))
+      FVector GlobalTargetLocation;
+
+      UPROPERTY(EditAnywhere, Category = "Elevator Movement")
+      float MinSpeed = 100.0f;
+
+      UPROPERTY(EditAnywhere, Category = "Elevator Movement")
+      float MaxSpeed = 500.0f;
+
+      UPROPERTY(EditAnywhere, Category = "Elevator Movement")
+      float Acceleration = 1.0f;
+
+      UPROPERTY(EditAnywhere, Category = "Elevator Movement")
+      float WaitTimeAtMidpoint = 15.0f; 
+
+      float CurrentSpeed = 0.0f;
+
+      // 상태 관리 변수
+      EElevatorState CurrentState = EElevatorState::IdleAtStart; 
+      FTimerHandle WaitTimerHandle;
+  };
