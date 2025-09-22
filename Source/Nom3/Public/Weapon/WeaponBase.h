@@ -53,6 +53,8 @@ protected:
 	UNiagaraSystem* fireEffect;
 	UPROPERTY(EditAnywhere)
 	UNiagaraSystem* BulletImpactEffect;
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* BulletTracerEffect;
 	
 public:
 	UPROPERTY(EditAnywhere)
