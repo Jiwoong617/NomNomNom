@@ -19,11 +19,12 @@ public:
 	AScoutShank();
 
 	virtual void BeginPlay() override;
-
-	virtual void OnShotDown(const FVector ShotDir) override;
 	
-	//플레이어 시선 노출 인터페이스 구현
+	//EnemyActorBase->DroneBase에서 상속받은 플레이어 시선 노출 인터페이스 오버라이드
 	virtual void OnAimByPlayerSight() override;
+
+	//EnemyActorBase->DroneBase에서 상속받은 사망 메서드 오버라이드
+	virtual void OnDie() override;
 
 protected:
 	//데미지 컴포넌트

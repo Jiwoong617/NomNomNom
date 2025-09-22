@@ -9,14 +9,16 @@
 #include "Interfaces/Damagable.h"
 #include "EnemyActorBase.generated.h"
 
-class UWidgetComponent;
-class UStateMachineBase;
 //델리게이트 선언
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChangedEventSignature, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnArmorChangedEventSignature, float);
 DECLARE_MULTICAST_DELEGATE(FOnDeathEventSignature);
 
 //전방 선언
+class UEnemyData;
+class UEnemyStatus;
+class UWidgetComponent;
+class UStateMachineBase;
 class UEnemyHealthComponent;
 class UDamageActorPoolWorldSubsystem;
 
@@ -31,6 +33,10 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
+
+	//에너미 데이터
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UEnemyData> EnemyData;
 
 	//현재 목표로 하는 폰
 	UPROPERTY(VisibleAnywhere)
@@ -48,6 +54,10 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UWidgetComponent> StatusWidgetComp;
 
+	//실제로 사용 중인 스테이터스 위젯
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UEnemyStatus> StatusWidget;
+
 	//피조준 인터페이스
 	UFUNCTION(BlueprintCallable)
 	virtual void OnAimByPlayerSight() override;
@@ -59,6 +69,9 @@ public:
 	//크리티컬 데미지 인터페이스
 	UFUNCTION(BlueprintCallable)
 	virtual void OnCriticalDamaged(FFireInfo Info) override;
+	
+	UFUNCTION()
+	virtual void OnDie();
 
 	//플레이어를 바라보는 방향
 	UFUNCTION()
@@ -80,4 +93,8 @@ protected:
 	//데미지 액터 풀링 게임 인스턴스 서브시스템 참조
 	UPROPERTY()
 	TObjectPtr<UDamageActorPoolWorldSubsystem> DamageActorPool;
+
+	//피조준 타이머 핸들
+	UPROPERTY()
+	FTimerHandle OnSightTimerHandle;
 };

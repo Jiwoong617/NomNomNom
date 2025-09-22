@@ -2,6 +2,7 @@
 
 #include "Enemy/Human/Common/HumanIdleStateMachine.h"
 #include "Enemy/Human/Common/HumanBase.h"
+#include "Kismet/KismetMathLibrary.h"
 
 UHumanIdleStateMachine::UHumanIdleStateMachine()
 {
@@ -21,6 +22,11 @@ void UHumanIdleStateMachine::EnterState()
 void UHumanIdleStateMachine::ExecuteState()
 {
 	Super::ExecuteState();
+
+	//목표 방향
+	const FVector TargetDir = (OwnerHuman->TargetPawn->GetActorLocation() - OwnerHuman->GetActorLocation()).GetSafeNormal();
+	const FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(TargetDir, OwnerHuman->GetActorUpVector());
+	OwnerHuman->MeshSceneComp->SetWorldRotation(TargetRot);
 
 	if (ElapsedTimeInState > LimitTimeInState)
 	{

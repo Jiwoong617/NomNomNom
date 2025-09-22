@@ -3,6 +3,8 @@
 #include "Enemy/Human/Dreg/DregShooterComponent.h"
 #include "Core/ProjectilePoolWorldSubSystem.h"
 #include "Enemy/Core/ProjectileBase.h"
+#include "Enemy/Core/StateMachineBase.h"
+#include "Enemy/Human/Dreg/NormalDreg.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -40,12 +42,27 @@ void UDregShooterComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//소유자 드렉 획득
+	OwnerDreg = Cast<ANormalDreg>(GetOwner());
+
 	//플레이어 캐릭터 획득
 	PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
 }
 
 void UDregShooterComponent::FireBulletOnce() const
 {
+	//소유자가 유효하지 않다면
+	if (OwnerDreg->GetCurrentStateMachine() == nullptr)
+	{
+		return;
+	}
+	
+	//회피 중이라면
+	if (OwnerDreg->GetCurrentStateMachine()->GetClass() == OwnerDreg->EvadeStateMachine.GetClass())
+	{
+		return;
+	}
+	
 	//목표 위치 획득
 	const FVector TargetLocation = PlayerPawn->GetActorLocation();
 

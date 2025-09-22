@@ -35,12 +35,25 @@ void UHumanMoveStateMachine::EnterState()
 		//목적지 주변의 도달 가능한 지점으로 업데이트
 		OwnerHuman->FindReachableLocation(Destination);
 	}
+
+	//4초 후에 Move 상태로 전환할 예정
+	LimitTimeInState = 4;
 }
 
 void UHumanMoveStateMachine::ExecuteState()
 {
 	Super::ExecuteState();
 
+	//목표 방향
+	const FVector TargetDir = (OwnerHuman->TargetPawn->GetActorLocation() - OwnerHuman->GetActorLocation()).GetSafeNormal();
+	const FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(TargetDir, OwnerHuman->GetActorUpVector());
+	OwnerHuman->MeshSceneComp->SetWorldRotation(TargetRot);
+
+	if (ElapsedTimeInState > LimitTimeInState)
+	{
+		//이동 상태 머신으로 전환
+		OwnerHuman->ChangeCurrentStateMachine(OwnerHuman->MoveStateMachine);
+	}
 }
 
 void UHumanMoveStateMachine::ExitState()

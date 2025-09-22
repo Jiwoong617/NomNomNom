@@ -2,11 +2,14 @@
 
 #include "Enemy/Human/Common/HumanBase.h"
 #include "NavigationSystem.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
 #include "Enemy/Core/StateMachineBase.h"
 #include "Enemy/Human/Common/HumanEvadeStateMachine.h"
 #include "Enemy/Human/Common/HumanIdleStateMachine.h"
 #include "Enemy/Human/Common/HumanMoveStateMachine.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AHumanBase::AHumanBase()
 {
@@ -19,6 +22,10 @@ AHumanBase::AHumanBase()
 
 	//체력 컴포넌트
 	HealthComp = CreateDefaultSubobject<UEnemyHealthComponent>(FName("HealthComp"));
+
+	//스테이터스 위젯 컴포넌트
+	StatusWidgetComp->SetRelativeLocation(FVector(0, 0, 150));
+	StatusWidgetComp->SetupAttachment(GetCapsuleComponent());
 
 	//대기 상태 머신
 	IdleStateMachine = CreateDefaultSubobject<UHumanIdleStateMachine>(FName("IdleStateMachine"));
@@ -33,10 +40,7 @@ AHumanBase::AHumanBase()
 void AHumanBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//체력 초기화
-	HealthComp->Init(4000);
-
+	
 	//사망 메서드 바인드
 	HealthComp->OnDeath.AddUFunction(this, FName("OnDie"));
 
@@ -50,8 +54,20 @@ void AHumanBase::BeginPlay()
 
 void AHumanBase::OnDie()
 {
+	Super::OnDie();
+	
 	//상태 전환
 	ChangeCurrentStateMachine(nullptr);
+
+	//이동 명령 정지
+	AIController->StopMovement();
+
+	//랙돌
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetAllBodiesSimulatePhysics(true);
+	GetMesh()->WakeAllRigidBodies();
 
 	//10초 뒤에 소멸
 	FTimerHandle DestroyHandle;
@@ -68,7 +84,7 @@ void AHumanBase::Tick(float DeltaTime)
 	//유효한 상태 머신이 설정되어 있다면
 	if (CurrentStateMachine)
 	{
-		//현재 생크 상태 머신 실행
+		//현재 상태 머신 실행
 		CurrentStateMachine->ExecuteState();
 	}
 }

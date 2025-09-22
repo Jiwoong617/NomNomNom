@@ -1,13 +1,14 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy/Core/EnemyCharacterBase.h"
-#include "AITypes.h"
 #include "NavigationSystem.h"
+#include "Components/WidgetComponent.h"
+#include "Enemy/Core/EnemyData.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
 #include "Enemy/Core/StateMachineBase.h"
 #include "Enemy/Damage/DamageActorPoolWorldSubsystem.h"
 #include "Kismet/GameplayStatics.h"
-#include "Navigation/PathFollowingComponent.h"
+#include "Enemy/Core/EnemyStatus.h"
 
 AEnemyCharacterBase::AEnemyCharacterBase()
 {
@@ -16,11 +17,32 @@ AEnemyCharacterBase::AEnemyCharacterBase()
 
 	//배치되어 있거나 스폰되면 AI에 의해 점유
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	//위젯 컴포넌트 부착
+	if (static ConstructorHelpers::FClassFinder<UEnemyStatus>
+		Finder(TEXT("/Game/Enemies/Default/WBP_EnemyStatus.WBP_EnemyStatus_C"));
+		Finder.Class)
+	{
+		StatusWidgetComp = CreateDefaultSubobject<UWidgetComponent>(FName("StatusWidgetComp"));
+		StatusWidgetComp->SetWidgetClass(Finder.Class);
+		StatusWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+		StatusWidgetComp->SetDrawSize(FVector2D(150, 10));
+	}
 }
 
 void AEnemyCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//스테이터스 위젯 획득
+	StatusWidget = Cast<UEnemyStatus>(StatusWidgetComp->GetWidget());
+	StatusWidget->Hide();
+
+	//스테이터스 위젯 업데이트
+	StatusWidget->SetName(EnemyData->EnemyName);
+
+	//체력 초기화
+	HealthComp->Init(EnemyData->EnemyMaxHP);
 
 	//원하는 AI 컨트롤러 스폰
 	SpawnDefaultController();
@@ -73,7 +95,19 @@ void AEnemyCharacterBase::ChangeCurrentStateMachine(UStateMachineBase* StateMach
 
 void AEnemyCharacterBase::OnAimByPlayerSight()
 {
+	if (GetCurrentStateMachine() == nullptr)
+	{
+		return;
+	}
 	
+	//스테이터스 위젯 가시화
+	StatusWidget->Show();
+
+	//2초 후에 스테이터스 위젯 비가시화 예약, 다시 들어온다면 덮어쓰니까 문제 없음
+	GetWorldTimerManager().SetTimer(OnSightTimerHandle, [this]()
+	{
+		StatusWidget->Hide();
+	}, 2, false);
 }
 
 void AEnemyCharacterBase::OnDamaged(const FFireInfo Info)
@@ -92,6 +126,9 @@ void AEnemyCharacterBase::OnDamaged(const FFireInfo Info)
 	
 	//자산의 위치에 데미지 액터 풀링
 	DamageActorPool->ShowNormalDamageActor(GetActorLocation(), Damage);
+
+	//체력 비율 업데이트
+	StatusWidget->UpdateHPBar(HealthComp->GetHPPercent());
 }
 
 void AEnemyCharacterBase::OnCriticalDamaged(const FFireInfo Info)
@@ -110,6 +147,15 @@ void AEnemyCharacterBase::OnCriticalDamaged(const FFireInfo Info)
 	
 	//자산의 위치에 데미지 액터 풀링
 	DamageActorPool->ShowCriticalDamageActor(GetActorLocation(), Damage);
+
+	//체력 비율 업데이트
+	StatusWidget->UpdateHPBar(HealthComp->GetHPPercent());
+}
+
+void AEnemyCharacterBase::OnDie()
+{
+	//스테이터스 위젯 비가시화
+	StatusWidget->Hide();
 }
 
 FVector AEnemyCharacterBase::GetPlayerGazeDir() const

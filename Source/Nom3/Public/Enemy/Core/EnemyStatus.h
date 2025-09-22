@@ -26,4 +26,10 @@ public:
 
 	UFUNCTION()
 	void UpdateHPBar(const float HPPer) const;
+
+	UFUNCTION()
+	void Show() const;
+	
+	UFUNCTION()
+	void Hide() const;
 };

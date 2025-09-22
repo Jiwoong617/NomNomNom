@@ -20,7 +20,7 @@ public:
 	AHumanBase();
 	
 	//씬 컴포넌트
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USceneComponent> MeshSceneComp;
 
 	//데미지 컴포넌트
@@ -46,8 +46,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
-	virtual void OnDie();
+	virtual void OnDie() override;
 
 public:
 	virtual void Tick(float DeltaTime) override;

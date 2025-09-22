@@ -6,6 +6,7 @@
 #include "Enemy/Components/FireProjectileComponentBase.h"
 #include "DregShooterComponent.generated.h"
 
+class ANormalDreg;
 class AProjectileBase;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -18,6 +19,10 @@ protected:
 
 public:
 	UDregShooterComponent();
+
+	//작착된 드렉 캐릭터
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<ANormalDreg> OwnerDreg;
 
 	//목표로 하는 플레이어 캐릭터
 	UPROPERTY(VisibleAnywhere)

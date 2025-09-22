@@ -27,6 +27,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	float InitWalkSpeed;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UAnimMontage> EvadeAnimMontage;
+
 	UFUNCTION()
 	bool FindEvadeLocation(FVector& OutLocation);
 };

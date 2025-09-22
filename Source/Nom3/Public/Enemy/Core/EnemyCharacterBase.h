@@ -10,10 +10,13 @@
 #include "Interfaces/Damagable.h"
 #include "EnemyCharacterBase.generated.h"
 
-class UNavigationSystemV1;
 //전방 선언
+class UEnemyData;
+class UEnemyStatus;
 class AAIController;
+class UWidgetComponent;
 class UStateMachineBase;
+class UNavigationSystemV1;
 class UEnemyHealthComponent;
 class UDamageActorPoolWorldSubsystem;
 
@@ -31,6 +34,10 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//에너미 데이터
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UEnemyData> EnemyData;
+
 	//AI 컨트롤러
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<AAIController> AIController;
@@ -47,7 +54,15 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UEnemyHealthComponent> HealthComp;
 
-	//생크 스테이트 머신
+	//체력 등의 스테이터스를 표시하는 위젯 컴포넌트
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UWidgetComponent> StatusWidgetComp;
+
+	//실제로 사용 중인 스테이터스 위젯
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UEnemyStatus> StatusWidget;
+
+	//스테이트 머신
 	UStateMachineBase* GetCurrentStateMachine() const;
 	void ChangeCurrentStateMachine(UStateMachineBase* StateMachineToChange);
 
@@ -62,6 +77,9 @@ public:
 	//크리티컬 데미지 인터페이스
 	UFUNCTION(BlueprintCallable)
 	virtual void OnCriticalDamaged(FFireInfo Info) override;
+
+	UFUNCTION()
+	virtual void OnDie();
 
 	//플레이어를 바라보는 방향
 	UFUNCTION()
@@ -87,4 +105,8 @@ protected:
 	//AI 컨트롤러 클래스
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AAIController> DefaultAIControllerClass;
+
+	//피조준 타이머 핸들
+	UPROPERTY()
+	FTimerHandle OnSightTimerHandle;
 };

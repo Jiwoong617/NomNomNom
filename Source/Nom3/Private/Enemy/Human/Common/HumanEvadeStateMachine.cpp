@@ -3,6 +3,7 @@
 #include "Enemy/Human/Common/HumanEvadeStateMachine.h"
 #include "Enemy/Human/Common/HumanBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Navigation/PathFollowingComponent.h"
 
 UHumanEvadeStateMachine::UHumanEvadeStateMachine()
@@ -16,35 +17,45 @@ void UHumanEvadeStateMachine::EnterState()
 {
 	Super::EnterState();
 
-	//최초 이동 속도 저장
-	InitWalkSpeed = OwnerHuman->GetCharacterMovement()->MaxWalkSpeed;
-
-	//이동 속도 2배로 상승
-	OwnerHuman->GetCharacterMovement()->MaxWalkSpeed = InitWalkSpeed * 3;
-
 	//회피 위치 검색 시도
 	if (FindEvadeLocation(EvadeLocation))
 	{
+		//최초 이동 속도 저장
+		InitWalkSpeed = OwnerHuman->GetCharacterMovement()->MaxWalkSpeed;
+
+		//이동 속도 2배로 상승
+		OwnerHuman->GetCharacterMovement()->MaxWalkSpeed = InitWalkSpeed * 5;
+		
 		//이동 시도
 		const EPathFollowingRequestResult::Type MoveResult = OwnerHuman->AIController->MoveToLocation(EvadeLocation, 25);
-		
-		//결과 확인
-		if (MoveResult == EPathFollowingRequestResult::Failed || MoveResult == EPathFollowingRequestResult::AlreadyAtGoal)
-		{
-			//목적지 주변의 도달 가능한 지점으로 업데이트
-			OwnerHuman->FindReachableLocation(EvadeLocation);
-		}
+
+		//애니메이션 몽타주 재생
+		OwnerHuman->GetMesh()->GetAnimInstance()->Montage_Play(EvadeAnimMontage);
+
+		//탈출 시간 설정
+		LimitTimeInState = 2;
 	}
 	else
 	{
 		//대기 상태로 전환
-		OwnerHuman->ChangeCurrentStateMachine(OwnerHuman->IdleStateMachine);	
+		OwnerHuman->ChangeCurrentStateMachine(OwnerHuman->IdleStateMachine);
 	}
 }
 
 void UHumanEvadeStateMachine::ExecuteState()
 {
 	Super::ExecuteState();
+
+	//목표 방향
+	const FVector TargetDir = OwnerHuman->GetCharacterMovement()->Velocity.GetSafeNormal();
+	const FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(TargetDir, OwnerHuman->GetActorUpVector());
+	OwnerHuman->MeshSceneComp->SetWorldRotation(TargetRot);
+
+	if (ElapsedTimeInState > LimitTimeInState)
+	{
+		//이동 상태 머신으로 전환
+		OwnerHuman->ChangeCurrentStateMachine(OwnerHuman->MoveStateMachine);
+	}
 }
 
 void UHumanEvadeStateMachine::ExitState()

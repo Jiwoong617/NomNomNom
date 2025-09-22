@@ -18,7 +18,8 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	virtual void OnShotDown(const FVector ShotDir) override;
+	//EnemyActorBase->DroneBase에서 상속받은 사망 메서드 오버라이드
+	virtual void OnDie() override;
 
 protected:
 	//크리티컬 데미지 컴포넌트
