@@ -7,6 +7,7 @@
  #include "Core/NomPlayer.h"
 #include "Nom3/Nom3.h"
 
+
 AInteractiveButton::AInteractiveButton()
  {
  	PrimaryActorTick.bCanEverTick = false;
@@ -26,6 +27,8 @@ void AInteractiveButton::BeginPlay()
     }
  }
 
+
+// player 캐릭터가 닿았다면
 void AInteractiveButton::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32
 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
  {

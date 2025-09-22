@@ -61,6 +61,9 @@ void AMovingPlatform::ToggleMovement()
 	ObjectSpeed = OriginalSpeed;
     
 	//움직이면서 다시 타이머 초기화
-	GetWorld()->GetTimerManager().ClearTimer(MovementTimerHandle);
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(MovementTimerHandle);
+	}
 }
 
