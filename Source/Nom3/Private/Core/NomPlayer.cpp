@@ -24,6 +24,7 @@
 #include "Core/PlayerUI.h"
 #include "Core/SkillComponent.h"
 #include "Enemy/Core/EnemyActorBase.h"
+#include "Enemy/Core/EnemyCharacterBase.h"
 #include "Kismet/GameplayStatics.h"
 
 ANomPlayer::ANomPlayer()
@@ -805,12 +806,18 @@ void ANomPlayer::SightCheck()
 		const FVector End = Start + FpsCameraComp->GetForwardVector() * 10000;
 		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
 		Params.AddIgnoredActor(this);
-		if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_Visibility, Params))
+		if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params))
 		{
-			if (const auto Enemy = Cast<AEnemyActorBase>(Hit.GetActor()))
+			if (const auto EnemyActor = Cast<AEnemyActorBase>(Hit.GetActor()))
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("OnSight!"));
-				Enemy->OnAimByPlayerSight();
+				//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("EnemyActor OnSight!"));
+				EnemyActor->OnAimByPlayerSight();
+			}
+
+			if (const auto EnemyCharacter = Cast<AEnemyCharacterBase>(Hit.GetActor()))
+			{
+				//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("EnemyCharacter OnSight!"));
+				EnemyCharacter->OnAimByPlayerSight();
 			}
 		}
 	}, 0.1, true);

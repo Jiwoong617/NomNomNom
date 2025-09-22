@@ -5,6 +5,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Core/DamageComponent.h"
 #include "Enemy/Components/DroneMovementComponent.h"
+#include "Enemy/Core/EnemyData.h"
+#include "Enemy/Core/EnemyStatus.h"
 #include "Enemy/Shank/Common/DroneDamageComponent.h"
 #include "Enemy/Shank/Common/DroneFollowPathStateMachine.h"
 #include "Enemy/Shank/ScoutShank/ScoutShankFindPathStateMachine.h"
@@ -16,9 +18,17 @@ AScoutShank::AScoutShank()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//데이터 로드
+	if (static ConstructorHelpers::FObjectFinder<UEnemyData>
+		Finder(TEXT("/Game/Data/DA_ScoutShank.DA_ScoutShank"));
+		Finder.Succeeded())
+	{
+		EnemyData = Finder.Object;
+	}
+
 	//스켈레탈 메시 로드
-	if (static ConstructorHelpers::FObjectFinder<USkeletalMesh> Finder(
-		TEXT("/Game/Asset/ScoutShank/SKM_ScoutShank.SKM_ScoutShank"));
+	if (static ConstructorHelpers::FObjectFinder<USkeletalMesh>
+		Finder(TEXT("/Game/Asset/ScoutShank/SKM_ScoutShank.SKM_ScoutShank"));
 		Finder.Succeeded())
 	{
 		SkeletalMeshComp->SetSkeletalMesh(Finder.Object);
@@ -57,6 +67,8 @@ void AScoutShank::BeginPlay()
 
 void AScoutShank::OnAimByPlayerSight()
 {
+	Super::OnAimByPlayerSight();
+	
 	//회피가 불가능한 상태가 아니라면
 	if (CurrentStateMachine == nullptr)
 	{
@@ -160,14 +172,9 @@ void AScoutShank::OnAimByPlayerSight()
 	}, Timing, false);
 }
 
-void AScoutShank::Tick(float DeltaTime)
+void AScoutShank::OnDie()
 {
-	Super::Tick(DeltaTime);
-}
-
-void AScoutShank::OnShotDown(const FVector ShotDir)
-{
-	Super::OnShotDown(ShotDir);
+	Super::OnDie();
 
 	//스폰
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionNiagara, GetActorLocation(), GetActorRotation(), FVector(1), true);

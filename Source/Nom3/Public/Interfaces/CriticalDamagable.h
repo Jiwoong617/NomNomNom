@@ -25,5 +25,5 @@ class NOM3_API ICriticalDamagable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void OnCriticalDamaged(FFireInfo Info);
+	virtual void OnCriticalDamaged(FFireInfo Info) = 0;
 };
