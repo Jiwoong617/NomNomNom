@@ -26,8 +26,10 @@ ADroneSpawner::ADroneSpawner()
 	}
 }
 
-void ADroneSpawner::OnDetectPlayerPawn()
+void ADroneSpawner::OnNoticePawn(AActor* DetectedPawn)
 {
+	Super::OnNoticePawn(DetectedPawn);
+
 	//최초 드론 사출
 	RequestSpawnEnemies(FMath::RandRange(SpawnMin, SpawnMax));
 

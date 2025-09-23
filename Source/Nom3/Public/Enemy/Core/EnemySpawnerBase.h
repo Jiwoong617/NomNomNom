@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/NoticePawn.h"
 #include "EnemySpawnerBase.generated.h"
 
 class UArrowComponent;
@@ -11,7 +12,7 @@ class APlayerDetectVolume;
 class AEnemyActorBase;
 
 UCLASS()
-class NOM3_API AEnemySpawnerBase : public AActor
+class NOM3_API AEnemySpawnerBase : public AActor, public INoticePawn
 {
 	GENERATED_BODY()
 
@@ -21,7 +22,7 @@ public:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	virtual void OnDetectPlayerPawn();
+	virtual void OnNoticePawn(AActor* DetectedPawn) override;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 

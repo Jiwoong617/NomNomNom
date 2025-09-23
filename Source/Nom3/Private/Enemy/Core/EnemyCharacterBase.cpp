@@ -53,9 +53,6 @@ void AEnemyCharacterBase::BeginPlay()
 	//네비게이션 시스템 획득
 	NavigationSystem = UNavigationSystemV1::GetCurrent(GetWorld());
 
-	//플레이어 폰 획득
-	TargetPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-
 	//데미지 액터 풀링 서브시스템 획득
 	if (auto Temp = GetWorld()->GetSubsystem<UDamageActorPoolWorldSubsystem>())
 	{
@@ -150,6 +147,22 @@ void AEnemyCharacterBase::OnCriticalDamaged(const FFireInfo Info)
 
 	//체력 비율 업데이트
 	StatusWidget->UpdateHPBar(HealthComp->GetHPPercent());
+}
+
+void AEnemyCharacterBase::OnNoticePawn(AActor* DetectedPawn)
+{
+	//이미 목표 폰을 가지고 있다면
+	if (TargetPawn)
+	{
+		return;
+	}
+	
+	//목표 폰 전달
+	TargetPawn = DetectedPawn;
+
+	//스켈레탈 메시의 애니메이션 모드 변경
+	GetMesh()->SetAnimationMode(EAnimationMode::Type::AnimationBlueprint);
+	GetMesh()->SetAnimInstanceClass(AnimBlueprintClass);
 }
 
 void AEnemyCharacterBase::OnDie()
