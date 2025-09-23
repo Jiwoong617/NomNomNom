@@ -26,7 +26,7 @@ UDregShooterComponent::UDregShooterComponent()
 
 	//사운드 큐 로드
 	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
-		TEXT("/Game/Asset/ScoutShank/Sound/SC_ScoutShankFireCue.SC_ScoutShankFireCue"));
+		TEXT("/Game/Asset/Dreg/Sound/SC_DregGunFire.SC_DregGunFire"));
 		Finder.Succeeded())
 	{
 		DregFireSound = Finder.Object;

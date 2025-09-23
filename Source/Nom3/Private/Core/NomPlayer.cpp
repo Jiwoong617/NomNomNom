@@ -132,6 +132,13 @@ ANomPlayer::ANomPlayer()
 	NiagaraComponent->SetupAttachment(TpsMeshComp);
 	NiagaraComponent->SetRelativeLocation(FVector(0, 0, 90));
 	NiagaraComponent->SetAutoActivate(false);
+
+	if (static ConstructorHelpers::FObjectFinder<USoundBase>
+		Finder(TEXT("/Game/Asset/Dreg/Sound/SW_GTADEATH.SW_GTADEATH"));
+		Finder.Succeeded())
+	{
+		DieSound = Finder.Object;
+	}
 	
 	//////////////////////////////Input/////////////////////////////////
 	{
@@ -938,6 +945,8 @@ void ANomPlayer::OnDamaged(FFireInfo Info)
 
 	if (Hp <= 0)
 	{
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), DieSound, GetActorLocation());
+		
 		bIsDead = true;
 		ChangeToTps();
 		
@@ -972,6 +981,8 @@ void ANomPlayer::OnCriticalDamaged(FFireInfo Info)
 
 	if (Hp <= 0)
 	{
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), DieSound, GetActorLocation());
+		
 		bIsDead = true;
 		ChangeToTps();
 		

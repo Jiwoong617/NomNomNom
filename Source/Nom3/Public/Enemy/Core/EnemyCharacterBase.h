@@ -122,4 +122,8 @@ protected:
 	//애니메이션 블루프린트 클래스
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAnimInstance> AnimBlueprintClass;
+
+	//사망 사운드
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USoundBase> DieSound;
 };

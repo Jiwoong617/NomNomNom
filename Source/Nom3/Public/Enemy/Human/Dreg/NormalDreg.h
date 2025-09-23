@@ -24,6 +24,10 @@ protected:
 
 	virtual void OnDie() override;
 
+	//총 스켈레톤 메시
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UStaticMeshComponent> GunMeshComp;
+
 	//사격 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDregShooterComponent> ShooterComp;

@@ -6,6 +6,7 @@
 #include "Enemy/Human/Common/HumanDamageComponent.h"
 #include "Enemy/Human/Common/HumanStateMachineBase.h"
 #include "Enemy/Human/Dreg/DregShooterComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ANormalDreg::ANormalDreg()
 {
@@ -25,22 +26,6 @@ ANormalDreg::ANormalDreg()
 	//대기 애니메이션 로드
 	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
 		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance1.AS_Dance1"));
-		Finder.Succeeded())
-	{
-		WaitAnimationAssets.Add(Finder.Object);
-	}
-	
-	//대기 애니메이션 로드
-	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
-		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance2.AS_Dance2"));
-		Finder.Succeeded())
-	{
-		WaitAnimationAssets.Add(Finder.Object);
-	}
-	
-	//대기 애니메이션 로드
-	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
-		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance3.AS_Dance3"));
 		Finder.Succeeded())
 	{
 		WaitAnimationAssets.Add(Finder.Object);
@@ -96,31 +81,7 @@ ANormalDreg::ANormalDreg()
 	
 	//대기 애니메이션 로드
 	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
-		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance10.AS_Dance10"));
-		Finder.Succeeded())
-	{
-		WaitAnimationAssets.Add(Finder.Object);
-	}
-	
-	//대기 애니메이션 로드
-	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
 		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance11.AS_Dance11"));
-		Finder.Succeeded())
-	{
-		WaitAnimationAssets.Add(Finder.Object);
-	}
-	
-	//대기 애니메이션 로드
-	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
-		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance12.AS_Dance12"));
-		Finder.Succeeded())
-	{
-		WaitAnimationAssets.Add(Finder.Object);
-	}
-	
-	//대기 애니메이션 로드
-	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
-		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance13.AS_Dance13"));
 		Finder.Succeeded())
 	{
 		WaitAnimationAssets.Add(Finder.Object);
@@ -148,7 +109,7 @@ ANormalDreg::ANormalDreg()
 
 	//일반적인 데미지 컴포넌트 부착
 	DamageComp = CreateDefaultSubobject<UHumanDamageComponent>(FName("DamageComp"));
-	DamageComp->SetBoxExtent(FVector(50, 50, 70));
+	DamageComp->SetBoxExtent(FVector(70, 70, 70));
 	DamageComp->SetRelativeLocation(FVector(0, 0, 100));
 	DamageComp->SetupAttachment(GetMesh());
 
@@ -157,10 +118,32 @@ ANormalDreg::ANormalDreg()
 	CriticalDamageComp->SetBoxExtent(FVector(36, 36, 36));
 	CriticalDamageComp->SetRelativeLocation(FVector(0, 0, 200));
 	CriticalDamageComp->SetupAttachment(GetMesh());
+
+	//총 스켈레탈 메시 컴포넌트 부착
+	GunMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(FName("GumMeshComp"));
+	GunMeshComp->SetCollisionProfileName(FName("NoCollision"));
+	
+	//스켈레탈 메시 로드
+	if (static ConstructorHelpers::FObjectFinder<UStaticMesh>
+		Finder(TEXT("/Game/Asset/Dreg/GUN.GUN"));
+		Finder.Succeeded())
+	{
+		GunMeshComp->SetStaticMesh(Finder.Object);
+		GunMeshComp->SetRelativeLocation(FVector(0, 0, 0));
+		GunMeshComp->SetupAttachment(GetMesh(), FName("GunSocket"));
+	}
 	
 	//드렉 전용의 사격 컴포넌트 부착
 	ShooterComp = CreateDefaultSubobject<UDregShooterComponent>(FName("ShooterComp"));
-	ShooterComp->SetupAttachment(GetMesh());
+	ShooterComp->SetupAttachment(GunMeshComp, FName("GunFireSocket"));
+
+	//드렉 사망 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase>
+		Finder(TEXT("/Game/Asset/Dreg/Sound/SC_Death.SC_Death"));
+		Finder.Succeeded())
+	{
+		DieSound = Finder.Object;
+	}
 }
 
 void ANormalDreg::BeginPlay()
@@ -187,6 +170,9 @@ void ANormalDreg::OnDie()
 
 	//사격 컴포넌트 비활성화
 	ShooterComp->InactiveAutoFire();
+
+	//사망 사운드 재생
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), DieSound, GetActorLocation());
 }
 
 void ANormalDreg::OnAimByPlayerSight()
