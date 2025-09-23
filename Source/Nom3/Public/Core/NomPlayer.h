@@ -261,4 +261,6 @@ public:
 	//effect
 	UFUNCTION() void SetEffect(UNiagaraSystem* Effect);
 	UFUNCTION() void RemoveEffect();
+
+	UFUNCTION() void OnGameCleared();
 };

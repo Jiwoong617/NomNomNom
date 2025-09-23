@@ -1080,3 +1080,8 @@ void ANomPlayer::RemoveEffect()
 		NiagaraComponent->SetAsset(nullptr);
 	}
 }
+
+void ANomPlayer::OnGameCleared()
+{
+	PlayerUI->OnClear();
+}

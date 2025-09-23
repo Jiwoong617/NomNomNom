@@ -4,6 +4,7 @@
 #include "Core/PlayerUI.h"
 
 #include "Components/CanvasPanel.h"
+#include "Components/CheckBox.h"
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
@@ -86,4 +87,10 @@ void UPlayerUI::IsPlayerDead(bool isDaed)
 void UPlayerUI::UpdateRespawnBar(float value)
 {
 	Bar_Respawn->SetPercent(value);
+}
+
+void UPlayerUI::OnClear()
+{
+	CB_Mission->SetIsChecked(true);
+	PlayAnimation(ClearAnim);
 }

@@ -2,6 +2,8 @@
 
 
 #include "Core/DestinyGameMode.h"
+
+#include "Core/NomPlayer.h"
 #include "Kismet/GameplayStatics.h"
 #include "Nom3/Public/Core/DestinyPlayerController.h"
 
@@ -11,5 +13,7 @@ void ADestinyGameMode::OnServitorDied(AServitor* KilledServitor)
 	if (PC)
 	{
 		PC->ShowClearUI();
+		if (ANomPlayer* p = Cast<ANomPlayer>(UGameplayStatics::GetPlayerPawn(this, 0)))
+			p->OnGameCleared();
 	}
 }

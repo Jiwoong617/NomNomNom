@@ -7,6 +7,7 @@
 #include "UObject/UnrealTypePrivate.h"
 #include "PlayerUI.generated.h"
 
+class UCheckBox;
 class UCanvasPanel;
 class UImage;
 class UProgressBar;
@@ -41,6 +42,9 @@ protected:
 	UPROPERTY() TArray<UImage*> WeaponImgs;
 	UPROPERTY() TArray<UTextBlock*> AmmoTexts;
 	
+	UPROPERTY(meta=(BindWidgetAnim), Transient) UWidgetAnimation* ClearAnim;
+	UPROPERTY(meta=(BindWidget)) UCheckBox* CB_Mission;
+	
 public:
     UFUNCTION(BlueprintCallable)
     void UpdateAmmoUI(int32 currentammo, int32 maxammo);
@@ -63,4 +67,7 @@ public:
 	void IsPlayerDead(bool isDaed);
 	UFUNCTION()
 	void UpdateRespawnBar(float value);
+
+	UFUNCTION()
+	void OnClear();
 };
