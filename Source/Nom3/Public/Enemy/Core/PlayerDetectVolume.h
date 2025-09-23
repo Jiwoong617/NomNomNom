@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/NoticePawn.h"
 #include "PlayerDetectVolume.generated.h"
 
 //전방 선언
@@ -20,8 +21,8 @@ public:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<AEnemySpawnerBase> BindSpawner;
+	UPROPERTY(EditAnywhere)
+	TArray<AActor*> BindSpawnerAndEnemy;
 
 protected:
 	UPROPERTY(VisibleAnywhere)

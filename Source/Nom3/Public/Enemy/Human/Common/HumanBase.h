@@ -44,6 +44,8 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UHumanStateMachineBase> EvadeStateMachine;
 
+	virtual void OnNoticePawn(AActor* DetectedPawn) override;
+
 protected:
 	virtual void BeginPlay() override;
 

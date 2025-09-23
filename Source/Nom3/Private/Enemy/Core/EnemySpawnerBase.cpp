@@ -52,7 +52,7 @@ void AEnemySpawnerBase::BeginPlay()
 	}
 }
 
-void AEnemySpawnerBase::OnDetectPlayerPawn()
+void AEnemySpawnerBase::OnNoticePawn(AActor* DetectedPawn)
 {
 	
 }
@@ -65,7 +65,7 @@ void AEnemySpawnerBase::OnConstruction(const FTransform& Transform)
 	{
 		BindPlayerDetectVolume = GetWorld()->SpawnActor<APlayerDetectVolume>();
 		BindPlayerDetectVolume->SetActorLocation(GetActorLocation());
-		BindPlayerDetectVolume->BindSpawner = this;
+		BindPlayerDetectVolume->BindSpawnerAndEnemy.Add(this);
 	}
 }
 

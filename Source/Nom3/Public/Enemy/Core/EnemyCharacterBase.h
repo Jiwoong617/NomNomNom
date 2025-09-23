@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/CriticalDamagable.h"
 #include "Interfaces/Damagable.h"
+#include "Interfaces/NoticePawn.h"
 #include "EnemyCharacterBase.generated.h"
 
 //전방 선언
@@ -21,7 +22,7 @@ class UEnemyHealthComponent;
 class UDamageActorPoolWorldSubsystem;
 
 UCLASS()
-class NOM3_API AEnemyCharacterBase : public ACharacter, public IOnAimByPlayerSight, public IDamagable, public ICriticalDamagable
+class NOM3_API AEnemyCharacterBase : public ACharacter, public IOnAimByPlayerSight, public IDamagable, public ICriticalDamagable, public INoticePawn
 {
 	GENERATED_BODY()
 
@@ -78,6 +79,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void OnCriticalDamaged(FFireInfo Info) override;
 
+	//폰 인식 인터페이스
+	UFUNCTION(BlueprintCallable)
+	virtual void OnNoticePawn(AActor* DetectedPawn) override;
+
 	UFUNCTION()
 	virtual void OnDie();
 
@@ -109,4 +114,12 @@ protected:
 	//피조준 타이머 핸들
 	UPROPERTY()
 	FTimerHandle OnSightTimerHandle;
+
+	//대기 애니메이션 에셋 배열
+	UPROPERTY(VisibleAnywhere)
+	TArray<UAnimationAsset*> WaitAnimationAssets;
+
+	//애니메이션 블루프린트 클래스
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UAnimInstance> AnimBlueprintClass;
 };
