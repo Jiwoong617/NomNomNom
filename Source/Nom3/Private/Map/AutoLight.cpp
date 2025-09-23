@@ -20,6 +20,16 @@ void AAutoLight::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Turn off all lights initially
+	for (ALight* LightActor : LightsActor)
+	{
+		if (LightActor && LightActor->GetLightComponent())
+		{
+			LightActor->GetLightComponent()->SetIntensity(0.0f);
+			LightActor->GetLightComponent()->SetVisibility(false);
+		}
+	}
+
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AAutoLight::OnOverlapBegin);
 	
 }
@@ -51,6 +61,7 @@ void AAutoLight::ActivateLight()
 		ALight* LightActor = LightsActor[CurrentLightIndex];
 		if (LightActor && LightActor->GetLightComponent())
 		{
+			LightActor->GetLightComponent()->SetVisibility(true);
 			LightActor->GetLightComponent()->SetIntensity(5000.0f);
 		}
 		CurrentLightIndex++;
