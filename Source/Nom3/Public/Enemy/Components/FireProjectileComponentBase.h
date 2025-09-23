@@ -25,6 +25,10 @@ protected:
 	int32 AutoFireMin;
 	int32 AutoFireMax;
 
+	//사격 차단기
+	UPROPERTY(VisibleAnywhere)
+	bool bBlockingFire;
+
 	//사격 카운트
 	UPROPERTY(VisibleAnywhere)
 	int32 FireCount;
@@ -48,6 +52,8 @@ protected:
 	
 public:
 	UFireProjectileComponentBase();
+
+	virtual void BeginPlay() override;
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

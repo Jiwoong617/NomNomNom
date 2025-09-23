@@ -9,12 +9,21 @@ UFireProjectileComponentBase::UFireProjectileComponentBase() :
 	AutoFireMax(1),
 	FireCount(0),
 	FireLimit(0),
+	ElapsedTimeAfterLastFire(0),
 	FireInterval(0.25f),
 	ShootRandConeAngle(1)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UFireProjectileComponentBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//차단기 초기화
+	bBlockingFire = false;
 }
 
 void UFireProjectileComponentBase::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -34,11 +43,16 @@ void UFireProjectileComponentBase::TickComponent(float DeltaTime, enum ELevelTic
 			FireCount++;
 
 			//ElapsedTime 갱신
-			ElapsedTimeAfterLastFire -= AutoFireRate;
+			ElapsedTimeAfterLastFire -= FireInterval;
 		}
 
 		//어쨌든 시간은 지나간다
 		ElapsedTimeAfterLastFire += DeltaTime;
+	}
+	else
+	{
+		//사격 차단기가 다시 풀린다
+		bBlockingFire = false;
 	}
 }
 
@@ -63,6 +77,18 @@ void UFireProjectileComponentBase::InactiveAutoFire()
 
 void UFireProjectileComponentBase::FireBulletMultiple()
 {
+	//이전 요청이 아직 마무리 되지 않았다면
+	if (bBlockingFire)
+	{
+		return;
+	}
+
+	//블로킹 활성화
+	bBlockingFire = true;
+	
+	//사격 지나간 시간 초기화
+	ElapsedTimeAfterLastFire = 0;
+	
 	//사격 카운트
 	FireCount = 0;
 

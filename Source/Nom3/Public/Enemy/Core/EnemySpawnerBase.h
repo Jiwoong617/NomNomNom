@@ -21,6 +21,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	UFUNCTION()
 	virtual void OnNoticePawn(AActor* DetectedPawn) override;
 
@@ -41,35 +43,59 @@ public:
 	UPROPERTY(EditAnywhere, Category="Spawning", meta=(ToolTip="이 스포너가 소환할 수 있는 재고의 숫자. StockList에 직접 할당된 요소의 개수가 NumOfStock에 못 미친다면 랜덤으로 할당된다."))
 	int32 NumOfStock;
 
+	UPROPERTY(EditAnywhere, Category="Spawning")
+	int32 StockIndex;
+
 	UPROPERTY(EditAnywhere, Category="Spawning", meta=(ToolTip="랜덤으로 선택될 수 있는 에너미 클래스 리스트"))
 	TArray<TSubclassOf<AEnemyActorBase>> EnemyList;
 
 	UPROPERTY(EditAnywhere, Category="Spawning", meta=(ToolTip="이 스포너가 순서내도 소환할 에너미 클래스 배열. 직접 설정 가능하나 NumOfStock이 채워질 때까지 랜덤 요소로 채워진다."))
 	TArray<TSubclassOf<AEnemyActorBase>> StockList;
-
-	UPROPERTY(VisibleAnywhere)
+	
+	UPROPERTY(VisibleAnywhere, Category="Spawning")
 	int32 SpawnCounter;
 
-	UPROPERTY(EditAnywhere, Category="Spawning")
-	TObjectPtr<APlayerDetectVolume> BindPlayerDetectVolume;
+	UPROPERTY(VisibleAnywhere, Category="Spawning")
+	int32 SpawnLimiter;
 
+	UPROPERTY(VisibleAnywhere, Category="Spawning")
+	float ElapsedTimeAfterLastSpawn;
+
+	UPROPERTY(VisibleAnywhere, Category="Spawning")
+	float SpawnInterval;
+	
 	UPROPERTY()
 	bool bBlockingSpawn;
-
-	UPROPERTY(EditAnywhere, Category="Spawning")
-	float SpawnRate;
-
+	
 	UPROPERTY(EditAnywhere, Category="Spawning")
 	int32 SpawnMin;
 
 	UPROPERTY(EditAnywhere, Category="Spawning")
 	int32 SpawnMax;
 
+	//자동 사격 타이머 핸들러
+	FTimerHandle AutoSpawnTimerHandle;
+
+	//자동 사격 타이머 델리게이트
+	FTimerDelegate AutoSpawnTimerDelegate;
+
+	UPROPERTY(EditAnywhere, Category="Spawning")
+	float AutoSpawnRate;
+
+	UPROPERTY(EditAnywhere, Category="Spawning")
+	TObjectPtr<APlayerDetectVolume> BindPlayerDetectVolume;
+	
 	UFUNCTION()
 	FTransform GetSpawnTransform() const;
 
 	UFUNCTION()
-	void RequestSpawnEnemies(int32 Count);
+	void ActiveAutoSpawn();
+
+	UFUNCTION()
+	void InactivateAutoSpawn();
+
+	UFUNCTION()
+	void RequestSpawnEnemies();
 
 	UFUNCTION()
 	void ProcessSpawn();

@@ -13,11 +13,15 @@ AEnemySpawnerBase::AEnemySpawnerBase() :
 	SpawnFrustumMin(50),
 	SpawnFrustumMax(100),
 	NumOfStock(8),
+	SpawnCounter(0),
+	SpawnLimiter(0),
+	SpawnInterval(0.5),
 	SpawnMin(4),
-	SpawnMax(4)
+	SpawnMax(4),
+	AutoSpawnRate(5)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	//스폰된 생크들이 사출되는 방향을 가리키는 애로우 컴포넌트
 	SpawnFrustumDirection = CreateDefaultSubobject<UArrowComponent>(FName("SpawnFrustumDirection"));
@@ -29,8 +33,11 @@ void AEnemySpawnerBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//스폰 카운터
-	SpawnCounter = 0;
+	//스폰 인덱스
+	StockIndex = 0;
+
+	//스폰 차단기
+	bBlockingSpawn = false;
 
 	//비어 있는 만큼 채워 넣기
 	for (int32 i = StockList.Num(); i < NumOfStock; i++)
@@ -49,6 +56,36 @@ void AEnemySpawnerBase::BeginPlay()
 		{
 			StockList.Add(Selected);	
 		}
+	}
+}
+
+void AEnemySpawnerBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	//발사 카운트가 작은 동안
+	if (SpawnCounter < SpawnLimiter)
+	{
+		//발사 간격을 넘겼으므로
+		if (ElapsedTimeAfterLastSpawn > SpawnInterval)
+		{
+			//1회 사격 호출
+			ProcessSpawn();
+		
+			//발사 카운트 증가
+			SpawnCounter++;
+
+			//ElapsedTime 갱신
+			ElapsedTimeAfterLastSpawn -= SpawnInterval;
+		}
+
+		//어쨌든 시간은 지나간다
+		ElapsedTimeAfterLastSpawn += DeltaSeconds;
+	}
+	else
+	{
+		//스폰 차단기가 다시 풀린다
+		bBlockingSpawn = false;
 	}
 }
 
@@ -89,14 +126,30 @@ FTransform AEnemySpawnerBase::GetSpawnTransform() const
 	return SpawnTransform;
 }
 
-void AEnemySpawnerBase::RequestSpawnEnemies(const int32 Count)
+void AEnemySpawnerBase::ActiveAutoSpawn()
 {
-	//유효하지 않은 요청
-	if (Count < 1)
+	//타이머 델리게이트 바인드
+	AutoSpawnTimerDelegate.BindLambda([this]()
 	{
-		return;
-	}
-	
+		//자동 스폰 메서드 호출
+		RequestSpawnEnemies();
+	});
+
+	//최초 실행
+	AutoSpawnTimerDelegate.Execute();
+
+	//자동 사격 호출
+	GetWorld()->GetTimerManager().SetTimer(AutoSpawnTimerHandle, AutoSpawnTimerDelegate, AutoSpawnRate, true);
+}
+
+void AEnemySpawnerBase::InactivateAutoSpawn()
+{
+	//사격 타이머 비활성화
+	GetWorld()->GetTimerManager().ClearTimer(AutoSpawnTimerHandle);
+}
+
+void AEnemySpawnerBase::RequestSpawnEnemies()
+{
 	//이전 요청이 아직 마무리 되지 않았다면
 	if (bBlockingSpawn)
 	{
@@ -105,29 +158,15 @@ void AEnemySpawnerBase::RequestSpawnEnemies(const int32 Count)
 
 	//블로킹 활성화
 	bBlockingSpawn = true;
-	
-	//이전 요청을 처리할 때까지 추가 요청을 차단
-	FTimerHandle SpawnTimerHandle;
-	FTimerDelegate SpawnTimerDelegate;
-	SpawnTimerDelegate.BindLambda([this]()
-	{
-		bBlockingSpawn = false;
-	});
-	GetWorldTimerManager().SetTimer(SpawnTimerHandle, SpawnTimerDelegate, Count * 0.25, false);
 
-	//델리게이트 바인딩
-	FTimerDelegate SpawnDelegate;
-	SpawnDelegate.BindUFunction(this, FName("ProcessSpawn"));
+	//스폰 지나간 시간 초기화
+	ElapsedTimeAfterLastSpawn = 0;
 	
-	//생크 1회 스폰
-	SpawnDelegate.Execute();
-	
-	//요청한 만큼 생크를 반복 스폰
-	for (int32 i = 0; i < Count; i++)
-	{
-		FTimerHandle Temp;
-		GetWorldTimerManager().SetTimer(Temp, SpawnDelegate, i * 0.5, false);	
-	}
+	//스폰 카운트 초기화
+	SpawnCounter = 0;
+
+	//스폰 리미터 초기화
+	SpawnLimiter = FMath::RandRange(SpawnMin, SpawnMax);
 }
 
 void AEnemySpawnerBase::ProcessSpawn()
@@ -135,6 +174,7 @@ void AEnemySpawnerBase::ProcessSpawn()
 	//전부 소진
 	if (NumOfStock <= 0)
 	{
+		InactivateAutoSpawn();
 		return;
 	}
 	

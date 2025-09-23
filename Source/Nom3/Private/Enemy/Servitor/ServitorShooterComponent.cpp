@@ -13,7 +13,7 @@ UServitorShooterComponent::UServitorShooterComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 
 	//정찰 생크 총알 블루프린트 클래스
 	if (static ConstructorHelpers::FClassFinder<AProjectileBase>
@@ -47,9 +47,6 @@ void UServitorShooterComponent::FireBulletOnce() const
 
 	//목표 방향 랜덤
 	TargetDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(TargetDirection, ShootRandConeAngle);
-
-	//발사 방향 디버그 드로우
-	//DrawDebugLine(GetWorld(), GetComponentLocation(), GetComponentLocation() + TargetDirection * 1000, FColor::Cyan, false, 5, 0, 0);
 	
 	//목표 방향 로테이터
 	const FRotator FireRotator = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), GetComponentLocation() + TargetDirection);
