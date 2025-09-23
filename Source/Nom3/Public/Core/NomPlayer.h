@@ -73,7 +73,7 @@ protected:
 	//Basic Status
 	float MaxSpeed = 1000.f;
 	float JumpForce = 1200.f;
-	float GravityMultiplier = 1.2f;
+	float GravityMultiplier = 1.5f;
 
 	//Movement params
 	float InteractDuration = 0.f;

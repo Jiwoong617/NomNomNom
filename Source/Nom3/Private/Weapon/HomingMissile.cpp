@@ -3,6 +3,7 @@
 
 #include "Weapon/HomingMissile.h"
 
+#include "EngineUtils.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -10,6 +11,7 @@
 #include "Core/DamageComponent.h"
 #include "Core/NomPlayer.h"
 #include "Enemy/Core/EnemyActorBase.h"
+#include "Enemy/Core/EnemyCharacterBase.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
 
 
@@ -58,20 +60,26 @@ void AHomingMissile::SetHoming()
 {
 	TArray<AActor*> EnemyList;
 	
-	TArray<AActor*> Candidates;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyActorBase::StaticClass(), Candidates);
-	for (AActor* Actor : Candidates)
+	for (AEnemyActorBase* Enemy : TActorRange<AEnemyActorBase>(MeshComp->GetWorld()))
 	{
-		if (!IsValid(Actor)) continue;
-		AEnemyActorBase* Enemy = Cast<AEnemyActorBase>(Actor);
+		if (!IsValid(Enemy)) continue;
 		if (!Enemy) continue;
 		if (Enemy->GetComponentByClass<UEnemyHealthComponent>()->GetHP() <= 0)
 			continue;
 
-		if (FVector::Dist(GetActorLocation(), Actor->GetActorLocation()) < 15000)
+		if (FVector::Dist(GetActorLocation(), Enemy->GetActorLocation()) < 15000)
+			EnemyList.Add(Enemy);
+	}	
+	for (AEnemyCharacterBase* Enemy : TActorRange<AEnemyCharacterBase>(MeshComp->GetWorld()))
+	{
+		if (!IsValid(Enemy)) continue;
+		if (!Enemy) continue;
+		if (Enemy->GetComponentByClass<UEnemyHealthComponent>()->GetHP() <= 0)
+			continue;
+
+		if (FVector::Dist(GetActorLocation(), Enemy->GetActorLocation()) < 15000)
 			EnemyList.Add(Enemy);
 	}
-
 
 	if (EnemyList.Num() > 0)
 	{

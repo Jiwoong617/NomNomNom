@@ -7,6 +7,7 @@
 #include "Enemy/Core/EnemyActorBase.h"
 #include "Camera/CameraComponent.h"
 #include "EngineUtils.h"
+#include "Enemy/Core/EnemyCharacterBase.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -62,8 +63,22 @@ void UUltimateSkillNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	float HalfFovDeg = TpsCam->FieldOfView * 0.5f;
 	
 	
-	TArray<AEnemyActorBase*> Enemies;
+	TArray<AActor*> Enemies;
 	for (AEnemyActorBase* Enemy : TActorRange<AEnemyActorBase>(MeshComp->GetWorld()))
+	{
+		if (!IsValid(Enemy)) continue;
+		if (!Enemy || Enemy->GetComponentByClass<UEnemyHealthComponent>()->GetHP() <= 0) continue;
+
+		float Dist = (Enemy->GetActorLocation() - Loc).Size();
+		if (Dist > MaxRange) continue;
+
+		FVector Dir = (Enemy->GetActorLocation() - Loc) / Dist;
+		float CosAngle = FVector::DotProduct(CamFwd, Dir);
+		float AngleDeg = FMath::RadiansToDegrees(FMath::Acos(FMath::Clamp(CosAngle, -1.0f, 1.0f)));
+		if (AngleDeg <= HalfFovDeg)
+			Enemies.Add(Enemy);
+	}
+	for (AEnemyCharacterBase* Enemy : TActorRange<AEnemyCharacterBase>(MeshComp->GetWorld()))
 	{
 		if (!IsValid(Enemy)) continue;
 		if (!Enemy || Enemy->GetComponentByClass<UEnemyHealthComponent>()->GetHP() <= 0) continue;
@@ -80,13 +95,13 @@ void UUltimateSkillNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	
 	if (Enemies.Num() == 0)
 		return;
-	Enemies.Sort([&](const AEnemyActorBase& A, const AEnemyActorBase& B)
+	Enemies.Sort([&](const AActor& A, const AActor& B)
 	{
 		return FVector::Dist(Player->GetActorLocation(), A.GetActorLocation()) <
 			   FVector::Dist(Player->GetActorLocation(), B.GetActorLocation());
 	});
 	
-	TArray<AEnemyActorBase*> Selected;
+	TArray<AActor*> Selected;
 	for (int32 i = 0; i < 7; i++)
 	{
 		if (Enemies.Num() > 5)
@@ -100,7 +115,7 @@ void UUltimateSkillNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	SpawnParams.Instigator = Player;
 	int32 DaggerDamage = FMath::RandRange(4750, 5250);
 	int32 DaggerSpeed = FMath::RandRange(9000, 11000);
-	for (AEnemyActorBase* Target : Selected)
+	for (AActor* Target : Selected)
 	{
 		if (!IsValid(Target))
 			continue;

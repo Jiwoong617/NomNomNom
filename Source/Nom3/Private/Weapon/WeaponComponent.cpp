@@ -242,6 +242,8 @@ void UWeaponComponent::ChangeWeapon(int32 idx)
 
 void UWeaponComponent::OnWeaponChanged(int32 idx)
 {
+	FireTime = CurrentWeapon->GetData()->FireRate;
+	
 	if (CurrentWeapon->GetData()->IsAimable == false)
 		return;
 	const FVector AimSocketLoc = CurrentWeapon->GetSocketTransform(AimSocket).GetLocation();
@@ -257,8 +259,6 @@ void UWeaponComponent::OnWeaponChanged(int32 idx)
 	}
 	const FVector AimSocketLocLocal = ParentFrame.InverseTransformPosition(AimSocketLoc);
 	AimCamLoc = AimSocketLocLocal;
-
-	FireTime = CurrentWeapon->GetData()->FireRate;
 }
 
 AWeaponBase* UWeaponComponent::GetCurrentWeapon()
