@@ -1,5 +1,4 @@
 
-
 #include "Map/Elevator.h" 
 #include "Components/BoxComponent.h"
 #include "Core/NomPlayer.h" 
@@ -26,6 +25,7 @@
 
       // 시작 위치를 현재 액터의 위치로 설정
       StartLocation = GetActorLocation();
+     
   }
 
   void AElevator::Tick(float DeltaTime)
@@ -129,6 +129,6 @@
 
   void AElevator::ResumeMovementToFinalTarget()
   {
-      // 상태를 최종 목적지로 이동하는 상태로 변경
+      // 최종 목적
       CurrentState = EElevatorState::MovingToFinalTarget;
   }
