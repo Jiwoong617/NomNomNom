@@ -12,7 +12,7 @@ ARifle::ARifle()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Weapons/Rifle/Meshes/SKM_Rifle.SKM_Rifle'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/gun/rifle/rifle.rifle'"));
 	if (TempMesh.Succeeded())
 	{
 		WeaponMeshComp->SetSkeletalMesh(TempMesh.Object);

@@ -37,7 +37,7 @@ private:
     UPROPERTY(EditAnywhere, Instanced) USkillBase* DodgeSkill;
     UPROPERTY(EditAnywhere, Instanced) USkillBase* UltimateSkill;
 
-	float ThrowCoolDown;
+	float ThrowCoolDown = 0.f;
     float DodgeCooldown = 0.f;
     float UltimateCooldown = 0.f;
 	

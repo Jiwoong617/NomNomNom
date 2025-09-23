@@ -6,6 +6,8 @@
 #include "Enemy/Core/ProjectileBase.h"
 #include "HomingMissile.generated.h"
 
+class ANomPlayer;
+
 UCLASS()
 class NOM3_API AHomingMissile : public AActor
 {
@@ -28,16 +30,16 @@ private:
 	FTimerHandle CantReachTimer;
     
     UPROPERTY(EditAnywhere)
-    AActor* Player;
+    ANomPlayer* Player;
 
     UPROPERTY(EditAnywhere, Category="HomingMissile")
     int32 Damage;
     UPROPERTY(EditAnywhere, Category="HomingMissile")
-    float Speed = 2000.f;
+    float Speed = 3000.f;
     UPROPERTY(EditAnywhere, Category="HomingMissile")
     float HomingDelay = 0.5f;
     UPROPERTY(EditAnywhere, Category="HomingMissile")
-    float HomingStrength = 10000.f;
+    float HomingStrength = 20000.f;
     UPROPERTY(EditAnywhere, Category="HomingMissile")
     float StraightFlightExplodeDelay = 2.0f;
     UPROPERTY(EditAnywhere, Category="HomingMissile")
@@ -50,5 +52,5 @@ private:
     void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 public:
-    void InitFire(int32 Dmg, AActor* player);
+    UFUNCTION() void InitFire(int32 Dmg, ANomPlayer* NomPlayer);
 };

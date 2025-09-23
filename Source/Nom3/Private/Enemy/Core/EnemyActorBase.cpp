@@ -3,6 +3,7 @@
 #include "Enemy/Core/EnemyActorBase.h"
 
 #include "Components/WidgetComponent.h"
+#include "Enemy/Core/EnemyData.h"
 #include "Enemy/Core/EnemyHealthComponent.h"
 #include "Enemy/Core/EnemyStatus.h"
 #include "Enemy/Core/StateMachineBase.h"
@@ -34,8 +35,15 @@ void AEnemyActorBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//스테이터스 위젯 획득
+	StatusWidget = Cast<UEnemyStatus>(StatusWidgetComp->GetWidget());
+	StatusWidget->Hide();
+
+	//스테이터스 위젯 업데이트
+	StatusWidget->SetName(EnemyData->EnemyName);
+
 	//체력 초기화
-	HealthComp->Init(100);
+	HealthComp->Init(EnemyData->EnemyMaxHP);
 	
 	//플레어어 폰 획득
 	TargetPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -81,7 +89,19 @@ void AEnemyActorBase::ChangeCurrentStateMachine(UStateMachineBase* StateMachineT
 
 void AEnemyActorBase::OnAimByPlayerSight()
 {
+	if (GetCurrentStateMachine() == nullptr)
+	{
+		return;
+	}
 	
+	//스테이터스 위젯 가시화
+	StatusWidget->Show();
+
+	//2초 후에 스테이터스 위젯 비가시화 예약, 다시 들어온다면 덮어쓰니까 문제 없음
+	GetWorldTimerManager().SetTimer(OnSightTimerHandle, [this]()
+	{
+		StatusWidget->Hide();
+	}, 2, false);
 }
 
 void AEnemyActorBase::OnDamaged(const FFireInfo Info)
@@ -102,10 +122,13 @@ void AEnemyActorBase::OnDamaged(const FFireInfo Info)
 	DamageActorPool->ShowNormalDamageActor(GetActorLocation(), Damage);
 
 	//체력 비율 업데이트
-	if (const auto StatusWidget = Cast<UEnemyStatus>(StatusWidgetComp->GetWidget()))
-	{
-		StatusWidget->UpdateHPBar(HealthComp->GetHPPercent());
-	}
+	StatusWidget->UpdateHPBar(HealthComp->GetHPPercent());
+}
+
+void AEnemyActorBase::OnDie()
+{
+	//스테이터스 위젯 비가시화
+	StatusWidget->Hide();
 }
 
 void AEnemyActorBase::OnCriticalDamaged(const FFireInfo Info)
@@ -126,10 +149,7 @@ void AEnemyActorBase::OnCriticalDamaged(const FFireInfo Info)
 	DamageActorPool->ShowCriticalDamageActor(GetActorLocation(), Damage);
 
 	//체력 비율 업데이트
-	if (const auto StatusWidget = Cast<UEnemyStatus>(StatusWidgetComp->GetWidget()))
-	{
-		StatusWidget->UpdateHPBar(HealthComp->GetHPPercent());
-	}
+	StatusWidget->UpdateHPBar(HealthComp->GetHPPercent());
 }
 
 FVector AEnemyActorBase::GetPlayerGazeDir() const

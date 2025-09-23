@@ -10,7 +10,7 @@
 
 UThrowSkill::UThrowSkill()
 {
-	ConstructorHelpers::FObjectFinder<UAnimMontage> anim(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/Skill/Throw_Montage.Throw_Montage'"));
+	ConstructorHelpers::FObjectFinder<UAnimMontage> anim(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/Skill/grenade_Anim_Montage.grenade_Anim_Montage'"));
 	if (anim.Succeeded())
 		SkillMontage = anim.Object;
 	
@@ -23,7 +23,7 @@ void UThrowSkill::UseSkill()
 	GetWorld()->SpawnActor<AGrenade>(AGrenade::StaticClass()
 		, Owner->GetFpsCam()->GetComponentLocation() + Owner->GetFpsCam()->GetRightVector() * -30
 		, FRotator(0))
-		->Init(Owner->GetFpsCam()->GetForwardVector(), 1000 + Owner->GetVelocity().X);
+		->Init(Owner->GetFpsCam()->GetForwardVector(), 1000 + Owner->GetVelocity().X, Owner);
 
 	if (SkillMontage)
 		Owner->PlayFPSAnim(SkillMontage);

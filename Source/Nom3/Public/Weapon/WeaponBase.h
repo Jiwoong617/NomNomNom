@@ -47,10 +47,14 @@ protected:
 	FRotator TargetRecoil; //목표 반동
 	UPROPERTY(EditAnywhere)
 	FRotator LastAppliedRecoil; // 직전 프레임에 적용한 반동
-	
-	//Test
+
+	//Effect
 	UPROPERTY(EditAnywhere)
 	UNiagaraSystem* fireEffect;
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* BulletImpactEffect;
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* BulletTracerEffect;
 	
 public:
 	UPROPERTY(EditAnywhere)

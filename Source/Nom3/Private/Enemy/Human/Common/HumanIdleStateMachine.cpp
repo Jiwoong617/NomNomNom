@@ -1,0 +1,41 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "Enemy/Human/Common/HumanIdleStateMachine.h"
+#include "Enemy/Human/Common/HumanBase.h"
+#include "Kismet/KismetMathLibrary.h"
+
+UHumanIdleStateMachine::UHumanIdleStateMachine()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UHumanIdleStateMachine::EnterState()
+{
+	Super::EnterState();
+
+	//2초 후에 Move 상태로 전환할 예정
+	LimitTimeInState = 2;
+}
+
+void UHumanIdleStateMachine::ExecuteState()
+{
+	Super::ExecuteState();
+
+	//목표 방향
+	const FVector TargetDir = (OwnerHuman->TargetPawn->GetActorLocation() - OwnerHuman->GetActorLocation()).GetSafeNormal();
+	const FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(TargetDir, OwnerHuman->GetActorUpVector());
+	OwnerHuman->MeshSceneComp->SetWorldRotation(TargetRot);
+
+	if (ElapsedTimeInState > LimitTimeInState)
+	{
+		//이동 상태 머신으로 전환
+		OwnerHuman->ChangeCurrentStateMachine(OwnerHuman->MoveStateMachine);
+	}
+}
+
+void UHumanIdleStateMachine::ExitState()
+{
+	Super::ExitState();
+}

@@ -67,11 +67,11 @@ public:
 	//이동 경로 위치를 담는 큐
 	TQueue<FVector> PathQueue;
 
+	//EnemyActorBase에서 상속받은 사망 메서드
+	virtual void OnDie() override;
+
 protected:
 
 	UPROPERTY()
 	TObjectPtr<UNiagaraSystem> ExplosionNiagara;
-
-	UFUNCTION(BlueprintCallable)
-	virtual void OnShotDown(const FVector ShotDir);
 };

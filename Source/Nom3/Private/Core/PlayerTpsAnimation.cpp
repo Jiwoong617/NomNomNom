@@ -3,6 +3,7 @@
 
 #include "Core/PlayerTpsAnimation.h"
 #include "Core/NomPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UPlayerTpsAnimation::NativeBeginPlay()
 {
@@ -14,6 +15,20 @@ void UPlayerTpsAnimation::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 
 	Owner = Cast<ANomPlayer>(TryGetPawnOwner());
+}
+
+void UPlayerTpsAnimation::NativeUpdateAnimation(float DeltaSeconds)
+{
+	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	if (Owner)
+	{
+		Speed = FVector::DotProduct(Owner->GetVelocity(), Owner->GetActorForwardVector())/Owner->GetCharacterMovement()->GetMaxSpeed();
+		Dir = FVector::DotProduct(Owner->GetVelocity(), Owner->GetActorRightVector())/Owner->GetCharacterMovement()->GetMaxSpeed();
+		bIsAir = Owner->GetCharacterMovement()->IsFalling();
+
+		MovingState = Owner->GetMovingState();
+	}
 }
 
 void UPlayerTpsAnimation::PlaySkillAnim(UAnimMontage* montage)

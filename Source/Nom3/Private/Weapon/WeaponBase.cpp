@@ -2,6 +2,8 @@
 
 
 #include "Weapon/WeaponBase.h"
+
+#include "NiagaraComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Core/DamageComponent.h"
 #include "Core/NomPlayer.h"
@@ -25,6 +27,14 @@ AWeaponBase::AWeaponBase() : WeaponData(nullptr)
 	ConstructorHelpers::FObjectFinder<UNiagaraSystem> eff(TEXT("/Script/Niagara.NiagaraSystem'/Game/Asset/FX/muzzle/N_MuzzleFalsh.N_MuzzleFalsh'"));
 	if (eff.Succeeded())
 		fireEffect = eff.Object;
+		
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> impacteff(TEXT("/Script/Niagara.NiagaraSystem'/Game/Asset/FX/NS_BulletEffect.NS_BulletEffect'"));
+	if (impacteff.Succeeded())
+		BulletImpactEffect = impacteff.Object;
+		
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> tracereff(TEXT("/Script/Niagara.NiagaraSystem'/Game/Asset/FX/traceBeam.traceBeam'"));
+	if (tracereff.Succeeded())
+		BulletTracerEffect = tracereff.Object;
 		
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> reloadMontage(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/gun/HandCannonReload.HandCannonReload'"));
 	if (reloadMontage.Succeeded())
@@ -96,12 +106,15 @@ void AWeaponBase::AimFire()
 
 		const FVector Pos = WeaponOwner->GetFpsCam()->GetComponentLocation();
 		const FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
+
+		FVector TracerStartPos = WeaponMeshComp->GetSocketLocation(FireSocketName);
+		FVector TracerEndPos = Pos + Dir * 10000;
 		
 		FHitResult Hit;
 		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
 		Params.AddIgnoredActor(WeaponOwner);
 		
-		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + Dir * 10000,ECC_Visibility,Params))
+		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + Dir * 10000, ECC_Visibility, Params))
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, Hit.GetComponent()->GetName());
 			
@@ -112,16 +125,27 @@ void AWeaponBase::AimFire()
 				dmg->OnDamaged(FFireInfo(damage,
 					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
+
+			TracerEndPos = Hit.Location;
 			
-			DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BulletImpactEffect,
+				Hit.Location, Hit.Normal.Rotation());
+			//DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
 		}
 
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), fireEffect,
 			WeaponMeshComp->GetSocketLocation(FireSocketName), WeaponMeshComp->GetSocketRotation(FireSocketName));
+
+		if (FVector::Dist(TracerStartPos, TracerEndPos) > 300.f)
+		{
+			auto Trace = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BulletTracerEffect,TracerStartPos);
+			Trace->SetVariableVec3(TEXT("start"), TracerStartPos);
+			Trace->SetVariableVec3(TEXT("end"),   TracerEndPos);
+		}
 		
-		DrawDebugLine(GetWorld(), Pos, Dir * 10000, FColor::Red, false, 1);
-		GEngine->AddOnScreenDebugMessage(2, 5.0f, FColor::Cyan,
-			FString::Printf(TEXT("%d/%d - %d"), CurrentAmmo, WeaponData->AmmoCount, MaxAmmo));
+		//DrawDebugLine(GetWorld(), Pos, Dir * 10000, FColor::Red, false, 1);
+		//GEngine->AddOnScreenDebugMessage(2, 5.0f, FColor::Cyan,
+		//	FString::Printf(TEXT("%d/%d - %d"), CurrentAmmo, WeaponData->AmmoCount, MaxAmmo));
 
 		//Recoil
 		ApplyRecoil();
@@ -157,12 +181,17 @@ void AWeaponBase::NoAimFire()
 		SpreadRot.Yaw += RandYaw;
 		const FVector FinalDir = SpreadRot.Vector();
 
+		FVector TracerStartPos = WeaponMeshComp->GetSocketLocation(FireSocketName);
+		FVector TracerEndPos = Pos + FinalDir * 10000;
+		
 		FHitResult Hit;
 		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
 		Params.AddIgnoredActor(WeaponOwner);
-		
-		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + FinalDir * 10000,ECC_Visibility, Params))
+
+		if (GetWorld()->LineTraceSingleByChannel(Hit,Pos,Pos + FinalDir * 10000, ECC_Visibility, Params))
 		{
+			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, Hit.GetComponent()->GetName());
+			
 			if (auto dmg = Cast<UDamageComponent>(Hit.GetComponent()))
 			{
 				PRINTLOG(TEXT("Damagable"));
@@ -170,18 +199,30 @@ void AWeaponBase::NoAimFire()
 				dmg->OnDamaged(FFireInfo(damage,
 					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
+
+			TracerEndPos = Hit.Location;
 			
-			DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BulletImpactEffect,
+				Hit.Location, Hit.Normal.Rotation());
+			//DrawDebugSphere(GetWorld(), Hit.Location, 10, 1, FColor::Red, false, 3);
 		}
 
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), fireEffect,
 			WeaponMeshComp->GetSocketLocation(FireSocketName), WeaponMeshComp->GetSocketRotation(FireSocketName));
+
+		if (FVector::Dist(TracerStartPos, TracerEndPos) > 300.f)
+		{
+			auto Trace = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BulletTracerEffect,TracerStartPos);
+			Trace->SetVariableVec3(TEXT("start"), TracerStartPos);
+			Trace->SetVariableVec3(TEXT("end"),   TracerEndPos);
+		}
 		
-		DrawDebugLine(GetWorld(), Pos, Pos + FinalDir * 10000, FColor::Red, false, 1);
-		GEngine->AddOnScreenDebugMessage(
-			-1, 5.0f, FColor::Cyan,
-			FString::Printf(TEXT("%d/%d - %d"), CurrentAmmo, WeaponData->AmmoCount, MaxAmmo)
-		);
+		
+		// DrawDebugLine(GetWorld(), Pos, Pos + FinalDir * 10000, FColor::Red, false, 1);
+		// GEngine->AddOnScreenDebugMessage(
+		// 	-1, 5.0f, FColor::Cyan,
+		// 	FString::Printf(TEXT("%d/%d - %d"), CurrentAmmo, WeaponData->AmmoCount, MaxAmmo)
+		// );
 
 		//Recoil
 		ApplyRecoil();

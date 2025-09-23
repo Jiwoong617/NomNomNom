@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Grenade.generated.h"
 
+class ANomPlayer;
 class USphereComponent;
 class UStaticMeshComponent;
 class UProjectileMovementComponent;
@@ -28,25 +29,20 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	UPROPERTY(EditAnywhere)
-	bool IsHit = false;
-
 	float ExplodeRadius = 500.f;
-	float MinDamage = 100.f;
-	float MaxDamage = 1000.f;
+	float MinDamage = 1000.f;
+	float MaxDamage = 2000.f;
 	
-	//UPROPERTY(EditAnywhere)
-	//UProjectileMovementComponent* Projectile;
+	UPROPERTY(EditAnywhere)
+	ANomPlayer* Player;
 	UPROPERTY(EditAnywhere)
 	USphereComponent* CollisionComponent;
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;
 
-	FTimerHandle TimerHandle;
-	
 private:
-	UFUNCTION() void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	UFUNCTION() void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 	UFUNCTION() void OnExplode();
 public:
-	UFUNCTION() void Init(FVector Direction, float Speed);
+	UFUNCTION() void Init(FVector Direction, float Speed, ANomPlayer* NomPlayer);
 };

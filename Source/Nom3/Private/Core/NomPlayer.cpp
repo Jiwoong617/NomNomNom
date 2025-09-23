@@ -6,6 +6,7 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "KismetTraceUtils.h"
+#include "NiagaraComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -24,6 +25,7 @@
 #include "Core/PlayerUI.h"
 #include "Core/SkillComponent.h"
 #include "Enemy/Core/EnemyActorBase.h"
+#include "Enemy/Core/EnemyCharacterBase.h"
 #include "Kismet/GameplayStatics.h"
 
 ANomPlayer::ANomPlayer()
@@ -83,7 +85,7 @@ ANomPlayer::ANomPlayer()
 	//TPS Cam Settings
 	TpsSpringArmComp = CreateDefaultSubobject<USpringArmComponent>("TPS Spring Arm");
 	TpsSpringArmComp->SetupAttachment(RootComponent);
-	TpsSpringArmComp->TargetArmLength = 600.f;
+	TpsSpringArmComp->TargetArmLength = TpsSpringArmLength;
 	TpsSpringArmComp->bUsePawnControlRotation = true;
 	TpsSpringArmComp->SetRelativeLocation(FVector(0, 0, 50));
 	TpsSpringArmComp->SetRelativeRotation(FRotator(-45, 0, 0));
@@ -112,7 +114,7 @@ ANomPlayer::ANomPlayer()
 	BodyBox = CreateDefaultSubobject<UPlayerDamageComponent>("BodyBox");
 	BodyBox->SetupAttachment(GetMesh(), TEXT("BodySocket"));
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> tempPunch(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/Skill/punching_Anim_Montage.punching_Anim_Montage'"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> tempPunch(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/Skill/punch_Anim_Montage.punch_Anim_Montage'"));
 	if (tempPunch.Succeeded())
 		PunchMontage = tempPunch.Object;
 
@@ -124,6 +126,12 @@ ANomPlayer::ANomPlayer()
     //Add Component
     WeaponComp = CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
     SkillComp = CreateDefaultSubobject<USkillComponent>("SkillComp");
+
+	//effect
+	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("NiagaraComp");
+	NiagaraComponent->SetupAttachment(TpsMeshComp);
+	NiagaraComponent->SetRelativeLocation(FVector(0, 0, 90));
+	NiagaraComponent->SetAutoActivate(false);
 	
 	//////////////////////////////Input/////////////////////////////////
 	{
@@ -590,9 +598,11 @@ void ANomPlayer::Throw()
 	if (MovingState == EMovingState::Running)
 		MovingState = EMovingState::Idle;
 
-	ActionState = EActionState::LeftHand;
 	
-	SkillComp->UseThrowSkill();
+	if (!SkillComp->UseThrowSkill())
+		return;
+	
+	ActionState = EActionState::LeftHand;
 }
 
 void ANomPlayer::LeftHandEnd(UAnimMontage* Montage, bool bInterrupted)
@@ -642,7 +652,6 @@ void ANomPlayer::Skill()
         return;
 
     ChangeToTps();
-	SkillComp->UseDodgeSkill();
 }
 
 void ANomPlayer::UltimateSkill()
@@ -675,20 +684,19 @@ void ANomPlayer::UltimateSkill()
         return;
 
     ChangeToTps();
-	
-	PRINTINFO();
-	FTimerHandle SkillHandle;
-	//TODO : 몽타쥬로 바꿀 것
-	GetWorldTimerManager().SetTimer(SkillHandle, [this]()
-	{
-		SkillEnd(nullptr, false);
-	}, 1.f, false);
 }
 
 void ANomPlayer::SkillEnd(UAnimMontage* Montage, bool bInterrupted)
 {
 	ActionState = EActionState::Idle;
 	ChangeToFps();
+	RemoveEffect();
+	TpsSpringArmComp->TargetArmLength = TpsSpringArmLength;
+	TpsMeshComp->SetWorldLocation(GetMesh()->GetComponentLocation());
+	//TpsMeshComp->AddWorldRotation(FRotator(0, 0, 20));
+	
+	GetCharacterMovement()->GravityScale = GravityMultiplier;
+		
 	if (bIsHoldFire)
 	{
 		ActionState = EActionState::Firing;
@@ -805,12 +813,18 @@ void ANomPlayer::SightCheck()
 		const FVector End = Start + FpsCameraComp->GetForwardVector() * 10000;
 		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
 		Params.AddIgnoredActor(this);
-		if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_Visibility, Params))
+		if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params))
 		{
-			if (const auto Enemy = Cast<AEnemyActorBase>(Hit.GetActor()))
+			if (const auto EnemyActor = Cast<AEnemyActorBase>(Hit.GetActor()))
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("OnSight!"));
-				Enemy->OnAimByPlayerSight();
+				//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("EnemyActor OnSight!"));
+				EnemyActor->OnAimByPlayerSight();
+			}
+
+			if (const auto EnemyCharacter = Cast<AEnemyCharacterBase>(Hit.GetActor()))
+			{
+				//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("EnemyCharacter OnSight!"));
+				EnemyCharacter->OnAimByPlayerSight();
 			}
 		}
 	}, 0.1, true);
@@ -945,9 +959,24 @@ USpringArmComponent* ANomPlayer::GetFpsCamArm()
 	return FpsSpringArmComp;
 }
 
+USpringArmComponent* ANomPlayer::GetTpsCamArm()
+{
+	return TpsSpringArmComp;
+}
+
 UCameraComponent* ANomPlayer::GetFpsCam()
 {
 	return FpsCameraComp;
+}
+
+UCameraComponent* ANomPlayer::GetTpsCam()
+{
+	return TpsCameraComp;
+}
+
+USkeletalMeshComponent* ANomPlayer::GetTpsComp()
+{
+	return TpsMeshComp;
 }
 
 const EActionState& ANomPlayer::GetActionState() const
@@ -994,5 +1023,23 @@ void ANomPlayer::PlayTPSAnim(UAnimMontage* Montage)
 
 		TpsAnimation->PlaySkillAnim(Montage);
 		TpsAnimation->Montage_SetEndDelegate(MontageEndedDelegate, Montage);
+	}
+}
+
+void ANomPlayer::SetEffect(UNiagaraSystem* Effect)
+{
+	if (Effect)
+	{
+		NiagaraComponent->SetAsset(Effect);
+		NiagaraComponent->Activate(true);
+	}
+}
+
+void ANomPlayer::RemoveEffect()
+{
+	if (NiagaraComponent->GetAsset())
+	{
+		NiagaraComponent->Deactivate();
+		NiagaraComponent->SetAsset(nullptr);
 	}
 }

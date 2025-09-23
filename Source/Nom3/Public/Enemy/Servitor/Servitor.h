@@ -18,13 +18,9 @@ public:
 
 	virtual void BeginPlay() override;
 
-	virtual void OnShotDown(const FVector ShotDir) override;
+	virtual void OnDie() override;
 
 	virtual void OnDamaged(FFireInfo Info) override;
-
-	// clear Ui 관련 함수
-	UFUNCTION()
-	void HandleDeath();
 
 protected:
 	//일반적인 데미지 컴포넌트

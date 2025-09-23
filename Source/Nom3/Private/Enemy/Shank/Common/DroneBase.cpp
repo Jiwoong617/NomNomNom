@@ -55,11 +55,11 @@ void ADroneBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//체력 초기화
-	HealthComp->Init(4000);
+	//사망 메서드 바인드
+	HealthComp->OnDeath.AddUFunction(this, FName("OnDie"));
 
-	//체력이 다했을 경우 격추
-	HealthComp->OnDeath.AddUFunction(this, FName("OnShotDown"));
+	//시뮬레이션 개시
+	DroneMoveComp->Simulate();
 	
 	//1초 뒤에 경로 탐색 상태로 전환
 	FTimerHandle Handle;
@@ -86,8 +86,10 @@ void ADroneBase::Tick(float DeltaTime)
 	}
 }
 
-void ADroneBase::OnShotDown(const FVector ShotDir)
+void ADroneBase::OnDie()
 {
+	Super::OnDie();
+
 	//상태 전환
 	ChangeCurrentStateMachine(nullptr);
 	
@@ -95,7 +97,7 @@ void ADroneBase::OnShotDown(const FVector ShotDir)
 	DroneMoveComp->Fall();
 
 	//랜덤 방향 충격 적용
-	DroneMoveComp->Splash(ShotDir);
+	DroneMoveComp->Splash(FMath::VRand());
 	
 	//10초 뒤에 소멸
 	FTimerHandle DestroyHandle;

@@ -8,6 +8,8 @@
 #include "Interfaces/Damagable.h"
 #include "NomPlayer.generated.h"
 
+class UNiagaraSystem;
+class UNiagaraComponent;
 class UPlayerTpsAnimation;
 class UPlayerFpsAnimation;
 class UPlayerUI;
@@ -91,7 +93,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FVector TpsCamOffset = FVector(0.f, 0.f, 50.f);
 	UPROPERTY(EditAnywhere)
-	float TpsSpringArmLength = 300.f;
+	float TpsSpringArmLength = 600.f;
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* TpsSpringArmComp;
 	UPROPERTY(EditAnywhere)
@@ -162,6 +164,8 @@ protected:
 	//Animation
 	UPlayerFpsAnimation* FpsAnimation;
 	UPlayerTpsAnimation* TpsAnimation;
+
+	UNiagaraComponent* NiagaraComponent;
 	
 public:
 
@@ -234,7 +238,10 @@ public:
 	UFUNCTION() virtual void OnDamaged(FFireInfo Info) override;
 	UFUNCTION() virtual void OnCriticalDamaged(FFireInfo Info) override;
 	USpringArmComponent* GetFpsCamArm();
+	USpringArmComponent* GetTpsCamArm();
 	UCameraComponent* GetFpsCam();
+	UCameraComponent* GetTpsCam();
+	USkeletalMeshComponent* GetTpsComp();
 	const EActionState& GetActionState() const;
 	const EMovingState& GetMovingState() const;
 
@@ -245,4 +252,8 @@ public:
 	void PlayFPSAnim(UAnimMontage* Montage, EActionState action = EActionState::LeftHand, int32 Idx = 0);
 	UFUNCTION()
 	void PlayTPSAnim(UAnimMontage* Montage);
+
+	//effect
+	UFUNCTION() void SetEffect(UNiagaraSystem* Effect);
+	UFUNCTION() void RemoveEffect();
 };
