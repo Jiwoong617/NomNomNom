@@ -49,7 +49,7 @@ void AHumanBase::OnNoticePawn(AActor* DetectedPawn)
 {
 	Super::OnNoticePawn(DetectedPawn);
 
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::Printf(TEXT("%s"), *DetectedPawn->GetActorLabel()));
+	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::Printf(TEXT("%s"), *DetectedPawn->GetActorLabel()));
 	
 	//상태 머신 전환
 	ChangeCurrentStateMachine(IdleStateMachine);

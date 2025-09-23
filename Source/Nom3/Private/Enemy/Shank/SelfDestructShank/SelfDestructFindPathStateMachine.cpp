@@ -105,9 +105,9 @@ void USelfDestructFindPathStateMachine::CalculatePaths() const
 	DebugDrawPointArray.Add(TargetLocation);
 
 	//목표까지 가는 경로 디버그 드로우
-	DrawDebugLine(GetWorld(), StartLocation, DebugDrawPointArray[0], FColor::Blue, false, 10, 0, 0);
+	//DrawDebugLine(GetWorld(), StartLocation, DebugDrawPointArray[0], FColor::Blue, false, 10, 0, 0);
 	for (int32 i = 0; i < DebugDrawPointArray.Num() - 1; i++)
 	{
-		DrawDebugLine(GetWorld(), DebugDrawPointArray[i], DebugDrawPointArray[i + 1], FColor::Blue, false, 10, 0, 0);
+		//DrawDebugLine(GetWorld(), DebugDrawPointArray[i], DebugDrawPointArray[i + 1], FColor::Blue, false, 10, 0, 0);
 	}
 }

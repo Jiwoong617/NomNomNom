@@ -90,7 +90,7 @@ void UDroneMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	//속도의 방향을 드로우
 	const FVector Location = GetOwner()->GetActorLocation();
 	
-	DrawDebugLine(GetWorld(), Location, Location + Velocity, FColor::Red, false, -1, 0, 0 );
+	//DrawDebugLine(GetWorld(), Location, Location + Velocity, FColor::Red, false, -1, 0, 0 );
 
 	//DrawDebugLine(GetWorld(), Location, Location + ThrustDir * 500, FColor::Green, false, -1, 0, 1 );
 	

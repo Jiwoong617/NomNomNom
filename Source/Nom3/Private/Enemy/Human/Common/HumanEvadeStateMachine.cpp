@@ -78,7 +78,7 @@ bool UHumanEvadeStateMachine::FindEvadeLocation(FVector& OutLocation)
 	for (int i = 13; i >= 10; i--)
 	{
 		FVector Find = Start + RightDir * i * 100;
-		DrawDebugLine(GetWorld(), Start, Find, FColor::Red, false, 5);
+		//(GetWorld(), Start, Find, FColor::Red, false, 5);
 		if (OwnerHuman->FindReachableLocation(Find))
 		{
 			EvadeLocation = Find;
@@ -91,7 +91,7 @@ bool UHumanEvadeStateMachine::FindEvadeLocation(FVector& OutLocation)
 	{
 		FVector Find = Start - RightDir * i * 100;
 		
-		DrawDebugLine(GetWorld(), Start, Find, FColor::Red, false, 5);
+		//DrawDebugLine(GetWorld(), Start, Find, FColor::Red, false, 5);
 		if (OwnerHuman->FindReachableLocation(Find))
 		{
 			EvadeLocation = Find;
@@ -99,7 +99,7 @@ bool UHumanEvadeStateMachine::FindEvadeLocation(FVector& OutLocation)
 		}
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Fail To Find Evade Location!"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Fail To Find Evade Location!"));
 
 	//실패
 	return false;

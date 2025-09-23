@@ -26,13 +26,13 @@ void AHumanController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, GetPawn()->GetActorLabel());
+	//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, GetPawn()->GetActorLabel());
 
 	OwnerHuman = Cast<AHumanBase>(GetPawn());
 
 	if (OwnerHuman)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("AI Human Controller Success!"));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Emerald, TEXT("AI Human Controller Success!"));
 	}
 
 	// AI의 PathFollowingComponent가 이동 요청을 끝냈을 때

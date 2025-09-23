@@ -40,26 +40,26 @@ void AServitorProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (auto Temp = Cast<ANomPlayer>(OtherActor))
 	{
 		Explode();
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Player Hit!"));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Player Hit!"));
 		return;
 	}
 
 	if (auto Temp = Cast<AEnemyActorBase>(OtherActor))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("EnemyActor Hit!"));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("EnemyActor Hit!"));
 		return;	
 	}
 
 	if (auto Temp = Cast<AEnemyCharacterBase>(OtherActor))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("EnemyCharacter Hit!"));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("EnemyCharacter Hit!"));
 		return;
 	}
 
 	if (auto Temp = Cast<AStaticMeshActor>(OtherActor))
 	{
 		Explode();
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Other Hit!"));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Other Hit!"));
 		return;
 	}
 }

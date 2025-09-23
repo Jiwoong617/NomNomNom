@@ -73,7 +73,7 @@ void UDregShooterComponent::FireBulletOnce() const
 	TargetDirection = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(TargetDirection, ShootRandConeAngle);
 
 	//발사 방향 디버그 드로우
-	DrawDebugLine(GetWorld(), GetComponentLocation(), GetComponentLocation() + TargetDirection * 1000, FColor::Cyan, false, 5, 0, 0);
+	//DrawDebugLine(GetWorld(), GetComponentLocation(), GetComponentLocation() + TargetDirection * 1000, FColor::Cyan, false, 5, 0, 0);
 	
 	//목표 방향 로테이터
 	const FRotator FireRotator = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), GetComponentLocation() + TargetDirection);

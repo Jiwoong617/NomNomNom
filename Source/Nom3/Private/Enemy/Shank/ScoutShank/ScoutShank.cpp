@@ -156,7 +156,7 @@ void AScoutShank::OnAimByPlayerSight()
 	Destination = GetActorLocation() + RandDir * 800;
 
 	//디버그 라인
-	DrawDebugLine(GetWorld(), GetActorLocation(), Destination, FColor::Magenta, false, 3, 0, 0);
+	//DrawDebugLine(GetWorld(), GetActorLocation(), Destination, FColor::Magenta, false, 3, 0, 0);
 
 	//타이밍
 	const float Timing = FMath::RandRange(4, 6);

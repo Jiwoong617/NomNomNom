@@ -28,8 +28,8 @@ void AScoutShankProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	if (auto Temp = Cast<APawn>(OtherActor) == UGameplayStatics::GetPlayerPawn(GetWorld(), 0))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Pawn Hit!"));
-	}
+	// if (auto Temp = Cast<APawn>(OtherActor) == UGameplayStatics::GetPlayerPawn(GetWorld(), 0))
+	// {
+	// 	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Pawn Hit!"));
+	// }
 }

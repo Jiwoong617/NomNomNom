@@ -141,7 +141,7 @@ void AHomingMissile::Explode()
 
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplodeEff,GetActorLocation());
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplodeSound, GetActorLocation());	
-	DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 12, FColor::Red, false, 2.f, 0, 10);
+	//DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 12, FColor::Red, false, 2.f, 0, 10);
 
 	GetWorldTimerManager().ClearTimer(CantReachTimer);
 	Destroy();

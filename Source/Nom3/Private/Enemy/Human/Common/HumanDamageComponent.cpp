@@ -31,7 +31,7 @@ void UHumanDamageComponent::OnHitBody(FFireInfo& Info)
 		OwnerHuman->OnDamaged(Info);
 
 		//디버그
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, *FString::Printf(TEXT("%s is Hit!"), *OwnerHuman->GetActorLabel()));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, *FString::Printf(TEXT("%s is Hit!"), *OwnerHuman->GetActorLabel()));
 	}
 }
 
@@ -46,6 +46,6 @@ void UHumanDamageComponent::OnHitHead(FFireInfo& Info)
 		OwnerHuman->OnCriticalDamaged(Info);
 
 		//디버그
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, *FString::Printf(TEXT("%s is Hit!"), *OwnerHuman->GetActorLabel()));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, *FString::Printf(TEXT("%s is Hit!"), *OwnerHuman->GetActorLabel()));
 	}
 }

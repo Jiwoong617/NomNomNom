@@ -100,9 +100,9 @@ void AGrenade::OnExplode()
 	
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplodeEff,GetActorLocation());
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation());
-	DrawDebugSphere(GetWorld(), GetActorLocation(), ExplodeRadius, 12, FColor::Red, false, 2.f, 0, 10);
+	//DrawDebugSphere(GetWorld(), GetActorLocation(), ExplodeRadius, 12, FColor::Red, false, 2.f, 0, 10);
 	
-	PRINTINFO();
+	//PRINTINFO();
 	Destroy();
 }
 

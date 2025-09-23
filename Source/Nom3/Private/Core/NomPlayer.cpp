@@ -275,8 +275,8 @@ void ANomPlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//PRINTLOG(TEXT("ACTION STATE : %s"), *UEnum::GetValueAsString(ActionState));
-	GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Cyan,
-		FString::Printf(TEXT("%s / %s"), *UEnum::GetValueAsString(MovingState), *UEnum::GetValueAsString(ActionState)), false);
+	//GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Cyan,
+	//	FString::Printf(TEXT("%s / %s"), *UEnum::GetValueAsString(MovingState), *UEnum::GetValueAsString(ActionState)), false);
 }
 
 void ANomPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
