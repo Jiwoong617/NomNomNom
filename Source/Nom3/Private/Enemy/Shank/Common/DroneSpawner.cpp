@@ -36,6 +36,11 @@ void ADroneSpawner::OnNoticePawn(AActor* DetectedPawn)
 
 void ADroneSpawner::SpawnSpecific(const FTransform& SpawnTransform)
 {
+	if (StockIndex >= StockList.Num())
+	{
+		return;
+	}
+	
 	//이번 에너미 클래스 획득
 	const TSubclassOf<AEnemyActorBase> ThisOrder = StockList[StockIndex++];
 	

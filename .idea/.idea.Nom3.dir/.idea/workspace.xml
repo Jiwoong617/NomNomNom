@@ -9,15 +9,14 @@
   <component name="ChangeListManager">
     <list default="true" id="461d99de-7243-482e-a7c0-686024869fe5" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Enemies/Shank/BP_PlayerDetectVolume.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Enemies/Shank/BP_PlayerDetectVolume.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Maps/EnemyMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/EnemyMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Components/FireProjectileComponentBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Components/FireProjectileComponentBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemySpawnerBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemySpawnerBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/DregShooterComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/DregShooterComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorShooterComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Servitor/ServitorShooterComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BluePrints/GameMOde/MyDestinyGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrints/GameMOde/MyDestinyGameMode.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/0/YS/QLWSAVRUES4N6GCLTYWDYO.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/1/R7/C7OGXDZ1XRZ9EL6UMIZX4F.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/2/E5/KLHJPPIUKMMA602FFWJO3B.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/6/6M/EPVPL7KFHVQEKFD64E56VE.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/8/LY/87LYFPCF5TPG4A8DYAM7GI.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/A/IL/O1DRYAIE95QJH3RXZ1HWQV.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/A/IL/O1DRYAIE95QJH3RXZ1HWQV.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/Common/DroneSpawner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/Common/DroneSpawner.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Components/FireProjectileComponentBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Components/FireProjectileComponentBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemySpawnerBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemySpawnerBase.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,7 +144,7 @@
       <workItem from="1758628780785" duration="1047000" />
       <workItem from="1758630298776" duration="268000" />
       <workItem from="1758647600743" duration="1230000" />
-      <workItem from="1758649149590" duration="4735000" />
+      <workItem from="1758649149590" duration="5690000" />
     </task>
     <servers />
   </component>
