@@ -45,6 +45,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	float ElapsedTimeAfterLastFire;
 	
+	
 public:
 	UFireProjectileComponentBase();
 
@@ -65,4 +66,6 @@ public:
 	//한 발의 총탄 발사
 	UFUNCTION(BlueprintCallable)
 	virtual void FireBulletOnce() const;
+
+
 };
