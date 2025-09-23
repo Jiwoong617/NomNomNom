@@ -261,4 +261,7 @@ public:
 	//effect
 	UFUNCTION() void SetEffect(UNiagaraSystem* Effect);
 	UFUNCTION() void RemoveEffect();
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USoundBase> DieSound;
 };

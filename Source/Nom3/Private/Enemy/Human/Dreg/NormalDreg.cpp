@@ -6,6 +6,7 @@
 #include "Enemy/Human/Common/HumanDamageComponent.h"
 #include "Enemy/Human/Common/HumanStateMachineBase.h"
 #include "Enemy/Human/Dreg/DregShooterComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ANormalDreg::ANormalDreg()
 {
@@ -135,6 +136,14 @@ ANormalDreg::ANormalDreg()
 	//드렉 전용의 사격 컴포넌트 부착
 	ShooterComp = CreateDefaultSubobject<UDregShooterComponent>(FName("ShooterComp"));
 	ShooterComp->SetupAttachment(GunMeshComp, FName("GunFireSocket"));
+
+	//드렉 사망 사운드 로드
+	if (static ConstructorHelpers::FObjectFinder<USoundBase>
+		Finder(TEXT("/Game/Asset/Dreg/Sound/SC_Death.SC_Death"));
+		Finder.Succeeded())
+	{
+		DieSound = Finder.Object;
+	}
 }
 
 void ANormalDreg::BeginPlay()
@@ -161,6 +170,9 @@ void ANormalDreg::OnDie()
 
 	//사격 컴포넌트 비활성화
 	ShooterComp->InactiveAutoFire();
+
+	//사망 사운드 재생
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), DieSound, GetActorLocation());
 }
 
 void ANormalDreg::OnAimByPlayerSight()
