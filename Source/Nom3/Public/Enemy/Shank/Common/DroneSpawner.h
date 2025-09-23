@@ -22,7 +22,7 @@ class NOM3_API ADroneSpawner : public AEnemySpawnerBase
 public:
 	ADroneSpawner();
 
-	virtual void OnDetectPlayerPawn() override;
+	virtual void OnNoticePawn(AActor* DetectedPawn) override;
 
 protected:
 	virtual void SpawnSpecific(const FTransform& SpawnTransform) override;

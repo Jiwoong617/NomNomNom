@@ -10,7 +10,6 @@
 #include "Enemy/Human/Common/HumanEvadeStateMachine.h"
 #include "Enemy/Human/Common/HumanIdleStateMachine.h"
 #include "Enemy/Human/Common/HumanMoveStateMachine.h"
-#include "Kismet/KismetMathLibrary.h"
 
 AHumanBase::AHumanBase()
 {
@@ -46,19 +45,22 @@ AHumanBase::AHumanBase()
 	}
 }
 
+void AHumanBase::OnNoticePawn(AActor* DetectedPawn)
+{
+	Super::OnNoticePawn(DetectedPawn);
+
+	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::Printf(TEXT("%s"), *DetectedPawn->GetActorLabel()));
+	
+	//상태 머신 전환
+	ChangeCurrentStateMachine(IdleStateMachine);
+}
+
 void AHumanBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
 	//사망 메서드 바인드
 	HealthComp->OnDeath.AddUFunction(this, FName("OnDie"));
-
-	//2초 후에 대기 상태로 전환
-	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
-	{
-		ChangeCurrentStateMachine(IdleStateMachine);
-	}, 2, false);
 }
 
 void AHumanBase::OnDie()

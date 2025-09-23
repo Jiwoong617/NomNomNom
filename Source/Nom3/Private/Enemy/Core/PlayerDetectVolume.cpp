@@ -4,6 +4,7 @@
 #include "Components/SphereComponent.h"
 #include "Core/NomPlayer.h"
 #include "Enemy/Core/EnemySpawnerBase.h"
+#include "Interfaces/NoticePawn.h"
 
 APlayerDetectVolume::APlayerDetectVolume()
 {
@@ -40,13 +41,12 @@ void APlayerDetectVolume::NotifyActorBeginOverlap(AActor* OtherActor)
 	//충돌 비활성화
 	PlayerDetectSphereComp->SetCollisionProfileName(FName("NoCollision"));
 
-	//진입한 폰이 플레이어였다면
-	if (auto Temp = Cast<ANomPlayer>(OtherActor))
+	//바인딩 되어 있는 폰 인식 액터들에게 전파
+	for (const auto Bind : BindSpawnerAndEnemy)
 	{
-		//유효한 스포너가 연결되어 있다면
-		if (BindSpawner)
+		if (const auto Notice = Cast<INoticePawn>(Bind))
 		{
-			BindSpawner->OnDetectPlayerPawn();
-		}	
+			Notice->OnNoticePawn(OtherActor);	
+		}
 	}
 }

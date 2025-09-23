@@ -19,6 +19,122 @@ ANormalDreg::ANormalDreg()
 	{
 		EnemyData = Finder.Object;
 	}
+
+#pragma region 춤추는 애니메이션 로드
+
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance1.AS_Dance1"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance2.AS_Dance2"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance3.AS_Dance3"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance4.AS_Dance4"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance5.AS_Dance5"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance6.AS_Dance6"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance7.AS_Dance7"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance8.AS_Dance8"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance9.AS_Dance9"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance10.AS_Dance10"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance11.AS_Dance11"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance12.AS_Dance12"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance13.AS_Dance13"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+	
+	//대기 애니메이션 로드
+	if (static ConstructorHelpers::FObjectFinder<UAnimationAsset>
+		Finder(TEXT("/Game/Asset/Dreg/Model/AS_Dance14.AS_Dance14"));
+		Finder.Succeeded())
+	{
+		WaitAnimationAssets.Add(Finder.Object);
+	}
+
+#pragma endregion 
 	
 	//스켈레탈 메시 로드
 	if (static ConstructorHelpers::FObjectFinder<USkeletalMesh>
@@ -50,6 +166,10 @@ ANormalDreg::ANormalDreg()
 void ANormalDreg::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//랜덤 대기 애니메이션 재생                                                                                                             
+	GetMesh()->SetAnimationMode(EAnimationMode::Type::AnimationSingleNode);
+	GetMesh()->PlayAnimation(WaitAnimationAssets[FMath::RandRange(0, WaitAnimationAssets.Num() - 1)], true);
 	
 	//자동 사격
 	ShooterComp->ActiveAutoFire();

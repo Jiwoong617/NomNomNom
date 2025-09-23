@@ -12,6 +12,7 @@
 #include "Weapon/WeaponData.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Interfaces/NoticePawn.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -126,6 +127,12 @@ void AWeaponBase::AimFire()
 					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
 			}
 
+			//폰 인식 인터페이스 호출
+			if (const auto Notice = Cast<INoticePawn>(Hit.GetComponent()->GetOwner()))
+			{
+				Notice->OnNoticePawn(WeaponOwner);
+			}
+
 			TracerEndPos = Hit.Location;
 			
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BulletImpactEffect,
@@ -198,6 +205,12 @@ void AWeaponBase::NoAimFire()
 				int32 damage = FMath::RandRange(WeaponData->Damage-50, WeaponData->Damage + 50);
 				dmg->OnDamaged(FFireInfo(damage,
 					WeaponMeshComp->GetSocketLocation(FireSocketName), ETeamInfo::Player, false));
+			}
+
+			//폰 인식 인터페이스 호출
+			if (const auto Notice = Cast<INoticePawn>(Hit.GetComponent()->GetOwner()))
+			{
+				Notice->OnNoticePawn(WeaponOwner);
 			}
 
 			TracerEndPos = Hit.Location;
