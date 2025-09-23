@@ -33,6 +33,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float ShootRandConeAngle;
 	
+	
 public:
 	UFireProjectileComponentBase();
 
@@ -58,4 +59,6 @@ public:
 	//내외부 요청으로 하나의 총탄 발사
 	UFUNCTION(BlueprintCallable)
 	virtual void FireBulletOnce() const;
+
+
 };
