@@ -227,6 +227,18 @@ void ANomPlayer::BeginPlay()
 	HeadBox->Init(FVector(10), ECC_EngineTraceChannel1, FName("Head"), EBodyType::Head);
 	BodyBox->Init(FVector(50, 15, 20), ECC_EngineTraceChannel2, FName("Body"), EBodyType::Body);
 
+	int32 MatCount = TpsMeshComp->GetNumMaterials();
+	for (int32 i = 0; i < MatCount; i++)
+	{
+		UMaterialInterface* Mat = TpsMeshComp->GetMaterial(i);
+		if (Mat)
+		{
+			UMaterialInstanceDynamic* DynMat = TpsMeshComp->CreateDynamicMaterialInstance(i, Mat);
+			if (DynMat)
+				DynamicMaterials.Add(DynMat);
+		}
+	}
+	
 	SightCheck();
 
 	SetActorScale3D(FVector(2));
@@ -853,8 +865,8 @@ void ANomPlayer::MakeTpsRagdoll()
 
 void ANomPlayer::ReSpawn()
 {
-	bIsDead = false;
 	Hp = MaxHp;
+	FilterWidth = 1.f;
 	if (PlayerUI)
 		PlayerUI->UpdateHealthUI(Hp, MaxHp);
 
@@ -882,8 +894,33 @@ void ANomPlayer::ReSpawn()
 
 	GetCharacterMovement()->StopMovementImmediately();
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-	ChangeToFps();
 	PlayerUI->IsPlayerDead(false);
+
+	for (int32 i = 0; i < DynamicMaterials.Num(); i++)
+	{
+		DynamicMaterials[i]->SetScalarParameterValue(TEXT("FilterWidth"), FilterWidth);
+		DynamicMaterials[i]->SetScalarParameterValue(TEXT("VisibleValue"), 0);
+	}
+	
+	GetWorldTimerManager().SetTimer(RespawnTimer,[this]()
+	{
+		FilterWidth -= 0.05f;
+		PRINTLOG(TEXT("%f"), FilterWidth);
+		for (int32 i = 0; i < DynamicMaterials.Num(); i++)
+			DynamicMaterials[i]->SetScalarParameterValue(TEXT("FilterWidth"), FilterWidth);
+		
+		if (FilterWidth <= 0)
+		{
+			for (int32 i = 0; i < DynamicMaterials.Num(); i++)
+			{
+				bIsDead = false;
+				DynamicMaterials[i]->SetScalarParameterValue(TEXT("FilterWidth"), 0);
+				DynamicMaterials[i]->SetScalarParameterValue(TEXT("VisibleValue"), -1);
+			}
+			ChangeToFps();
+			GetWorldTimerManager().ClearTimer(RespawnTimer);
+		}
+	},0.05f, true);
 }
 
 //여기에 데미지 함수 구현

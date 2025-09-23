@@ -78,9 +78,14 @@ protected:
 	//Movement params
 	float InteractDuration = 0.f;
 	
-	//Fps Mesh
+	//Tps Mesh
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* TpsMeshComp;
+	UPROPERTY(EditAnywhere)
+	TArray<UMaterialInstanceDynamic*> DynamicMaterials;
+	UPROPERTY(EditAnywhere)
+	float FilterWidth = 1.f;
+	FTimerHandle RespawnTimer;
 	
 	//Camera and Weapon
 	UPROPERTY(EditAnywhere)
