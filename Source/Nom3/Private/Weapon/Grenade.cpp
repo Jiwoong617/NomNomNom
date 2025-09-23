@@ -3,6 +3,7 @@
 
 #include "Weapon/Grenade.h"
 
+#include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "Core/DamageComponent.h"
 #include "Core/NomPlayer.h"
@@ -41,6 +42,9 @@ AGrenade::AGrenade()
 	ConstructorHelpers::FObjectFinder<USoundWave> tmpSound(TEXT("/Script/Engine.SoundWave'/Game/Asset/Sound/Grenade_Explosion.Grenade_Explosion'"));
 	if (tmpSound.Succeeded())
 		Sound = tmpSound.Object;
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> ns(TEXT("/Script/Niagara.NiagaraSystem'/Game/Asset/FX/NS_Explode.NS_Explode'"));
+	if (ns.Succeeded())
+		ExplodeEff = ns.Object;
 }
 
 // Called when the game starts or when spawned
@@ -94,7 +98,7 @@ void AGrenade::OnExplode()
 	}
 
 	
-	//TODO : 이펙트 넣기
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplodeEff,GetActorLocation());
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation());
 	DrawDebugSphere(GetWorld(), GetActorLocation(), ExplodeRadius, 12, FColor::Red, false, 2.f, 0, 10);
 	

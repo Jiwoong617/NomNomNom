@@ -47,6 +47,8 @@ private:
 
     UPROPERTY()
     TObjectPtr<USoundBase> ExplodeSound;
+    UPROPERTY(EditAnywhere)
+    UNiagaraSystem* ExplodeEff;
     
     void SetHoming();
     void Explode();

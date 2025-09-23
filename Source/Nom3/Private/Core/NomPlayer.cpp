@@ -134,10 +134,24 @@ ANomPlayer::ANomPlayer()
 	NiagaraComponent->SetAutoActivate(false);
 
 	if (static ConstructorHelpers::FObjectFinder<USoundBase>
-		Finder(TEXT("/Game/Asset/Dreg/Sound/SW_GTADEATH.SW_GTADEATH"));
+		Finder(TEXT("/Script/Engine.SoundWave'/Game/Asset/Dreg/Sound/SW_Death2.SW_Death2'"));
 		Finder.Succeeded())
 	{
 		DieSound = Finder.Object;
+	}
+	
+	if (static ConstructorHelpers::FObjectFinder<USoundBase>
+		Finder(TEXT("/Script/Engine.SoundWave'/Game/Asset/Sound/ReviveSound.ReviveSound'"));
+		Finder.Succeeded())
+	{
+		ReviveSound = Finder.Object;
+	}
+	
+	if (static ConstructorHelpers::FObjectFinder<USoundBase>
+		Finder(TEXT("/Script/Engine.SoundWave'/Game/Asset/Sound/punch.punch'"));
+		Finder.Succeeded())
+	{
+		PunchSound = Finder.Object;
 	}
 	
 	//////////////////////////////Input/////////////////////////////////
@@ -421,7 +435,6 @@ void ANomPlayer::InteractHold(const FInputActionInstance& Value)
 	
 	if (true)
 	{
-		// TODO : 에이밍 중이면
 		if (InteractDuration >= 1.f)
 			InteractDuration = 0.f;
 	}
@@ -569,7 +582,6 @@ void ANomPlayer::Melee()
 		MovingState = EMovingState::Idle;
 
 	ActionState = EActionState::LeftHand;
-
 	
 	EObjectTypeQuery ObjType = UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2);
 	TArray<AActor*> ActorsToIgnore = {this};
@@ -582,7 +594,7 @@ void ANomPlayer::Melee()
 	FVector End   = GetActorLocation() + Offset + FpsCameraComp->GetForwardVector() * 40.f;
 	if (UKismetSystemLibrary::BoxTraceMultiForObjects(GetWorld(), Start, End, FVector(32,32,50),
 		FpsCameraComp->GetComponentRotation(), TArray<TEnumAsByte<EObjectTypeQuery>> { ObjType}, false, ActorsToIgnore, EDrawDebugTrace::ForDuration,OutHits,
-		true, FColor::Red, FColor::Green, 10))
+		true))
 	{
 		for (FHitResult& hits : OutHits)
 		{
@@ -594,6 +606,7 @@ void ANomPlayer::Melee()
 	}
 	
 	PlayFPSAnim(PunchMontage);
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), PunchSound, GetActorLocation());	
 }
 
 void ANomPlayer::Throw()
@@ -758,12 +771,6 @@ void ANomPlayer::ChangeWeapon(const FInputActionValue& Value)
 	{
 		WeaponComp->ChangeWeapon(WeaponIndex - 1);
 	}, WeaponComp->GetCurrentWeapon()->GetData()->AimDuration, false);
-	
-	//TODO : 몽타쥬로 바꿀것
-	// GetWorldTimerManager().SetTimer(ChangeWeaponHandle, [this, WeaponIndex]()
-	// {
-	// 	OnWeaponChanged(WeaponIndex - 1);
-	// }, WeaponComp->GetCurrentWeapon()->GetData()->EquipDuration, false);
 }
 
 void ANomPlayer::OnWeaponChanged(float Idx)
@@ -918,6 +925,9 @@ void ANomPlayer::ReSpawn()
 		
 		if (FilterWidth <= 0)
 		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ReviveSound, GetActorLocation());
+			//UGameplayStatics::stop(GetWorld(), ReviveSound, GetActorLocation());
+			
 			for (int32 i = 0; i < DynamicMaterials.Num(); i++)
 			{
 				bIsDead = false;

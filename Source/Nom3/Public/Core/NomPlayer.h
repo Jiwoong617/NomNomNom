@@ -266,4 +266,6 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	
 	TObjectPtr<USoundBase> DieSound;
+	TObjectPtr<USoundBase> ReviveSound;
+	TObjectPtr<USoundBase> PunchSound;
 };

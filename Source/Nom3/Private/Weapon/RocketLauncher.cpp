@@ -66,8 +66,8 @@ void ARocketLauncher::NoAimFire()
 	{
 		FTransform trans = WeaponMeshComp->GetSocketTransform(FireSocketName);
 		AHomingMissile* mis = GetWorld()->SpawnActor<AHomingMissile>(Missile, trans);
-		
-		mis->InitFire(WeaponData->Damage, WeaponOwner);
+		if (mis)
+			mis->InitFire(WeaponData->Damage, WeaponOwner);
 		
 		FireCounter++;
 		if (FireCounter == 6)

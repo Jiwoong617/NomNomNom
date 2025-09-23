@@ -4,6 +4,7 @@
 #include "Weapon/HomingMissile.h"
 
 #include "EngineUtils.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -37,6 +38,10 @@ AHomingMissile::AHomingMissile()
 	ConstructorHelpers::FObjectFinder<USoundWave> sound(TEXT("/Script/Engine.SoundWave'/Game/Asset/Sound/roketEXP.roketEXP'"));
 	if (sound.Succeeded())
 		ExplodeSound = sound.Object;
+
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> ns(TEXT("/Script/Niagara.NiagaraSystem'/Game/Asset/FX/NS_Explode.NS_Explode'"));
+	if (ns.Succeeded())
+		ExplodeEff = ns.Object;
 }
 
 // Called when the game starts or when spawned
@@ -134,7 +139,7 @@ void AHomingMissile::Explode()
 		}
 	}
 
-	//TODO : 이펙트 넣기
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplodeEff,GetActorLocation());
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplodeSound, GetActorLocation());	
 	DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 12, FColor::Red, false, 2.f, 0, 10);
 

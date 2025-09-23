@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Grenade.generated.h"
 
+class UNiagaraSystem;
 class ANomPlayer;
 class USphereComponent;
 class UStaticMeshComponent;
@@ -43,6 +44,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	USoundWave* Sound;
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* ExplodeEff;
 
 private:
 	UFUNCTION() void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
