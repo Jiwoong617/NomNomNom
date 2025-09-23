@@ -15,7 +15,7 @@
 
 UUltimateSkill::UUltimateSkill()
 {
-	ConstructorHelpers::FObjectFinder<UAnimMontage> anim(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/Skill/ulrta_Anim_Montage.ulrta_Anim_Montage'"));
+	ConstructorHelpers::FObjectFinder<UAnimMontage> anim(TEXT("/Script/Engine.AnimMontage'/Game/Asset/Character/Character/Skill/ULT_Anim_Montage.ULT_Anim_Montage'"));
 	if (anim.Succeeded())
 		SkillMontage = anim.Object;
 	
