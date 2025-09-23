@@ -13,7 +13,7 @@ UHumanDamageComponent::UHumanDamageComponent()
 
 	//총알 명중 사운드 로드
 	if (static ConstructorHelpers::FObjectFinder<USoundBase> Finder(
-		TEXT("/Game/Asset/ScoutShank/Sound/SC_ScoutShankBulletHitCue.SC_ScoutShankBulletHitCue"));
+		TEXT("/Game/Asset/Dreg/Sound/SC_DregBulletHit.SC_DregBulletHit"));
 		Finder.Succeeded())
 	{
 		HitSound = Finder.Object;

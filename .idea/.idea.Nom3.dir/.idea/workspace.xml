@@ -7,33 +7,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43a1775c-c70f-4346-bcc1-afa820da5cd4" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/dictionaries/project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/encodings.xml" beforeDir="false" />
+    <list default="true" id="461d99de-7243-482e-a7c0-686024869fe5" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/projectSettingsUpdater.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Enemies/ABP_NormalDreg.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Enemies/ABP_NormalDreg.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/GUN.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Dreg/GUN.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/House_of_Dusk_Dreg12.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Dreg/House_of_Dusk_Dreg12.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/AS_Dance10.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/AS_Dance12.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/AS_Dance13.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/AS_Dance2.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/AS_Dance3.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Model/SK_Dreg.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Dreg/Model/SK_Dreg.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/Shrapnel_Launcher/M_Gun1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Dreg/Shrapnel_Launcher/M_Gun1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/Dreg/root_010_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/Dreg/root_010_Skeleton.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Data/DA_Dreg.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Data/DA_Dreg.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Enemies/BP_NormalDreg.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Enemies/BP_NormalDreg.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Maps/EnemyMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/EnemyMap.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nom3.sln.DotSettings.user" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyCharacterBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemySpawnerBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemySpawnerBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/PlayerDetectVolume.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/PlayerDetectVolume.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nom3.uproject.DotSettings.user" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanDamageComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Common/HumanDamageComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/DregShooterComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/DregShooterComponent.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/NormalDreg.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/NormalDreg.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/Common/DroneSpawner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Shank/Common/DroneSpawner.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyCharacterBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemySpawnerBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemySpawnerBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/PlayerDetectVolume.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/PlayerDetectVolume.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Common/HumanBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Common/HumanBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Shank/Common/DroneSpawner.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Shank/Common/DroneSpawner.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Dreg/NormalDreg.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Human/Dreg/NormalDreg.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,36 +43,31 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="cidr-memory-view://0" root0="FORCE_HIGHLIGHTING" />
-    <setting file="cidr-memory-view://1" root0="FORCE_HIGHLIGHTING" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 6
-}</component>
-  <component name="ProjectId" id="335ef6ypqoHQeWqUmrNuhbA8T8C" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="3366AxmJT4xVjA0dmgVidEVryZe" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Uproject.Nom3.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Dreg&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Uproject.Nom3.executor": "Run",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Nom3" type="Uproject" factoryName="rider.uproject">
       <configuration_1 setup="1">
@@ -153,13 +145,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
-      <changelist id="43a1775c-c70f-4346-bcc1-afa820da5cd4" name="변경" comment="" />
-      <created>1758611461360</created>
+      <changelist id="461d99de-7243-482e-a7c0-686024869fe5" name="변경" comment="" />
+      <created>1758625035184</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1758611461360</updated>
-      <workItem from="1758611463670" duration="762000" />
-      <workItem from="1758612251161" duration="4705000" />
+      <updated>1758625035184</updated>
+      <workItem from="1758625037311" duration="2741000" />
     </task>
     <servers />
   </component>
