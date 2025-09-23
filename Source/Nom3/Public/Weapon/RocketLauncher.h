@@ -7,6 +7,7 @@
 #include "RocketLauncher.generated.h"
 
 class AHomingMissile;
+class USoundWave;
 
 UCLASS()
 class NOM3_API ARocketLauncher : public AWeaponBase
@@ -25,6 +26,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AHomingMissile> Missile;
 
+	UPROPERTY(EditAnywhere)
+	USoundWave* ShootSound;
+	
 	FTimerHandle FireTimer;
 	int32 FireCounter = 0;
 	

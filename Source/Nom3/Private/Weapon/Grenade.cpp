@@ -7,6 +7,7 @@
 #include "Core/DamageComponent.h"
 #include "Core/NomPlayer.h"
 #include "Interfaces/Damagable.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Nom3/Nom3.h"
 
@@ -36,6 +37,10 @@ AGrenade::AGrenade()
 		Mesh->SetRelativeLocation(FVector(0, -7, 0));
 		Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+	
+	ConstructorHelpers::FObjectFinder<USoundWave> tmpSound(TEXT("/Script/Engine.SoundWave'/Game/Asset/Sound/Grenade_Explosion.Grenade_Explosion'"));
+	if (tmpSound.Succeeded())
+		Sound = tmpSound.Object;
 }
 
 // Called when the game starts or when spawned
@@ -90,6 +95,7 @@ void AGrenade::OnExplode()
 
 	
 	//TODO : 이펙트 넣기
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation());
 	DrawDebugSphere(GetWorld(), GetActorLocation(), ExplodeRadius, 12, FColor::Red, false, 2.f, 0, 10);
 	
 	PRINTINFO();

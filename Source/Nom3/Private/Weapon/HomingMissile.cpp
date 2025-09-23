@@ -33,6 +33,10 @@ AHomingMissile::AHomingMissile()
 	ProjectileMoveComp->ProjectileGravityScale = 0.0f;
 	ProjectileMoveComp->bIsHomingProjectile = false;
 	ProjectileMoveComp->bRotationFollowsVelocity = true;
+
+	ConstructorHelpers::FObjectFinder<USoundWave> sound(TEXT("/Script/Engine.SoundWave'/Game/Asset/Sound/roketEXP.roketEXP'"));
+	if (sound.Succeeded())
+		ExplodeSound = sound.Object;
 }
 
 // Called when the game starts or when spawned
@@ -131,6 +135,7 @@ void AHomingMissile::Explode()
 	}
 
 	//TODO : 이펙트 넣기
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplodeSound, GetActorLocation());	
 	DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 12, FColor::Red, false, 2.f, 0, 10);
 
 	GetWorldTimerManager().ClearTimer(CantReachTimer);

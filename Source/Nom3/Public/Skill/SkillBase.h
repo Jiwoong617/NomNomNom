@@ -23,6 +23,9 @@ protected:
 	ANomPlayer* Owner;
 	UPROPERTY()
 	UAnimMontage* SkillMontage;
+
+	UPROPERTY()
+	USoundWave* SkillSound;
 	
 public:
 	void SetOwner(ANomPlayer* NewOwner);

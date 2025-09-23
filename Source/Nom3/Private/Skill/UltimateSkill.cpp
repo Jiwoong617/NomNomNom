@@ -11,6 +11,7 @@
 #include "Enemy/Core/EnemyHealthComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Skill/ThrowingDagger.h"
 
 UUltimateSkill::UUltimateSkill()
@@ -23,6 +24,10 @@ UUltimateSkill::UUltimateSkill()
 	if (niagara.Succeeded())
 		NiagaraEffect = niagara.Object;
 	
+	ConstructorHelpers::FObjectFinder<USoundWave> sound(TEXT("/Script/Engine.SoundWave'/Game/Asset/Sound/UltSound.UltSound'"));
+	if (sound.Succeeded())
+		SkillSound = sound.Object;
+	
 	Damage = 3000;
 	CoolTime = 90.f;
 }
@@ -32,6 +37,7 @@ void UUltimateSkill::UseSkill()
 	if (SkillMontage)
 	{
 		Owner->SetEffect(NiagaraEffect);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SkillSound, Owner->GetActorLocation());
 		
 		FVector LeftDir = -Owner->GetActorRightVector();
 		FVector NewLocation = Owner->GetTpsComp()->GetComponentLocation() + LeftDir * 150.f;

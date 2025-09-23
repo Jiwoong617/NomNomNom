@@ -45,6 +45,9 @@ private:
     UPROPERTY(EditAnywhere, Category="HomingMissile")
     float ExplosionRadius = 300.f;
 
+    UPROPERTY()
+    TObjectPtr<USoundBase> ExplodeSound;
+    
     void SetHoming();
     void Explode();
 

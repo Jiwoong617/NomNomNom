@@ -3,6 +3,7 @@
 
 #include "Weapon/RocketLauncher.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Nom3/Nom3.h"
 #include "Weapon/HomingMissile.h"
 #include "Weapon/WeaponData.h"
@@ -31,6 +32,10 @@ ARocketLauncher::ARocketLauncher()
 	ConstructorHelpers::FClassFinder<AHomingMissile> TempMissile(TEXT("/Script/Engine.Blueprint'/Game/BluePrints/Weapons/BP_HomingMissile.BP_HomingMissile_C'"));
 	if (TempMissile.Succeeded())
 		Missile = TempMissile.Class;
+
+	ConstructorHelpers::FObjectFinder<USoundWave> sound(TEXT("/Script/Engine.SoundWave'/Game/Asset/Sound/roketShot.roketShot'"));
+	if (sound.Succeeded())
+		ShootSound = sound.Object;
 }
 
 // Called when the game starts or when spawned
@@ -55,6 +60,7 @@ void ARocketLauncher::NoAimFire()
 {
 	if (CurrentAmmo <= 0) return;
 	CurrentAmmo--;
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShootSound, GetActorLocation());
 	
 	GetWorldTimerManager().SetTimer(FireTimer, [this]()
 	{
