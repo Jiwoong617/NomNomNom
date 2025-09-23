@@ -54,7 +54,7 @@ public:
 	TObjectPtr<APlayerDetectVolume> BindPlayerDetectVolume;
 
 	UPROPERTY()
-	FTimerHandle SpawnTimerHandle;
+	bool bBlockingSpawn;
 
 	UPROPERTY(EditAnywhere, Category="Spawning")
 	float SpawnRate;

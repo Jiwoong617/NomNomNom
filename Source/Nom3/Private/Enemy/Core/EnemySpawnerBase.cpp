@@ -98,29 +98,35 @@ void AEnemySpawnerBase::RequestSpawnEnemies(const int32 Count)
 	}
 	
 	//이전 요청이 아직 마무리 되지 않았다면
-	if (SpawnTimerHandle.IsValid())
+	if (bBlockingSpawn)
 	{
 		return;
 	}
+
+	//블로킹 활성화
+	bBlockingSpawn = true;
 	
 	//이전 요청을 처리할 때까지 추가 요청을 차단
-	GetWorldTimerManager().SetTimer(SpawnTimerHandle, [this]()
+	FTimerHandle SpawnTimerHandle;
+	FTimerDelegate SpawnTimerDelegate;
+	SpawnTimerDelegate.BindLambda([this]()
 	{
-		GetWorldTimerManager().ClearTimer(SpawnTimerHandle);
-	}, Count * 0.25, false);
+		bBlockingSpawn = false;
+	});
+	GetWorldTimerManager().SetTimer(SpawnTimerHandle, SpawnTimerDelegate, Count * 0.25, false);
 
 	//델리게이트 바인딩
-	FTimerDelegate Delegate;
-	Delegate.BindUFunction(this, FName("ProcessSpawn"));
+	FTimerDelegate SpawnDelegate;
+	SpawnDelegate.BindUFunction(this, FName("ProcessSpawn"));
 	
 	//생크 1회 스폰
-	Delegate.Execute();
+	SpawnDelegate.Execute();
 	
 	//요청한 만큼 생크를 반복 스폰
 	for (int32 i = 0; i < Count; i++)
 	{
 		FTimerHandle Temp;
-		GetWorldTimerManager().SetTimer(Temp, Delegate, i * 0.5, false);	
+		GetWorldTimerManager().SetTimer(Temp, SpawnDelegate, i * 0.5, false);	
 	}
 }
 

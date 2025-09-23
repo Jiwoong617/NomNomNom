@@ -15,8 +15,8 @@ protected:
 	//자동 사격 타이머 핸들러
 	FTimerHandle AutoFireTimerHandle;
 
-	//사격 간격 타이머 핸들러
-	FTimerHandle FireIntervalTimerHandle;
+	//자동 사격 타이머 델리게이트
+	FTimerDelegate AutoFireTimerDelegate;
 
 	//자동 사격 간격
 	float AutoFireRate;
@@ -29,12 +29,26 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	int32 FireCount;
 
+	//사격 리미트
+	UPROPERTY(VisibleAnywhere)
+	int32 FireLimit;
+
+	//사격 간격
+	UPROPERTY(VisibleAnywhere)
+	float FireInterval;
+
 	//랜덤화
 	UPROPERTY(EditAnywhere)
 	float ShootRandConeAngle;
+
+	//이전 사격으로부터 지난 시간
+	UPROPERTY(VisibleAnywhere)
+	float ElapsedTimeAfterLastFire;
 	
 public:
 	UFireProjectileComponentBase();
+
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//자동 사격 활성화
 	UFUNCTION(BlueprintCallable)
@@ -46,16 +60,9 @@ public:
 
 	//자동 사격
 	UFUNCTION(BlueprintCallable)
-	void FireBulletMultipleForInnerReq(const float Delay);
-	
-	//외부 요청으로 복수의 총탄 발사
-	UFUNCTION(BlueprintCallable)
-	void FireBulletMultipleForOuterReq(int Num, float Delay);
+	void FireBulletMultiple();
 
-	//내외부 요청으로 복수의 총탄 발사
-	void FireBulletMultiple(const int Num, float Delay);
-
-	//내외부 요청으로 하나의 총탄 발사
+	//한 발의 총탄 발사
 	UFUNCTION(BlueprintCallable)
 	virtual void FireBulletOnce() const;
 };

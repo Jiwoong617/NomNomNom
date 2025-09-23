@@ -4,25 +4,55 @@
 #include "Nom3/Nom3.h"
 
 UFireProjectileComponentBase::UFireProjectileComponentBase() :
-	ShootRandConeAngle(1),
-	FireCount(0),
 	AutoFireRate(4),
 	AutoFireMin(1),
-	AutoFireMax(1)
+	AutoFireMax(1),
+	FireCount(0),
+	FireLimit(0),
+	FireInterval(0.25f),
+	ShootRandConeAngle(1)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UFireProjectileComponentBase::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	//발사 카운트가 작은 동안
+	if (FireCount < FireLimit)
+	{
+		//발사 간격을 넘겼으므로
+		if (ElapsedTimeAfterLastFire > FireInterval)
+		{
+			//1회 사격 호출
+			FireBulletOnce();
+		
+			//발사 카운트 증가
+			FireCount++;
+
+			//ElapsedTime 갱신
+			ElapsedTimeAfterLastFire -= AutoFireRate;
+		}
+
+		//어쨌든 시간은 지나간다
+		ElapsedTimeAfterLastFire += DeltaTime;
+	}
+}
+
 void UFireProjectileComponentBase::ActiveAutoFire()
 {
-	//타이머 설정
-	GetWorld()->GetTimerManager().SetTimer(AutoFireTimerHandle, [this]()
+	//타이머 델리게이트 바인드
+	AutoFireTimerDelegate.BindLambda([this]()
 	{
 		//자동 사격 메서드 호출
-		FireBulletMultipleForInnerReq(0.25);
-	}, AutoFireRate, true);
+		FireBulletMultiple();
+	});
+
+	//자동 사격 호출
+	GetWorld()->GetTimerManager().SetTimer(AutoFireTimerHandle, AutoFireTimerDelegate, AutoFireRate, true);
 }
 
 void UFireProjectileComponentBase::InactiveAutoFire()
@@ -31,48 +61,13 @@ void UFireProjectileComponentBase::InactiveAutoFire()
 	GetWorld()->GetTimerManager().ClearTimer(AutoFireTimerHandle);
 }
 
-void UFireProjectileComponentBase::FireBulletMultipleForInnerReq(const float Delay)
-{
-	//사격 횟수 결정
-	const int Num = FMath::RandRange(AutoFireMin, AutoFireMax);
-
-	//요청 수행
-	FireBulletMultiple(Num, Delay);
-}
-
-void UFireProjectileComponentBase::FireBulletMultipleForOuterReq(const int Num, const float Delay)
-{
-	//이미 자동 사격 상태이므로 외부 요청을 무시한다
-	if (AutoFireTimerHandle.IsValid())
-	{
-		return;
-	}
-
-	//요청 수행
-	FireBulletMultiple(Num, Delay);
-}
-
-void UFireProjectileComponentBase::FireBulletMultiple(const int Num, const float Delay)
+void UFireProjectileComponentBase::FireBulletMultiple()
 {
 	//사격 카운트
 	FireCount = 0;
 
-	//사격 개시
-	GetWorld()->GetTimerManager().SetTimer(FireIntervalTimerHandle, [this, Num]()
-	{
-		//사격 종료
-		if (FireCount >= Num)
-		{
-			GetWorld()->GetTimerManager().ClearTimer(FireIntervalTimerHandle);
-			return;
-		}
-
-		//자동 사격 호출
-		FireBulletOnce();
-
-		//사격 횟수 증가
-		FireCount++;
-	}, Delay, true);
+	//사격 횟수 결정
+	FireLimit = FMath::RandRange(AutoFireMin, AutoFireMax);
 }
 
 void UFireProjectileComponentBase::FireBulletOnce() const
