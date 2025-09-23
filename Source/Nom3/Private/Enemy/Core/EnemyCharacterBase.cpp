@@ -115,6 +115,12 @@ void AEnemyCharacterBase::OnDamaged(const FFireInfo Info)
 		return;
 	}
 
+	if (TargetPawn == nullptr)
+	{
+		//폰 획득
+		OnNoticePawn(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));	
+	}
+
 	//일반적인 데미지
 	const int32 Damage = FMath::FloorToInt(Info.Damage);
 
@@ -134,6 +140,12 @@ void AEnemyCharacterBase::OnCriticalDamaged(const FFireInfo Info)
 	if (HealthComp->HP <= 0)
 	{
 		return;
+	}
+
+	if (TargetPawn == nullptr)
+	{
+		//폰 획득
+		OnNoticePawn(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));	
 	}
 
 	//크리티컬 데미지

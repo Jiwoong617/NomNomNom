@@ -9,10 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="461d99de-7243-482e-a7c0-686024869fe5" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Core/NomPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Core/NomPlayer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/NormalDreg.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Human/Dreg/NormalDreg.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Core/NomPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Core/NomPlayer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Enemy/Core/EnemyCharacterBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Enemy/Core/EnemyCharacterBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Weapon/WeaponBase.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -133,7 +131,8 @@
       <option name="presentableId" value="Default" />
       <updated>1758625035184</updated>
       <workItem from="1758625037311" duration="2741000" />
-      <workItem from="1758628780785" duration="1020000" />
+      <workItem from="1758628780785" duration="1047000" />
+      <workItem from="1758630298776" duration="268000" />
     </task>
     <servers />
   </component>
