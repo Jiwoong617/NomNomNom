@@ -412,8 +412,7 @@
       <change beforePath="$PROJECT_DIR$/../GEMINI.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Nom3.sln.DotSettings.user" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Nom3.uproject" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Maps/LEVELnONE.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/LEVELnONE.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Map/Elevator.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Map/Elevator.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Source/Nom3.Target.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Source/Nom3/Nom3.Build.cs" beforeDir="false" />
@@ -493,23 +492,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C/C++ Project.Nom3.executor": "Run",
-    "C/C++ 프로젝트.Nom3.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "MAP__JM",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;C/C++ Project.Nom3.executor&quot;: &quot;Run&quot;,
+    &quot;C/C++ 프로젝트.Nom3.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;MAP__JM&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="C/C++ Project.Nom3">
     <configuration name="Nom3" type="CppProject" factoryName="C++ Project">
       <configuration_1 setup="1">

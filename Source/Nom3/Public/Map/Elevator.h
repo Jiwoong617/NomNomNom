@@ -54,7 +54,7 @@ protected:
     float Acceleration = 2.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Elevator Settings")
-    float HowToDelay = 15.f;
+    float HowToDelay = 20.f;
     
 private:
     // 내부 상태 변수
