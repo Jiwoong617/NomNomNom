@@ -30,7 +30,7 @@ public:
 	TArray<class ALight*> LightsActor;
 	
 	UPROPERTY(EditAnywhere, Category = "AutoLight", meta = (AllowPrivateAccess = "true"))
-	float DelayBetweenLight = 0.5f;
+	float DelayBetweenLight = 1.5f;
 
 	void ActivateLight();
 

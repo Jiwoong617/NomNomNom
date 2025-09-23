@@ -18,8 +18,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2050a9b8-cdea-4699-9a8b-9fe929825009" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/Nom3/Private/Map/AutoLight.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/Nom3/Public/Map/AutoLight.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../.idea/.idea.Nom3.dir/.idea/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../.idea/.idea.Nom3.dir/.idea/.name" beforeDir="false" />
@@ -415,21 +413,17 @@
       <change beforePath="$PROJECT_DIR$/../Nom3.sln.DotSettings.user" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Nom3.uproject" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nom3/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BluePrints/MAP_MovingObject/MyCleanMachine.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BluePrints/MAP_MovingObject/MyCleanMachine.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Maps/EnemyMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/EnemyMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Air_Explosion_03.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Air_Explosion_03.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Dust_Explosion_01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Dust_Explosion_01.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_02.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_02.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_03.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_03.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_04.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_04.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_05.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_05.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_06.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_06.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_07.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Explosion_07.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Smoke_Wind_01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Smoke_Wind_01.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Splash_Flame_01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MsvFx_Niagara_Explosion_Pack_01/Prefabs/Niagara_Splash_Flame_01.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/9/H7/JJ9OKJEB9EJ9RRLHI641RR.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/9/H7/JJ9OKJEB9EJ9RRLHI641RR.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/cleanMachine/SM_CleanMachine.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/cleanMachine/SM_CleanMachine.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/cleanMachine/body.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/cleanMachine/body.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/cleanMachine/emisive.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/cleanMachine/emisive.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/cleanMachine/nal.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/cleanMachine/nal.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/cleanMachine/naltwo.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/cleanMachine/naltwo.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Asset/cleanMachine/under.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Asset/cleanMachine/under.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/XL/LOOATJJNAUOPWU6GG8A62R.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Maps/LEVELnONE/5/XL/LOOATJJNAUOPWU6GG8A62R.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nom3.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Nom3.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Map/AutoLight.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Map/AutoLight.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Nom3/Private/Map/Elevator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Private/Map/Elevator.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Map/Elevator.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Map/Elevator.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Nom3/Public/Map/AutoLight.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Nom3/Public/Map/AutoLight.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Source/Nom3.Target.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Source/Nom3/Nom3.Build.cs" beforeDir="false" />
@@ -669,6 +663,9 @@
       <workItem from="1758504424876" duration="1315000" />
       <workItem from="1758516151600" duration="6096000" />
       <workItem from="1758530932555" duration="6673000" />
+      <workItem from="1758585158925" duration="657000" />
+      <workItem from="1758585864262" duration="1024000" />
+      <workItem from="1758602740016" duration="729000" />
     </task>
     <servers />
   </component>
