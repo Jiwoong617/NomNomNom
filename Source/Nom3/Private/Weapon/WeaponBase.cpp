@@ -109,7 +109,7 @@ void AWeaponBase::AimFire()
 		const FVector Dir = WeaponOwner->GetFpsCam()->GetForwardVector();
 
 		FVector TracerStartPos = WeaponMeshComp->GetSocketLocation(FireSocketName);
-		FVector TracerEndPos = Pos + Dir * 10000;
+		FVector TracerEndPos = Pos + Dir * 30000;
 		
 		FHitResult Hit;
 		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
@@ -183,7 +183,7 @@ void AWeaponBase::NoAimFire()
 		const FVector FinalDir = SpreadRot.Vector();
 
 		FVector TracerStartPos = WeaponMeshComp->GetSocketLocation(FireSocketName);
-		FVector TracerEndPos = Pos + FinalDir * 10000;
+		FVector TracerEndPos = Pos + FinalDir * 30000;
 		
 		FHitResult Hit;
 		FCollisionQueryParams Params = FCollisionQueryParams::DefaultQueryParam;
